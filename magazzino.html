@@ -184,6 +184,26 @@ ol.steps li{margin-bottom:7px}
   border:1px solid var(--b1);object-fit:cover;display:flex;align-items:center;justify-content:center;
   font-size:28px;color:var(--mut)}
 
+/* pannello listino insumi */
+#insPanel{position:fixed;inset:0;z-index:95;display:none}
+#insPanel.on{display:block}
+#insPanel .bd{position:absolute;inset:0;background:rgba(0,0,0,.68)}
+#insPanel .in{position:absolute;left:0;right:0;bottom:0;max-height:93vh;background:var(--panel);
+  border-top:1px solid var(--b2);border-radius:16px 16px 0 0;display:flex;flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom)}
+#insPanel .hd{padding:12px 14px;border-bottom:1px solid var(--b1)}
+#insPanel .ls{overflow-y:auto;padding:4px 12px 20px;flex:1}
+.irow{display:flex;align-items:center;gap:11px;padding:11px 2px;border-bottom:1px solid var(--b1)}
+.iu{font-family:var(--fm);font-size:.72rem;color:var(--ora);flex:0 0 auto;min-width:34px}
+.ilbl{flex:1;min-width:0}
+.inm{font-size:.95rem;font-weight:600;line-height:1.3}
+.imis{color:var(--ora);font-size:.9rem}
+.isp{color:var(--mut);font-size:.85rem}
+.ipz{font-family:var(--fm);font-size:.7rem;color:var(--mut);margin-top:2px}
+.imk{font-family:var(--fm);font-size:.68rem;color:var(--dim);margin-top:2px}
+.imk b{color:var(--grn);font-weight:400}
+.already{font-family:var(--fm);font-size:.68rem;color:var(--grn)}
+
 /* toast */
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(90px);
   background:#1B2A4A;border:1.5px solid var(--ora);color:#fff;padding:13px 20px;border-radius:28px;
@@ -240,7 +260,7 @@ ol.steps li{margin-bottom:7px}
   </div>
   <div class="chips" id="cats"></div>
   <div class="cardlist" id="list"></div>
-  <button class="btn btn-p" style="width:100%;margin-top:14px" onclick="openSheet()">＋ Nuovo prodotto</button>
+  <button class="btn btn-p" style="width:100%;margin-top:14px" onclick="openSheet()">+ Nuovo prodotto</button>
 </section>
 
 <!-- ══════════ STOCK ══════════ -->
@@ -310,6 +330,14 @@ ol.steps li{margin-bottom:7px}
         <button class="btn btn-sm" onclick="showSheet('gscode')">Espandi</button>
       </div>
     </details>
+  </div>
+
+  <div class="card">
+    <h3>Listino insumi</h3>
+    <p>Il listino standard di Valve: tubi per diametro e spessore, cavi, canaline, accessori clima e PVC. Caricando un articolo ti mettono subito prezzo di acquisto e di vendita, cos&igrave; sai subito il margine. Tocca lo stesso listino dal Preventivatore.</p>
+    <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn btn-p btn-sm" onclick="openIns()">Apri listino</button>
+    </div>
   </div>
 
   <div class="card">
@@ -412,8 +440,30 @@ ol.steps li{margin-bottom:7px}
   </div>
 </div>
 
+<div id="insPanel">
+  <div class="bd" onclick="closeIns()"></div>
+  <div class="in">
+    <div class="hd">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-weight:700;font-size:1.12rem;flex:1">Listino insumi</div>
+        <button class="ibtn" onclick="closeIns()" aria-label="Chiudi" style="width:38px;height:38px">✕</button>
+      </div>
+      <div class="srow" style="margin-bottom:9px">
+        <span class="ic">🔍</span>
+        <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…" oninput="renderIns()">
+      </div>
+      <div class="chips" id="insCats" style="margin-bottom:0;padding-bottom:2px"></div>
+      <div id="insBulk" style="display:none;margin-top:10px">
+        <button class="btn btn-sm btn-p" style="width:100%" onclick="bulkIns()">+ Carica tutta la categoria in magazzino</button>
+      </div>
+    </div>
+    <div class="ls" id="insList"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="js/insumi.js"></script>
 <script src="js/vendor/zxing.min.js"></script>
 <script>
 "use strict";
@@ -667,7 +717,7 @@ async function showScanResult(code, p){
         '<div class="hitname">Non in magazzino</div>' +
         '<div class="hitmeta">Nessun prodotto ha questo codice a barre.</div>' +
         '<div class="hitrow">' +
-          '<button class="btn btn-p" onclick="openSheet(null,\'' + esc(code).replace(/'/g,"") + '\')">＋ Crea prodotto</button>' +
+          '<button class="btn btn-p" onclick="openSheet(null,\'' + esc(code).replace(/'/g,"") + '\')">+ Crea prodotto</button>' +
           '<button class="btn btn-sm" onclick="startScan()">↺ Scansiona ancora</button>' +
         '</div>' +
       '</div>';
@@ -1051,6 +1101,130 @@ async function syncNow(manual){
     renderAll();
     renderSyncState();
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LISTINO INSUMI  (stesso file del Preventivatore)
+   ══════════════════════════════════════════════════════════════ */
+let insCat = 'tutti';
+
+function openIns(){
+  if(typeof INSUMI === 'undefined'){ toast('Listino non caricato', 'err'); return; }
+  insCat = 'tutti';
+  $('insq').value = '';
+  renderInsCats();
+  renderIns();
+  $('insPanel').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeIns(){
+  $('insPanel').classList.remove('on');
+  document.body.style.overflow = '';
+}
+function insCatsList(){
+  if(typeof INSUMI_CATS === 'undefined') return [];
+  return INSUMI_CATS;
+}
+function renderInsCats(){
+  let h = '<button class="chip' + (insCat==='tutti'?' on':'') + '" data-c="tutti">Tutti</button>';
+  insCatsList().forEach(c => {
+    h += '<button class="chip' + (insCat===c?' on':'') + '" data-c="' + esc(c) + '">' + esc(c) + '</button>';
+  });
+  const box = $('insCats');
+  box.innerHTML = h;
+  box.querySelectorAll('.chip').forEach(b => {
+    b.onclick = () => { insCat = b.dataset.c; renderInsCats(); renderIns(); };
+  });
+  $('insBulk').style.display = (insCat === 'tutti') ? 'none' : 'block';
+}
+function insRows(){
+  let rows = (typeof insumiTrova === 'function') ? insumiTrova($('insq').value) : (INSUMI || []);
+  if(insCat !== 'tutti') rows = rows.filter(i => i.cat === insCat);
+  return rows;
+}
+function renderIns(){
+  const rows = insRows();
+  const box = $('insList');
+  if(!rows.length){
+    box.innerHTML = '<div style="text-align:center;padding:36px 14px;color:var(--mut);font-size:.9rem">' +
+      'Nessun articolo corrisponde alla ricerca.</div>';
+    return;
+  }
+  box.innerHTML = rows.map(i => {
+    const gia = live().find(p => p.sku === i.sku);
+    const mar = Math.round((i.ven / i.acq - 1) * 100);
+    return '<div class="irow">' +
+      '<div class="iu">' + esc(i.un || 'pz') + '</div>' +
+      '<div class="ilbl">' +
+        '<div class="inm">' + esc(i.nome) +
+          (i.mis && i.mis !== '—' ? ' <span class="imis">' + esc(i.mis) + '</span>' : '') +
+          (i.sp ? ' <span class="isp">× ' + esc(i.sp) + '</span>' : '') +
+        '</div>' +
+        '<div class="imk">' + esc(i.sku) + ' · <b>' + eur(i.acq) + '</b> acq. · ' + eur(i.ven) + ' vend. (margine +' + mar + '%)' +
+          (i.note ? ' · ' + esc(i.note) : '') +
+        '</div>' +
+        (gia ? '<div class="already">in magazzino: ' + fmtQty(gia.qty) + ' ' + esc(gia.unit) + '</div>' : '') +
+      '</div>' +
+      (gia
+        ? '<button class="btn btn-sm" style="width:48px;padding:0" onclick="insQty(\'' + i.sku + '\',1)" aria-label="Aggiungi 1">+1</button>'
+        : '<button class="btn btn-p btn-sm" onclick="insAdd(\'' + i.sku + '\')">+ Inserisci</button>') +
+    '</div>';
+  }).join('');
+}
+
+/* inserisce l'articolo del listino in magazzino */
+async function insAdd(sku){
+  const it = (INSUMI || []).find(i => i.sku === sku);
+  if(!it) return;
+  const p = blankProduct();
+  p.sku      = it.sku;
+  p.name     = insumiEtichetta(it);
+  p.category = it.cat;
+  p.unit     = it.un || 'pz';
+  p.price    = it.acq;
+  p.sellPrice= it.ven;
+  p.qty      = 0;
+  p.minQty   = it.un === 'mt' ? 10 : 2;
+  const idx = PRODUCTS.findIndex(x => x.sku === it.sku);
+  if(idx >= 0){ toast('Aggiornato: ' + it.sku, 'ok'); } else { PRODUCTS.push(p); }
+  await DB.put(p);
+  renderAll();
+  scheduleSync();
+  renderIns();
+  toast((idx>=0?'Aggiornato: ':'Inserito: ') + it.sku, 'ok');
+}
+
+/* se il prodotto c'e' gia', ne aumenta la giacenza */
+async function insQty(sku, d){
+  const it = (INSUMI || []).find(i => i.sku === sku);
+  if(!it) return;
+  let p = live().find(x => x.sku === sku);
+  if(!p){ await insAdd(sku); p = live().find(x => x.sku === sku); }
+  if(!p) return;
+  p.qty = Math.max(0, (Number(p.qty)||0) + d);
+  p.updatedAt = now(); p.dirty = true;
+  await DB.put(p);
+  renderAll(); scheduleSync(); renderIns();
+}
+
+/* carica tutta la categoria */
+async function bulkIns(){
+  const rows = insRows();
+  if(!rows.length) return;
+  const nuovi = rows.filter(i => !live().some(p => p.sku === i.sku)).length;
+  if(!nuovi){ toast('Tutti gli articoli di questa categoria sono già in magazzino'); return; }
+  if(!confirm('Inserirà ' + nuovi + ' articoli di "' + insCat + '" in magazzino.\nPotrai poi correggerli.')) return;
+  for(const it of rows){
+    if(live().some(p => p.sku === it.sku)) continue;
+    const p = blankProduct();
+    p.sku = it.sku; p.name = insumiEtichetta(it); p.category = it.cat;
+    p.unit = it.un || 'pz'; p.price = it.acq; p.sellPrice = it.ven;
+    p.qty = 0; p.minQty = it.un === 'mt' ? 10 : 2;
+    PRODUCTS.push(p);
+    await DB.put(p);
+  }
+  renderAll(); scheduleSync(); renderIns();
+  toast(nuovi + ' articoli inseriti', 'ok');
 }
 
 /* ══════════════════════════════════════════════════════════════

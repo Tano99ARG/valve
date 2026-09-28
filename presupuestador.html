@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
 <title>Valve Electronics ELECTRONICS — Preventivatore</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script src="js/insumi.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -357,7 +358,8 @@ body {
     <!-- MATERIALES -->
     <div class="card">
       <div class="card-title">📦 MATERIALI / FORNITURE
-        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="addMat()">+ Aggiungi</button>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openIns()">🛢 Listino</button>
+        <button class="btn btn-ghost btn-sm" onclick="addMat()">+ Aggiungi</button>
       </div>
       <div id="matrows">
         <div style="font-size:12px;color:var(--muted);text-align:center;padding:6px 0">Nessun materiale caricato</div>
@@ -747,7 +749,7 @@ function renderCart(){
           <button class="qbtn" onclick="chgQty('${it.code}',+1)">+</button>
         </div>
         <div class="pwrap">
-          <span class="psym">$</span>
+          <span class="psym">€</span>
           <input type="number" value="${it.unitPrice}" min="0"
             onchange="setPrice('${it.code}',this.value)"
             oninput="setPrice('${it.code}',this.value)">
@@ -791,7 +793,7 @@ function renderMats(){
       <input class="mqty" type="number" placeholder="Q.tà" value="${m.qty}" min="1"
         onchange="updMat(${m.id},'qty',this.value)" style="width:52px;text-align:center;font-size:12px">
       <div class="mprw" style="width:100px">
-        <span class="psym">$</span>
+        <span class="psym">€</span>
         <input type="number" placeholder="P. unit." value="${m.price}" min="0"
           onchange="updMat(${m.id},'price',this.value)"
           oninput="updMat(${m.id},'price',this.value)" style="padding-left:15px;font-size:12px">
@@ -1005,6 +1007,95 @@ function drawLogoV(doc, x, y, size){
   for(var i=1;i<pts.length;i++) seg.push([(pts[i][0]-pts[i-1][0])*s, -(pts[i][1]-pts[i-1][1])*s]);
   doc.setFillColor(0,212,170);
   doc.lines(seg, X(pts[0]), Y(pts[0]), [1,1], 'F', true);
+}
+
+// ═══════════════════════════════════════════════════════════
+// LISTINO INSUMI (da js/insumi.js)
+// ═══════════════════════════════════════════════════════════
+let insCat = 'tutti';
+
+function openIns(){
+  if(typeof INSUMI === 'undefined'){ showToast('Listino non caricato'); return; }
+  insCat = 'tutti';
+  $('insq').value = '';
+  renderInsCats();
+  renderIns();
+  $('insOverlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeIns(){
+  $('insOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+function renderInsCats(){
+  const cs = typeof INSUMI_CATS !== 'undefined' ? INSUMI_CATS : [];
+  let h = '<button class="cpill' + (insCat==='tutti'?' act':'') + '" data-c="tutti" ' +
+    'style="white-space:nowrap">Tutti (' + INSUMI.length + ')</button>';
+  cs.forEach(c => {
+    const n = INSUMI.filter(i => i.cat === c).length;
+    h += '<button class="cpill' + (insCat===c?' act':'') + '" data-c="' + escIns(c) + '" ' +
+      'style="white-space:nowrap">' + escIns(c) + ' (' + n + ')</button>';
+  });
+  const box = $('insCats');
+  box.innerHTML = h;
+  box.querySelectorAll('.cpill').forEach(b => {
+    b.onclick = () => { insCat = b.dataset.c; renderInsCats(); renderIns(); };
+  });
+}
+function escIns(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function renderIns(){
+  let rows = typeof insumiTrova === 'function' ? insumiTrova($('insq').value) : INSUMI;
+  if(insCat !== 'tutti') rows = rows.filter(i => i.cat === insCat);
+
+  const box = $('insList');
+  if(!rows.length){
+    box.innerHTML = '<div style="text-align:center;padding:34px 14px;color:var(--muted);font-size:13px">' +
+      'Nessun articolo corrisponde alla ricerca.</div>';
+    return;
+  }
+  box.innerHTML = rows.map(i => {
+    const mar = Math.round((i.ven / i.acq - 1) * 100);
+    return '<div style="display:flex;align-items:center;gap:10px;padding:11px 2px;' +
+      'border-bottom:1px solid #2a2e42">' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:13.5px;font-weight:600;line-height:1.3">' + escIns(i.nome) +
+          (i.mis && i.mis!=='\u2014' ? ' <span style="color:#00D4AA">' + escIns(i.mis) + '</span>' : '') +
+          (i.sp ? ' <span style="color:#8089a8;font-size:12px">\u00d7 ' + escIns(i.sp) + '</span>' : '') +
+        '</div>' +
+        '<div style="font-size:11px;color:#8089a8;margin-top:2px;font-family:\'Share Tech Mono\',monospace">' +
+          escIns(i.sku) + ' \u00b7 acquisto ' + fmt(i.acq) + ' \u00b7 vendita ' + fmt(i.ven) +
+          ' <span style="color:' + (mar>=100?'#2ecc71':'#ff9a3c') + '">+' + mar + '%</span>' +
+          (i.note ? ' \u00b7 ' + escIns(i.note) : '') +
+        '</div>' +
+      '</div>' +
+      '<div style="text-align:right;flex:0 0 auto">' +
+        '<div style="font-family:\'Share Tech Mono\',monospace;font-size:12px;color:#8089a8">' + i.un + '</div>' +
+        '<button class="btn btn-primary btn-sm" style="padding:7px 13px;font-size:13px" ' +
+          'onclick="addIns(\'' + i.sku + '\')">+ Aggiungi</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+function addIns(sku){
+  const it = (typeof INSUMI !== 'undefined' ? INSUMI : []).find(i => i.sku === sku);
+  if(!it) return;
+  // evita doppioni accidentali: se la stessa descrizione c'e' gia', aumento la quantita'
+  const desc = insumiEtichetta(it) + (it.un && it.un !== 'mt' ? ' [' + it.un + ']' : '');
+  const esistente = mats.find(m => m.desc === desc);
+  if(esistente){
+    esistente.qty = (Number(esistente.qty) || 0) + 1;
+    updMat(esistente.id, 'qty', esistente.qty);
+    showToast('Quantità aggiornata: ' + desc);
+  } else {
+    mats.push({ id: midx++, desc: desc, qty: 1, price: it.ven });
+    renderMats();
+    showToast('Aggiunto: ' + desc);
+  }
+  $('matsub').style.display = 'block';
+  recalc();
 }
 
 // GUARDAR / COMPARTIR PDF — cross-platform
@@ -1644,5 +1735,26 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<!-- ══════════ LISTINO INSUMI ══════════ -->
+<div id="insOverlay" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.66)">
+  <div style="position:absolute;left:0;right:0;bottom:0;max-height:92vh;background:var(--navy2,#1d2130);
+    border-radius:14px 14px 0 0;border-top:1px solid #2a2e42;display:flex;flex-direction:column">
+    <div style="padding:12px 14px;border-bottom:1px solid #2a2e42">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;flex:1">Listino insumi</div>
+        <button class="btn-del" onclick="closeIns()" style="width:36px;height:36px">✕</button>
+      </div>
+      <div class="srow" style="position:relative;margin-bottom:9px">
+        <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…"
+          oninput="renderIns()" style="width:100%;background:var(--navy3,#11141d);border:1px solid #2a2e42;
+          color:#eef0f8;padding:12px 12px 12px 36px;border-radius:8px;font-size:15px;outline:none">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8089a8">🔍</span>
+      </div>
+      <div id="insCats" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch"></div>
+    </div>
+    <div id="insList" style="overflow-y:auto;padding:10px 12px 24px;flex:1"></div>
+  </div>
+</div>
+
 </body>
 </html>
