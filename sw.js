@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valve-v6';
+const CACHE_NAME = 'valve-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,9 @@ const ASSETS = [
   './checklist-starlink.html',
   './dimensionamento-solare.html',
   './informe.html',
+  './js/vendor/zxing.min.js',
+  './js/apps-script.gs',
+  './magazzino.html',
   './instrumentos.html',
   './interno.html',
   './normativa.html',
