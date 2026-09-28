@@ -184,6 +184,19 @@ ol.steps li{margin-bottom:7px}
   border:1px solid var(--b1);object-fit:cover;display:flex;align-items:center;justify-content:center;
   font-size:28px;color:var(--mut)}
 
+/* avviso scorte: barra in evidenza sulle schede Scansiona e Catalogo */
+.abar{display:none;align-items:center;gap:11px;margin-bottom:12px;padding:12px 14px;
+  border-radius:9px;background:rgba(243,156,18,.13);border:1px solid rgba(243,156,18,.5);
+  cursor:pointer}
+.abar.on{display:flex}
+.abar.grave{background:rgba(231,76,60,.15);border-color:rgba(231,76,60,.55)}
+.abar .ic{font-size:20px;flex:0 0 auto}
+.abar .tx{flex:1;min-width:0;font-size:.9rem;line-height:1.4}
+.abar .tx b{display:block;font-family:var(--fd);font-size:1rem;font-weight:700;color:#ffcf7a}
+.abar.grave .tx b{color:#ff9a9a}
+.abar .go{font-family:var(--fd);font-weight:700;font-size:.82rem;color:#ffcf7a;flex:0 0 auto}
+.abar.grave .go{color:#ff9a9a}
+
 /* pannello listino insumi */
 #insPanel{position:fixed;inset:0;z-index:95;display:none}
 #insPanel.on{display:block}
@@ -236,6 +249,11 @@ ol.steps li{margin-bottom:7px}
 
 <!-- ══════════ SCANSIONA ══════════ -->
 <section class="view on" id="v-scan">
+  <div id="alertBar" class="abar" onclick="go('stock')">
+    <span class="ic">⚠</span>
+    <span class="tx"><b id="alertTitolo"></b><span id="alertTesto"></span></span>
+    <span class="go">Vedi ›</span>
+  </div>
   <div id="camwrap">
     <video id="cam" playsinline muted autoplay></video>
     <div class="reticle" id="ret">
@@ -256,6 +274,11 @@ ol.steps li{margin-bottom:7px}
 
 <!-- ══════════ CATALOGO ══════════ -->
 <section class="view" id="v-cat">
+  <div id="alertBar2" class="abar" onclick="go('stock')">
+    <span class="ic">⚠</span>
+    <span class="tx"><b id="alertTitolo2"></b><span id="alertTesto2"></span></span>
+    <span class="go">Vedi ›</span>
+  </div>
   <div class="srow">
     <span class="ic">🔍</span>
     <input id="q" type="search" placeholder="Cerca nome, SKU o codice a barre" oninput="renderCat()">
@@ -269,7 +292,7 @@ ol.steps li{margin-bottom:7px}
 <section class="view" id="v-stock">
   <div class="tiles" id="tiles"></div>
   <div class="card">
-    <h3>Scorte sotto il minimo</h3>
+    <h3 id="lowListTitle">Scorte sotto il minimo</h3>
     <p id="lowtxt"></p>
     <div class="cardlist" id="lowlist"></div>
   </div>
@@ -287,6 +310,33 @@ ol.steps li{margin-bottom:7px}
 
 <!-- ══════════ IMPOSTAZIONI ══════════ -->
 <section class="view" id="v-set">
+  <div class="card">
+    <h3>Allerta scorte</h3>
+    <p>Decidi quando l'app deve segnalarti che un articolo è in esaurimento. Con la soglia unica non devi impostare il minimo sugli articoli uno per uno.</p>
+    <div class="fld">
+      <label class="flbl" for="alertMode">Quando segnalare</label>
+      <select class="inp" id="alertMode" onchange="salvaAlert()">
+        <option value="articolo">Usa la scorta minima di ogni articolo</option>
+        <option value="globale">Una soglia unica per tutti gli articoli</option>
+        <option value="esaurito">Solo gli articoli completamente esauriti</option>
+      </select>
+    </div>
+    <div class="fld" id="wrapSoglia" style="display:none">
+      <label class="flbl" for="alertSoglia">Soglia unica</label>
+      <input class="inp" id="alertSoglia" type="number" inputmode="decimal" step="any" min="0" value="3" oninput="salvaAlert()">
+      <div style="font-size:.78rem;color:var(--dim);margin-top:5px">Vengono segnalati gli articoli con giacenza <b>pari o inferiore</b> a questo numero.</div>
+    </div>
+    <div class="sw">
+      <input type="checkbox" id="alertZero" onchange="salvaAlert()">
+      <div>Segnala sempre anche gli articoli a zero<small>Utile se vuoi sapere subito cosa &egrave; finito, indipendentemente dalla soglia scelta.</small></div>
+    </div>
+    <div class="sw">
+      <input type="checkbox" id="alertBanner" onchange="salvaAlert()">
+      <div>Mostra l'avviso in cima all'app<small>Una barra in evidenza sulle schede Scansiona e Catalogo, e il numero accanto al nome nella scheda del browser.</small></div>
+    </div>
+    <div id="alertAnteprima" style="font-size:.82rem;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)"></div>
+  </div>
+
   <div class="card">
     <h3>Sincronizzazione</h3>
     <p>I dati stanno sempre sul telefono e funzionano senza rete. Il sincronizzatore invia e riceve le variazioni dal foglio Google quando c'è campo.</p>
@@ -571,7 +621,36 @@ function findByBarcode(code){
   return PRODUCTS.find(p => !p.deleted && p.barcode && p.barcode === code) || null;
 }
 
-function isLow(p){ return !p.deleted && p.minQty > 0 && p.qty < p.minQty; }
+function cfgAlert(){
+  const a = (typeof CFG !== 'undefined' && CFG.alert) || {};
+  return {
+    mode:    a.mode    || 'articolo',
+    soglia:  a.soglia  == null ? 3 : Number(a.soglia),
+    zero:    a.zero    !== false,
+    banner:  a.banner  !== false
+  };
+}
+
+function isLow(p){
+  if(p.deleted) return false;
+  const a = cfgAlert();
+  const q = Number(p.qty) || 0;
+  // gli articoli a zero sono gia' un caso limite: attenzione alla segnaletica
+  if(q <= 0) return a.zero;
+  if(a.mode === 'esaurito') return false;              // solo i vuoti, gestiti sopra
+  if(a.mode === 'globale')  return q <= a.soglia;       // soglia unica
+  return Number(p.minQty) > 0 && q < Number(p.minQty); // minimo per articolo
+}
+
+function lowList(){
+  return live().filter(isLow).sort(function(a,b){
+    const qa = Number(a.qty)||0, qb = Number(b.qty)||0;
+    if(qa <= 0 && qb > 0) return -1;                    // gli esauriti prima
+    if(qb <= 0 && qa > 0) return 1;
+    return qa - qb;                                     // poi i piu' bassi
+  });
+}
+
 function live(){ return PRODUCTS.filter(p => !p.deleted); }
 
 function eur(n){
@@ -875,7 +954,7 @@ async function renderCat(){
 
 function renderStock(){
   const L = live();
-  const low = L.filter(isLow);
+  const low = lowList();
   const out = L.filter(p => p.qty <= 0);
   const value = L.reduce((s,p) => s + (Number(p.price)||0) * (Number(p.qty)||0), 0);
 
@@ -885,9 +964,14 @@ function renderStock(){
     '<div class="tile' + (low.length?' warn':'') + '"><div class="tv">' + low.length + '</div><div class="tl">Sotto il minimo</div></div>' +
     '<div class="tile' + (out.length?' warn':'') + '"><div class="tv">' + out.length + '</div><div class="tl">Esauriti</div></div>';
 
+  const a4 = cfgAlert();
+  const etichetta = a4.mode === 'globale' ? 'sotto la soglia di ' + a4.soglia
+                      : a4.mode === 'esaurito' ? 'esauriti'
+                      : 'sotto la scorta minima';
+  $('lowListTitle').textContent = 'Scorte ' + etichetta;
   $('lowtxt').textContent = low.length
-    ? low.length + ' articoli da riordinare.'
-    : 'Nessun articolo sotto la scorta minima. Tutto in ordine.';
+    ? low.length + (low.length === 1 ? ' articolo da riordinare.' : ' articoli da riordinare.')
+    : 'Nessun articolo ' + etichetta + '. Tutto in ordine.';
 
   $('lowlist').innerHTML = low.length ? low.map(p =>
     '<div class="pcard" data-id="' + p.id + '">' +
@@ -909,7 +993,40 @@ function renderCounts(){
   $('cntLow').textContent = live().filter(isLow).length;
 }
 
-function renderAll(){ renderChips(); renderCat(); renderStock(); renderCounts(); }
+/* Avviso scorte: barra in evidenza e numero nel titolo della scheda */
+function renderAlert(){
+  const a = cfgAlert();
+  const bassi = lowList();
+  const zero = bassi.filter(p => (Number(p.qty)||0) <= 0).length;
+  const n = bassi.length;
+
+  ['', '2'].forEach(function(suf){
+    const bar = $('alertBar' + suf);
+    if(!bar) return;
+    bar.classList.toggle('on', a.banner && n > 0);
+    bar.classList.toggle('grave', a.banner && n > 0 && zero > 0);
+    if(n > 0){
+      $('alertTitolo' + suf).textContent =
+        n === 1 ? '1 articolo in esaurimento' : n + ' articoli in esaurimento';
+      $('alertTesto' + suf).textContent =
+        zero ? zero + ' esauriti · ' + (n - zero) + ' sotto soglia'
+             : (a.mode === 'globale' ? 'sotto la soglia di ' + a.soglia
+                                     : 'sotto la scorta minima');
+    }
+  });
+
+  // numero accanto al nome della scheda del browser: serve l'occhiello
+  document.title = (n > 0 ? '(' + n + ') ' : '') + 'Magazzino — Valve Electronics';
+
+  const ante = $('alertAnteprima');
+  if(ante){
+    ante.textContent = n > 0
+      ? 'Ora segnalati ' + n + ' articoli su ' + live().length + '.'
+      : 'Nessun articolo segnalato con le impostazioni attuali.';
+  }
+}
+
+function renderAll(){ renderChips(); renderCat(); renderStock(); renderCounts(); renderAlert(); }
 
 /* ══════════════════════════════════════════════════════════════
    8. FOGLIO PRODOTTO
@@ -1035,6 +1152,34 @@ function scheduleSync(){
   renderSyncState();
   if(syncTimer) clearTimeout(syncTimer);
   syncTimer = setTimeout(() => syncNow(false), 4000);
+}
+
+function salvaAlert(){
+  const a = {
+    mode:   $('alertMode').value,
+    soglia: Number($('alertSoglia').value) || 0,
+    zero:   $('alertZero').checked,
+    banner: $('alertBanner').checked
+  };
+  CFG.alert = a;
+  DB.setMeta('cfg', CFG).catch(function(){});
+  applicaModalitaAllerta();
+  renderAll();
+}
+
+function applicaModalitaAllerta(){
+  const m = $('alertMode').value;
+  $('wrapSoglia').style.display = (m === 'globale') ? 'block' : 'none';
+  $('alertSoglia').disabled = (m !== 'globale');
+}
+
+function caricaAlert(){
+  const a = cfgAlert();
+  $('alertMode').value   = a.mode;
+  $('alertSoglia').value = a.soglia;
+  $('alertZero').checked = a.zero;
+  $('alertBanner').checked = a.banner;
+  applicaModalitaAllerta();
 }
 
 function renderSyncState(){
@@ -1404,6 +1549,7 @@ async function init(){
   CFG.lastSync = await DB.getMeta('lastSync') || 0;
   $('ep').value = CFG.endpoint || '';
   $('optPhoto').checked = !!CFG.photo;
+  caricaAlert();
 
   document.querySelectorAll('.tab').forEach(b => b.onclick = () => go(b.dataset.v));
   $('q').oninput = e => { search = e.target.value; renderCat(); };
