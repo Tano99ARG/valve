@@ -1586,7 +1586,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   updateSB();
   // fecha
   const d=new Date();
-  document.getElementById('cinfo').textContent=d.toLocaleDateString('es-AR');
+  document.getElementById('cinfo').textContent=d.toLocaleDateString('it-IT');
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -2474,7 +2474,7 @@ function genPDF(){
   const rev=document.getElementById('pdf-rev').value||'A';
   const esc_=document.getElementById('pdf-esc').value||'S/E';
   const obs=document.getElementById('pdf-obs').value;
-  const fecha=new Date().toLocaleDateString('es-AR');
+  const fecha=new Date().toLocaleDateString('it-IT');
 
   const NAVY=[27,42,74]; const ORA=[244,121,32]; const BLU=[74,142,194];
   const GRN=[39,174,96]; const RED=[192,57,43]; const MUT=[100,110,140];

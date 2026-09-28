@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1A2E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Valve Electronics">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="Calcolatore di carico termico per dimensionamento impianti HVAC">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Carico Termico","short_name":"CaricoTermico","start_url":".","display":"standalone","background_color":"0D0D1A","theme_color":"1A1A2E"}'>
+  <title>Valve Electronics — Carico Termico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* ===== PALETTE VALVE ELECTRONICS ===== */
+    :root {
+      --verde-elettrico: #00D4AA;
+      --grigio-scuro: #1A1A2E;
+      --verde-scuro: #008F6E;
+      --grigio-medio: #2A2A3E;
+      --grigio-chiaro: #3A3A4E;
+      --bianco: #FFFFFF;
+      --nero: #0D0D1A;
+      --rosso: #FF4757;
+      --arancio: #FF6B35;
+      --giallo: #FFD93D;
+      --blu: #3742FA;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--nero);
+      color: var(--bianco);
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--safe-area-top);
+      padding-bottom: var(--safe-area-bottom);
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      background: var(--grigio-scuro);
+      border-bottom: 2px solid var(--verde-elettrico);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topbar-logo svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .topbar-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--verde-elettrico);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .topbar-tools {
+      display: flex;
+      gap: 8px;
+    }
+
+    .topbar-btn {
+      background: var(--grigio-medio);
+      border: 1px solid var(--verde-scuro);
+      color: var(--bianco);
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .topbar-btn:hover {
+      background: var(--verde-scuro);
+      border-color: var(--verde-elettrico);
+    }
+
+    .topbar-btn.active {
+      background: var(--verde-elettrico);
+      color: var(--nero);
+    }
+
+    /* ===== LAYOUT PRINCIPALE ===== */
+    .main-container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ===== LEFT PANEL (INPUT) ===== */
+    .left-panel {
+      width: 320px;
+      background: var(--grigio-scuro);
+      border-right: 1px solid var(--grigio-medio);
+      overflow-y: auto;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-section {
+      border-bottom: 1px solid var(--grigio-medio);
+      padding: 12px;
+    }
+
+    .panel-section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--verde-elettrico);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-section-title::before {
+      content: '';
+      width: 3px;
+      height: 14px;
+      background: var(--verde-elettrico);
+      border-radius: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 3px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      color: var(--bianco);
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--verde-elettrico);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    /* ===== CANVAS CENTRALE ===== */
+    .canvas-area {
+      flex: 1;
+      background: var(--nero);
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .result-card {
+      background: var(--grigio-scuro);
+      border: 1px solid var(--grigio-medio);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--verde-elettrico);
+    }
+
+    .result-card.warning::before {
+      background: var(--arancio);
+    }
+
+    .result-card.danger::before {
+      background: var(--rosso);
+    }
+
+    .result-card.info::before {
+      background: var(--blu);
+    }
+
+    .result-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--verde-elettrico);
+      margin: 8px 0 4px;
+    }
+
+    .result-card.warning .result-value {
+      color: var(--arancio);
+    }
+
+    .result-card.danger .result-value {
+      color: var(--rosso);
+    }
+
+    .result-card.info .result-value {
+      color: var(--blu);
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .result-unit {
+      font-size: 0.7rem;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    /* ===== GRAFICO ===== */
+    .chart-container {
+      background: var(--grigio-scuro);
+      border: 1px solid var(--grigio-medio);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .chart-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--verde-elettrico);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bar-label {
+      width: 120px;
+      font-size: 0.75rem;
+      color: #aaa;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .bar-wrapper {
+      flex: 1;
+      height: 24px;
+      background: var(--grigio-medio);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      min-width: 40px;
+    }
+
+    .bar-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--nero);
+      font-weight: 700;
+    }
+
+    /* ===== RIGHT PANEL (RIEPILOGO) ===== */
+    .right-panel {
+      width: 280px;
+      background: var(--grigio-scuro);
+      border-left: 1px solid var(--grigio-medio);
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 12px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--grigio-medio);
+      font-size: 0.8rem;
+    }
+
+    .summary-item:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: #888;
+    }
+
+    .summary-value {
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--verde-elettrico);
+      font-weight: 600;
+    }
+
+    .efficiency-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .eff-a { background: #00D4AA; color: #1A1A2E; }
+    .eff-b { background: #4ADE80; color: #1A1A2E; }
+    .eff-c { background: #FFD93D; color: #1A1A2E; }
+    .eff-d { background: #FF6B35; color: #1A1A2E; }
+    .eff-e { background: #FF4757; color: #FFF; }
+    .eff-f { background: #DC2626; color: #FFF; }
+    .eff-g { background: #991B1B; color: #FFF; }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      background: var(--grigio-scuro);
+      border-top: 1px solid var(--grigio-medio);
+      padding: 4px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #666;
+      flex-shrink: 0;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--verde-elettrico);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ===== MODALS ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--grigio-scuro);
+      border: 1px solid var(--verde-elettrico);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--grigio-medio);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--verde-elettrico);
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .modal-close:hover {
+      color: var(--rosso);
+      background: var(--grigio-medio);
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .model-card {
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .model-card:hover {
+      border-color: var(--verde-elettrico);
+      background: var(--grigio-chiaro);
+    }
+
+    .model-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--bianco);
+      margin-bottom: 4px;
+    }
+
+    .model-card-desc {
+      font-size: 0.7rem;
+      color: #888;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      .left-panel, .right-panel {
+        width: 100%;
+        max-height: 300px;
+        border-right: none;
+        border-left: none;
+        border-bottom: 1px solid var(--grigio-medio);
+      }
+
+      .canvas-area {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar-title {
+        font-size: 1rem;
+      }
+
+      .topbar-btn span {
+        display: none;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .bar-label {
+        width: 80px;
+        font-size: 0.65rem;
+      }
+
+      .model-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--grigio-scuro);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--grigio-chiaro);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--verde-scuro);
+    }
+
+    /* ===== ANIMAZIONI ===== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card, .chart-container {
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* ===== TOOLTIP ===== */
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--grigio-chiaro);
+      color: var(--bianco);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 1000;
+    }
+
+    .tooltip:hover::after {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== TOPBAR ===== -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#00D4AA" stroke-width="2"/>
+        <path d="M10 20 L16 10 L22 20 Z" fill="#00D4AA"/>
+        <circle cx="16" cy="16" r="3" fill="#1A1A2E"/>
+      </svg>
+      <span class="topbar-title">Carico Termico</span>
+    </div>
+    <div class="topbar-tools">
+      <button class="topbar-btn" onclick="apriModelli()" title="Modelli precaricati">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span>Modelli</span>
+      </button>
+      <button class="topbar-btn" onclick="salvaProgetto()" title="Salva progetto">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        <span>Salva</span>
+      </button>
+      <button class="topbar-btn" onclick="caricaProgetto()" title="Carica progetto">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span>Carica</span>
+      </button>
+      <button class="topbar-btn" onclick="exportPDF()" title="Esporta PDF">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        <span>PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== CONTENITORE PRINCIPALE ===== -->
+  <div class="main-container">
+    <!-- ===== LEFT PANEL (INPUT) ===== -->
+    <aside class="left-panel">
+      <!-- Sezione Locale -->
+      <div class="panel-section">
+        <div class="panel-section-title">Locale</div>
+        <div class="form-group">
+          <label>Nome locale</label>
+          <input type="text" id="locale-nome" value="Locale 1" placeholder="Es. Soggiorno">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lunghezza (m)</label>
+            <input type="number" id="locale-lunghezza" value="5" min="0" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Larghezza (m)</label>
+            <input type="number" id="locale-larghezza" value="4" min="0" step="0.1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Altezza (m)</label>
+          <input type="number" id="locale-altezza" value="2.7" min="0" step="0.1">
+        </div>
+      </div>
+
+      <!-- Sezione Isolamento -->
+      <div class="panel-section">
+        <div class="panel-section-title">Isolamento</div>
+        <div class="form-group">
+          <label>Tipo parete</label>
+          <select id="isolamento-tipo">
+            <option value="mattoni">Mattoni forati 30cm</option>
+            <option value="pietra">Pietra naturale</option>
+            <option value="legno">Legno massello</option>
+            <option value="vetro-doppio">Vetro doppio</option>
+            <option value="vetro-singolo">Vetro singolo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Trasmittanza U (W/m²K)</label>
+          <input type="number" id="isolamento-u" value="0.35" min="0" step="0.01" readonly>
+        </div>
+      </div>
+
+      <!-- Sezione Pareti -->
+      <div class="panel-section">
+        <div class="panel-section-title">Pareti</div>
+        <div class="form-group">
+          <label>Numero pareti</label>
+          <input type="number" id="pareti-numero" value="4" min="0" max="10">
+        </div>
+        <div class="form-group">
+          <label>Superficie totale (m²)</label>
+          <input type="number" id="pareti-superficie" value="50" min="0" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Orientamento dominante</label>
+          <select id="pareti-orientamento">
+            <option value="N">Nord</option>
+            <option value="S" selected>Sud</option>
+            <option value="E">Est</option>
+            <option value="O">Ovest</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sezione Finestre -->
+      <div class="panel-section">
+        <div class="panel-section-title">Finestre</div>
+        <div class="form-group">
+          <label>Numero finestre</label>
+          <input type="number" id="finestre-numero" value="2" min="0" max="20">
+        </div>
+        <div class="form-group">
+          <label>Superficie totale (m²)</label>
+          <input type="number" id="finestre-superficie" value="6" min="0" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Tipo vetro</label>
+          <select id="finestre-tipo">
+            <option value="singolo">Vetro singolo</option>
+            <option value="doppio" selected>Vetro doppio</option>
+            <option value="triplo">Vetro triplo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Sezione Occupanti -->
+      <div class="panel-section">
+        <div class="panel-section-title">Occupanti</div>
+        <div class="form-group">
+          <label>Numero persone</label>
+          <input type="number" id="occupanti-numero" value="2" min="0" max="100">
+        </div>
+      </div>
+
+      <!-- Sezione Apparecchiature -->
+      <div class="panel-section">
+        <div class="panel-section-title">Apparecchiature</div>
+        <div class="form-group">
+          <label>Numero apparecchi</label>
+          <input type="number" id="apparecchi-numero" value="3" min="0" max="50">
+        </div>
+        <div class="form-group">
+          <label>Potenza totale (W)</label>
+          <input type="number" id="apparecchi-potenza" value="500" min="0" step="10">
+        </div>
+      </div>
+
+      <!-- Sezione Infiltrazioni -->
+      <div class="panel-section">
+        <div class="panel-section-title">Infiltrazioni</div>
+        <div class="form-group">
+          <label>Tasso ricambio aria (volte/ora)</label>
+          <input type="number" id="infiltrazioni-tasso" value="0.5" min="0" step="0.1">
+        </div>
+      </div>
+
+      <!-- Sezione Condizioni -->
+      <div class="panel-section">
+        <div class="panel-section-title">Condizioni</div>
+        <div class="form-group">
+          <label>Temperatura esterna (°C)</label>
+          <input type="number" id="temp-esterna" value="35" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Temperatura desiderata (°C)</label>
+          <input type="number" id="temp-desiderata" value="22" step="0.5">
+        </div>
+        <div class="form-group">
+          <label>Irraggiamento solare (W/m²)</label>
+          <input type="number" id="irraggiamento" value="800" min="0" step="50">
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== CANVAS CENTRALE ===== -->
+    <main class="canvas-area">
+      <!-- Card risultati principali -->
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Carico Termico Totale</div>
+          <div class="result-value" id="risultato-kw">0.00</div>
+          <div class="result-unit">kW</div>
+        </div>
+        <div class="result-card info">
+          <div class="result-label">In kcal/h</div>
+          <div class="result-value" id="risultato-kcal">0</div>
+          <div class="result-unit">kcal/h</div>
+        </div>
+        <div class="result-card info">
+          <div class="result-label">In BTU/h</div>
+          <div class="result-value" id="risultato-btu">0</div>
+          <div class="result-unit">BTU/h</div>
+        </div>
+        <div class="result-card warning">
+          <div class="result-label">Consumo Stimato</div>
+          <div class="result-value" id="risultato-consumo">0</div>
+          <div class="result-unit">kWh/anno</div>
+        </div>
+      </div>
+
+      <!-- Seconda riga risultati -->
+      <div class="results-grid">
+        <div class="result-card">
+          <div class="result-label">Dimensionamento Consigliato</div>
+          <div class="result-value" id="risultato-dim">0.00</div>
+          <div class="result-unit">kW</div>
+        </div>
+        <div class="result-card">
+          <div class="label">Efficienza Energetica</div>
+          <div class="result-value" id="risultato-eff">B</div>
+          <div class="result-unit">Classe</div>
+        </div>
+        <div class="result-card info">
+          <div class="result-label">Superficie Locale</div>
+          <div class="result-value" id="risultato-sup">0</div>
+          <div class="result-unit">m²</div>
+        </div>
+        <div class="result-card info">
+          <div class="result-label">Volume Locale</div>
+          <div class="result-value" id="risultato-vol">0</div>
+          <div class="result-unit">m³</div>
+        </div>
+      </div>
+
+      <!-- Grafico a barre -->
+      <div class="chart-container">
+        <div class="chart-title">Contributi al Carico Termico</div>
+        <div class="bar-chart" id="bar-chart">
+          <!-- Le barre vengono generate dinamicamente via JS -->
+        </div>
+      </div>
+
+      <!-- Dettaglio calcoli -->
+      <div class="chart-container">
+        <div class="chart-title">Dettaglio Calcoli</div>
+        <div id="dettaglio-calcoli" style="font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; color: #aaa; line-height: 1.6;">
+          <!-- Dettaglio generato via JS -->
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== RIGHT PANEL (RIEPILOGO) ===== -->
+    <aside class="right-panel">
+      <div class="panel-section">
+        <div class="panel-section-title">Riepilogo</div>
+        <div class="summary-item">
+          <span class="summary-label">Perdite conduzione</span>
+          <span class="summary-value" id="riep-conduzione">0 kW</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Perdite infiltrazione</span>
+          <span class="summary-value" id="riep-infiltrazione">0 kW</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Guadagni interni</span>
+          <span class="summary-value" id="riep-interni">0 kW</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Guadagni solari</span>
+          <span class="summary-value" id="riep-solari">0 kW</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Carico raffrescamento</span>
+          <span class="summary-value" id="riep-raffrescamento">0 kW</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Carico riscaldamento</span>
+          <span class="summary-value" id="riep-riscaldamento">0 kW</span>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Efficienza</div>
+        <div style="text-align: center; padding: 12px 0;">
+          <span class="efficiency-badge eff-b" id="eff-badge">B</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Consumo specifico</span>
+          <span class="summary-value" id="riep-consumo-spec">0 kWh/m²a</span>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-title">Note</div>
+        <div style="font-size: 0.75rem; color: #888; line-height: 1.5;">
+          <p>Calcoli basati su formule termotecniche standard.</p>
+          <p style="margin-top: 6px;">Perdite: Q = U × A × ΔT</p>
+          <p>Infiltrazioni: Q = 0.33 × V × n × ΔT</p>
+          <p>Solare: Q = A × F × S</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ===== STATUS BAR ===== -->
+  <footer class="status-bar">
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span>Sistema pronto</span>
+    </div>
+    <span id="status-time">--:--:--</span>
+  </footer>
+
+  <!-- ===== MODAL MODELLI ===== -->
+  <div class="modal-overlay" id="modal-modelli">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Modelli Precaricati</span>
+        <button class="modal-close" onclick="chiudiModal('modal-modelli')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="model-grid">
+          <div class="model-card" onclick="caricaModello('appartamento')">
+            <div class="model-card-title">Appartamento 80m²</div>
+            <div class="model-card-desc">2 locali, 2 occupanti</div>
+          </div>
+          <div class="model-card" onclick="caricaModello('ufficio')">
+            <div class="model-card-title">Ufficio 120m²</div>
+            <div class="model-card-desc">Open space, 8 occupanti</div>
+          </div>
+          <div class="model-card" onclick="caricaModello('negozio')">
+            <div class="model-card-title">Negozio 200m²</div>
+            <div class="model-card-desc">Vetrina, 4 occupanti</div>
+          </div>
+          <div class="model-card" onclick="caricaModello('villa')">
+            <div class="model-card-title">Villa 250m²</div>
+            <div class="model-card-desc">2 piani, 5 occupanti</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PDF ===== -->
+  <div class="modal-overlay" id="modal-pdf">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">Anteprima Report PDF</span>
+        <button class="modal-close" onclick="chiudiModal('modal-pdf')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: #888; font-size: 0.85rem; margin-bottom: 12px;">
+          Il report PDF include tutti i dati di input, i calcoli dettagliati e i risultati del dimensionamento.
+        </p>
+        <button class="topbar-btn active" style="width: 100%; justify-content: center; padding: 12px;" onclick="generaPDF()">
+          Scarica Report PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== COSTANTI E CONFIGURAZIONE =====
+    const TRASMITTANZE = {
+      'mattoni': 0.35,
+      'pietra': 0.50,
+      'legno': 0.25,
+      'vetro-doppio': 2.8,
+      'vetro-singolo': 5.8
+    };
+
+    const FATTORI_SOLARI = {
+      'N': 0.3,
+      'S': 0.8,
+      'E': 0.6,
+      'O': 0.5
+    };
+
+    const FATTORI_VETRO = {
+      'singolo': 0.9,
+      'doppio': 0.6,
+      'triplo': 0.4
+    };
+
+    // ===== STATO APPLICAZIONE =====
+    let stato = {
+      locale: {},
+      isolamento: {},
+      pareti: {},
+      finestre: {},
+      occupanti: 0,
+      apparecchi: {},
+      infiltrazioni: 0,
+      condizioni: {}
+    };
+
+    // ===== INIZIALIZZAZIONE =====
+    document.addEventListener('DOMContentLoaded', function() {
+      // Aggiorna trasmittanza quando cambia il tipo di isolamento
+      document.getElementById('isolamento-tipo').addEventListener('change', function() {
+        const tipo = this.value;
+        document.getElementById('isolamento-u').value = TRASMITTANZE[tipo];
+        calcola();
+      });
+
+      // Aggiungi listener a tutti gli input
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('input', calcola);
+        input.addEventListener('change', calcola);
+      });
+
+      // Calcolo iniziale
+      aggiornaTrasmittanza();
+      calcola();
+
+      // Aggiorna orario
+      setInterval(aggiornaOrario, 1000);
+      aggiornaOrario();
+
+      // Registra service worker inline
+      registraServiceWorker();
+    });
+
+    // ===== FUNZIONI DI UTILITÀ =====
+    function aggiornaTrasmittanza() {
+      const tipo = document.getElementById('isolamento-tipo').value;
+      document.getElementById('isolamento-u').value = TRASMITTANZE[tipo];
+    }
+
+    function aggiornaOrario() {
+      const now = new Date();
+      document.getElementById('status-time').textContent = now.toLocaleTimeString('it-IT');
+    }
+
+    function leggiInput() {
+      stato.locale = {
+        nome: document.getElementById('locale-nome').value,
+        lunghezza: parseFloat(document.getElementById('locale-lunghezza').value) || 0,
+        larghezza: parseFloat(document.getElementById('locale-larghezza').value) || 0,
+        altezza: parseFloat(document.getElementById('locale-altezza').value) || 0
+      };
+
+      stato.isolamento = {
+        tipo: document.getElementById('isolamento-tipo').value,
+        u: parseFloat(document.getElementById('isolamento-u').value) || 0
+      };
+
+      stato.pareti = {
+        numero: parseInt(document.getElementById('pareti-numero').value) || 0,
+        superficie: parseFloat(document.getElementById('pareti-superficie').value) || 0,
+        orientamento: document.getElementById('pareti-orientamento').value
+      };
+
+      stato.finestre = {
+        numero: parseInt(document.getElementById('finestre-numero').value) || 0,
+        superficie: parseFloat(document.getElementById('finestre-superficie').value) || 0,
+        tipo: document.getElementById('finestre-tipo').value
+      };
+
+      stato.occupanti = parseInt(document.getElementById('occupanti-numero').value) || 0;
+
+      stato.apparecchi = {
+        numero: parseInt(document.getElementById('apparecchi-numero').value) || 0,
+        potenza: parseFloat(document.getElementById('apparecchi-potenza').value) || 0
+      };
+
+      stato.infiltrazioni = parseFloat(document.getElementById('infiltrazioni-tasso').value) || 0;
+
+      stato.condizioni = {
+        tempEsterna: parseFloat(document.getElementById('temp-esterna').value) || 0,
+        tempDesiderata: parseFloat(document.getElementById('temp-desiderata').value) || 0,
+        irraggiamento: parseFloat(document.getElementById('irraggiamento').value) || 0
+      };
+    }
+
+    // ===== CALCOLO CARICO TERMICO =====
+    function calcola() {
+      leggiInput();
+
+      // Calcolo superficie e volume
+      const superficie = stato.locale.lunghezza * stato.locale.larghezza;
+      const volume = superficie * stato.locale.altezza;
+      const deltaT = Math.abs(stato.condizioni.tempEsterna - stato.condizioni.tempDesiderata);
+
+      // 1. Perdite per conduzione (pareti + pavimento + soffitto)
+      // Pavimento e soffitto hanno superficie = superficie locale
+      const superficiePavimento = superficie;
+      const superficieSoffitto = superficie;
+      const uPavimento = stato.isolamento.u * 1.2; // Pavimento più dispersivo
+      const uSoffitto = stato.isolamento.u * 0.8; // Soffitto meno dispersivo
+
+      const qPareti = stato.isolamento.u * stato.pareti.superficie * deltaT;
+      const qPavimento = uPavimento * superficiePavimento * deltaT;
+      const qSoffitto = uSoffitto * superficieSoffitto * deltaT;
+      const qConduzione = qPareti + qPavimento + qSoffitto;
+
+      // 2. Perdite per infiltrazione: Q = 0.33 × V × n × ΔT
+      const qInfiltrazione = 0.33 * volume * stato.infiltrazioni * deltaT;
+
+      // 3. Guadagni interni
+      const qOccupanti = stato.occupanti * 100; // 100W per persona
+      const qApparecchi = stato.apparecchi.potenza;
+      const qIlluminazione = superficie * 10; // 10W/m²
+      const qInterni = qOccupanti + qApparecchi + qIlluminazione;
+
+      // 4. Guadagni solari: Q = A × F × S
+      const fattoreSolare = FATTORI_SOLARI[stato.pareti.orientamento] || 0.5;
+      const fattoreVetro = FATTORI_VETRO[stato.finestre.tipo] || 0.6;
+      const qSolare = stato.finestre.superficie * fattoreSolare * fattoreVetro * stato.condizioni.irraggiamento;
+
+      // 5. Carico totale
+      // Se temperatura esterna > desiderata = raffrescamento (i guadagni si sommano)
+      // Se temperatura esterna < desiderata = riscaldamento (i guadagni si sottraggono)
+      let caricoTotale;
+      let caricoRaffrescamento = qConduzione + qInfiltrazione + qInterni + qSolare;
+      let caricoRiscaldamento = qConduzione + qInfiltrazione - qInterni - qSolare;
+
+      if (stato.condizioni.tempEsterna > stato.condizioni.tempDesiderata) {
+        caricoTotale = caricoRaffrescamento;
+      } else {
+        caricoTotale = Math.max(0, caricoRiscaldamento);
+      }
+
+      // Conversioni
+      const caricoKW = caricoTotale / 1000;
+      const caricoKcal = caricoTotale * 0.86; // 1W = 0.86 kcal/h
+      const caricoBTU = caricoTotale * 3.412; // 1W = 3.412 BTU/h
+
+      // Dimensionamento consigliato (con margine di sicurezza 15%)
+      const dimensionamento = caricoKW * 1.15;
+
+      // Consumo stimato (assume 2000 ore di funzionamento annuo)
+      const consumoAnnuo = caricoKW * 2000;
+
+      // Efficienza energetica (basata su consumo specifico)
+      const consumoSpecifico = superficie > 0 ? consumoAnnuo / superficie : 0;
+      let efficienza;
+      if (consumoSpecifico < 50) efficienza = 'A';
+      else if (consumoSpecifico < 80) efficienza = 'B';
+      else if (consumoSpecifico < 110) efficienza = 'C';
+      else if (consumoSpecifico < 150) efficienza = 'D';
+      else if (consumoSpecifico < 200) efficienza = 'E';
+      else if (consumoSpecifico < 250) efficienza = 'F';
+      else efficienza = 'G';
+
+      // Aggiorna UI
+      aggiornaRisultati({
+        caricoKW,
+        caricoKcal,
+        caricoBTU,
+        dimensionamento,
+        consumoAnnuo,
+        efficienza,
+        superficie,
+        volume,
+        qConduzione,
+        qInfiltrazione,
+        qInterni,
+        qSolare,
+        caricoRaffrescamento,
+        caricoRiscaldamento,
+        consumoSpecifico,
+        deltaT
+      });
+    }
+
+    // ===== AGGIORNAMENTO UI =====
+    function aggiornaRisultati(r) {
+      // Risultati principali
+      document.getElementById('risultato-kw').textContent = r.caricoKW.toFixed(2);
+      document.getElementById('risultato-kcal').textContent = Math.round(r.caricoKcal);
+      document.getElementById('risultato-btu').textContent = Math.round(r.caricoBTU);
+      document.getElementById('risultato-consumo').textContent = Math.round(r.consumoAnnuo);
+      document.getElementById('risultato-dim').textContent = r.dimensionamento.toFixed(2);
+      document.getElementById('risultato-eff').textContent = r.efficienza;
+      document.getElementById('risultato-sup').textContent = r.superficie.toFixed(1);
+      document.getElementById('risultato-vol').textContent = r.volume.toFixed(1);
+
+      // Riepilogo
+      document.getElementById('riep-conduzione').textContent = (r.qConduzione / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-infiltrazione').textContent = (r.qInfiltrazione / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-interni').textContent = (r.qInterni / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-solari').textContent = (r.qSolare / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-raffrescamento').textContent = (r.caricoRaffrescamento / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-riscaldamento').textContent = (r.caricoRiscaldamento / 1000).toFixed(2) + ' kW';
+      document.getElementById('riep-consumo-spec').textContent = r.consumoSpecifico.toFixed(1) + ' kWh/m²a';
+
+      // Badge efficienza
+      const badge = document.getElementById('eff-badge');
+      badge.textContent = r.efficienza;
+      badge.className = 'efficiency-badge eff-' + r.efficienza.toLowerCase();
+
+      // Grafico a barre
+      aggiornaGrafico(r);
+
+      // Dettaglio calcoli
+      aggiornaDettaglio(r);
+    }
+
+    function aggiornaGrafico(r) {
+      const chart = document.getElementById('bar-chart');
+      const valori = [
+        { label: 'Conduzione', valore: r.qConduzione, colore: '#00D4AA' },
+        { label: 'Infiltrazione', valore: r.qInfiltrazione, colore: '#3742FA' },
+        { label: 'Guadagni interni', valore: r.qInterni, colore: '#FFD93D' },
+        { label: 'Guadagni solari', valore: r.qSolare, colore: '#FF6B35' }
+      ];
+
+      const maxValore = Math.max(...valori.map(v => v.valore), 1);
+
+      chart.innerHTML = valori.map(v => `
+        <div class="bar-item">
+          <span class="bar-label">${v.label}</span>
+          <div class="bar-wrapper">
+            <div class="bar-fill" style="width: ${(v.valore / maxValore * 100).toFixed(1)}%; background: ${v.colore};">
+              <span class="bar-value">${(v.valore / 1000).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function aggiornaDettaglio(r) {
+      const dettaglio = document.getElementById('dettaglio-calcoli');
+      dettaglio.innerHTML = `
+        <div>ΔT = ${r.deltaT.toFixed(1)}°C</div>
+        <div>Superficie = ${r.superficie.toFixed(1)} m²</div>
+        <div>Volume = ${r.volume.toFixed(1)} m³</div>
+        <div>Q conduzione = ${r.qConduzione.toFixed(0)} W (${(r.qConduzione / 1000).toFixed(2)} kW)</div>
+        <div>Q infiltrazione = ${r.qInfiltrazione.toFixed(0)} W (${(r.qInfiltrazione / 1000).toFixed(2)} kW)</div>
+        <div>Q guadagni interni = ${r.qInterni.toFixed(0)} W (${(r.qInterni / 1000).toFixed(2)} kW)</div>
+        <div>Q guadagni solari = ${r.qSolare.toFixed(0)} W (${(r.qSolare / 1000).toFixed(2)} kW)</div>
+        <div>Carico raffrescamento = ${(r.caricoRaffrescamento / 1000).toFixed(2)} kW</div>
+        <div>Carico riscaldamento = ${(r.caricoRiscaldamento / 1000).toFixed(2)} kW</div>
+      `;
+    }
+
+    // ===== MODALI =====
+    function apriModelli() {
+      document.getElementById('modal-modelli').classList.add('active');
+    }
+
+    function chiudiModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Chiudi modal cliccando fuori
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+
+    // ===== MODELLI PRECARICATI =====
+    function caricaModello(tipo) {
+      const modelli = {
+        'appartamento': {
+          nome: 'Appartamento',
+          lunghezza: 8,
+          larghezza: 10,
+          altezza: 2.7,
+          isolamento: 'mattoni',
+          paretiNumero: 4,
+          paretiSuperficie: 60,
+          orientamento: 'S',
+          finestreNumero: 3,
+          finestreSuperficie: 8,
+          finestreTipo: 'doppio',
+          occupanti: 2,
+          apparecchiNumero: 4,
+          apparecchiPotenza: 600,
+          infiltrazioni: 0.5,
+          tempEsterna: 35,
+          tempDesiderata: 22,
+          irraggiamento: 800
+        },
+        'ufficio': {
+          nome: 'Ufficio',
+          lunghezza: 12,
+          larghezza: 10,
+          altezza: 3,
+          isolamento: 'mattoni',
+          paretiNumero: 4,
+          paretiSuperficie: 80,
+          orientamento: 'S',
+          finestreNumero: 6,
+          finestreSuperficie: 15,
+          finestreTipo: 'doppio',
+          occupanti: 8,
+          apparecchiNumero: 10,
+          apparecchiPotenza: 1500,
+          infiltrazioni: 0.8,
+          tempEsterna: 35,
+          tempDesiderata: 22,
+          irraggiamento: 800
+        },
+        'negozio': {
+          nome: 'Negozio',
+          lunghezza: 15,
+          larghezza: 13,
+          altezza: 3.5,
+          isolamento: 'mattoni',
+          paretiNumero: 4,
+          paretiSuperficie: 100,
+          orientamento: 'S',
+          finestreNumero: 4,
+          finestreSuperficie: 20,
+          finestreTipo: 'doppio',
+          occupanti: 4,
+          apparecchiNumero: 6,
+          apparecchiPotenza: 2000,
+          infiltrazioni: 1.0,
+          tempEsterna: 35,
+          tempDesiderata: 22,
+          irraggiamento: 1000
+        },
+        'villa': {
+          nome: 'Villa',
+          lunghezza: 15,
+          larghezza: 16,
+          altezza: 3,
+          isolamento: 'pietra',
+          paretiNumero: 4,
+          paretiSuperficie: 150,
+          orientamento: 'S',
+          finestreNumero: 8,
+          finestreSuperficie: 25,
+          finestreTipo: 'triplo',
+          occupanti: 5,
+          apparecchiNumero: 8,
+          apparecchiPotenza: 2500,
+          infiltrazioni: 0.6,
+          tempEsterna: 35,
+          tempDesiderata: 22,
+          irraggiamento: 800
+        }
+      };
+
+      const m = modelli[tipo];
+      if (!m) return;
+
+      document.getElementById('locale-nome').value = m.nome;
+      document.getElementById('locale-lunghezza').value = m.lunghezza;
+      document.getElementById('locale-larghezza').value = m.larghezza;
+      document.getElementById('locale-altezza').value = m.altezza;
+      document.getElementById('isolamento-tipo').value = m.isolamento;
+      document.getElementById('isolamento-u').value = TRASMITTANZE[m.isolamento];
+      document.getElementById('pareti-numero').value = m.paretiNumero;
+      document.getElementById('pareti-superficie').value = m.paretiSuperficie;
+      document.getElementById('pareti-orientamento').value = m.orientamento;
+      document.getElementById('finestre-numero').value = m.finestreNumero;
+      document.getElementById('finestre-superficie').value = m.finestreSuperficie;
+      document.getElementById('finestre-tipo').value = m.finestreTipo;
+      document.getElementById('occupanti-numero').value = m.occupanti;
+      document.getElementById('apparecchi-numero').value = m.apparecchiNumero;
+      document.getElementById('apparecchi-potenza').value = m.apparecchiPotenza;
+      document.getElementById('infiltrazioni-tasso').value = m.infiltrazioni;
+      document.getElementById('temp-esterna').value = m.tempEsterna;
+      document.getElementById('temp-desiderata').value = m.tempDesiderata;
+      document.getElementById('irraggiamento').value = m.irraggiamento;
+
+      chiudiModal('modal-modelli');
+      calcola();
+    }
+
+    // ===== SALVA / CARICA PROGETTO =====
+    function salvaProgetto() {
+      leggiInput();
+      const data = {
+        versione: '1.0',
+        data: new Date().toISOString(),
+        stato: stato
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'carico-termico-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function caricaProgetto() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            if (data.stato) {
+              applicaStato(data.stato);
+              calcola();
+            }
+          } catch (err) {
+            alert('Errore nel caricamento del file');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function applicaStato(s) {
+      if (s.locale) {
+        document.getElementById('locale-nome').value = s.locale.nome || '';
+        document.getElementById('locale-lunghezza').value = s.locale.lunghezza || 0;
+        document.getElementById('locale-larghezza').value = s.locale.larghezza || 0;
+        document.getElementById('locale-altezza').value = s.locale.altezza || 0;
+      }
+      if (s.isolamento) {
+        document.getElementById('isolamento-tipo').value = s.isolamento.tipo || 'mattoni';
+        document.getElementById('isolamento-u').value = s.isolamento.u || 0;
+      }
+      if (s.pareti) {
+        document.getElementById('pareti-numero').value = s.pareti.numero || 0;
+        document.getElementById('pareti-superficie').value = s.pareti.superficie || 0;
+        document.getElementById('pareti-orientamento').value = s.pareti.orientamento || 'S';
+      }
+      if (s.finestre) {
+        document.getElementById('finestre-numero').value = s.finestre.numero || 0;
+        document.getElementById('finestre-superficie').value = s.finestre.superficie || 0;
+        document.getElementById('finestre-tipo').value = s.finestre.tipo || 'doppio';
+      }
+      if (s.occupanti !== undefined) {
+        document.getElementById('occupanti-numero').value = s.occupanti;
+      }
+      if (s.apparecchi) {
+        document.getElementById('apparecchi-numero').value = s.apparecchi.numero || 0;
+        document.getElementById('apparecchi-potenza').value = s.apparecchi.potenza || 0;
+      }
+      if (s.infiltrazioni !== undefined) {
+        document.getElementById('infiltrazioni-tasso').value = s.infiltrazioni;
+      }
+      if (s.condizioni) {
+        document.getElementById('temp-esterna').value = s.condizioni.tempEsterna || 0;
+        document.getElementById('temp-desiderata').value = s.condizioni.tempDesiderata || 0;
+        document.getElementById('irraggiamento').value = s.condizioni.irraggiamento || 0;
+      }
+    }
+
+    // ===== EXPORT PDF =====
+    function exportPDF() {
+      document.getElementById('modal-pdf').classList.add('active');
+    }
+
+    function generaPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFillColor(26, 26, 46);
+      doc.rect(0, 0, pageWidth, 30, 'F');
+      doc.setTextColor(0, 212, 170);
+      doc.setFontSize(18);
+      doc.text('Valve Electronics — Carico Termico', 14, 20);
+
+      // Data
+      doc.setTextColor(100);
+      doc.setFontSize(10);
+      doc.text('Report generato il: ' + new Date().toLocaleString('it-IT'), 14, 40);
+
+      // Dati di input
+      doc.setTextColor(0, 212, 170);
+      doc.setFontSize(14);
+      doc.text('Dati di Input', 14, 55);
+
+      doc.setTextColor(50);
+      doc.setFontSize(10);
+      let y = 65;
+      const lineHeight = 7;
+
+      const dati = [
+        ['Locale', stato.locale.nome],
+        ['Dimensioni', `${stato.locale.lunghezza}m x ${stato.locale.larghezza}m x ${stato.locale.altezza}m`],
+        ['Superficie', `${(stato.locale.lunghezza * stato.locale.larghezza).toFixed(1)} m²`],
+        ['Volume', `${(stato.locale.lunghezza * stato.locale.larghezza * stato.locale.altezza).toFixed(1)} m³`],
+        ['Isolamento', stato.isolamento.tipo],
+        ['Trasmittanza U', `${stato.isolamento.u} W/m²K`],
+        ['Pareti', `${stato.pareti.numero} pareti, ${stato.pareti.superficie} m², orientamento ${stato.pareti.orientamento}`],
+        ['Finestre', `${stato.finestre.numero} finestre, ${stato.finestre.superficie} m², ${stato.finestre.tipo}`],
+        ['Occupanti', stato.occupanti + ' persone'],
+        ['Apparecchi', `${stato.apparecchi.numero} apparecchi, ${stato.apparecchi.potenza} W`],
+        ['Infiltrazioni', stato.infiltrazioni + ' volte/ora'],
+        ['Temp. esterna', stato.condizioni.tempEsterna + '°C'],
+        ['Temp. desiderata', stato.condizioni.tempDesiderata + '°C'],
+        ['Irraggiamento', stato.condizioni.irraggiamento + ' W/m²']
+      ];
+
+      dati.forEach(([label, value]) => {
+        doc.setTextColor(100);
+        doc.text(label + ':', 14, y);
+        doc.setTextColor(50);
+        doc.text(String(value), 80, y);
+        y += lineHeight;
+      });
+
+      // Risultati
+      y += 10;
+      doc.setTextColor(0, 212, 170);
+      doc.setFontSize(14);
+      doc.text('Risultati', 14, y);
+      y += 10;
+
+      const caricoKW = parseFloat(document.getElementById('risultato-kw').textContent);
+      const caricoKcal = parseInt(document.getElementById('risultato-kcal').textContent);
+      const caricoBTU = parseInt(document.getElementById('risultato-btu').textContent);
+      const dimensionamento = parseFloat(document.getElementById('risultato-dim').textContent);
+      const consumo = parseInt(document.getElementById('risultato-consumo').textContent);
+      const efficienza = document.getElementById('risultato-eff').textContent;
+
+      const risultati = [
+        ['Carico termico totale', caricoKW.toFixed(2) + ' kW'],
+        ['Carico in kcal/h', caricoKcal + ' kcal/h'],
+        ['Carico in BTU/h', caricoBTU + ' BTU/h'],
+        ['Dimensionamento consigliato', dimensionamento.toFixed(2) + ' kW'],
+        ['Consumo stimato', consumo + ' kWh/anno'],
+        ['Efficienza energetica', 'Classe ' + efficienza]
+      ];
+
+      risultati.forEach(([label, value]) => {
+        doc.setTextColor(100);
+        doc.text(label + ':', 14, y);
+        doc.setTextColor(50);
+        doc.text(String(value), 80, y);
+        y += lineHeight;
+      });
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text('Calcoli basati su formule termotecniche standard. Q = U x A x ΔT | Q = 0.33 x V x n x ΔT', 14, 280);
+
+      // Salva
+      doc.save('carico-termico-report.pdf');
+      chiudiModal('modal-pdf');
+    }
+
+    // ===== SERVICE WORKER INLINE =====
+    function registraServiceWorker() {
+      // Service worker inline come Blob (funziona solo su HTTPS)
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        const swCode = `
+          const CACHE_NAME = 'carico-termico-v1';
+          const urlsToCache = ['/'];
+
+          self.addEventListener('install', event => {
+            event.waitUntil(
+              caches.open(CACHE_NAME)
+                .then(cache => cache.addAll(urlsToCache))
+            );
+          });
+
+          self.addEventListener('fetch', event => {
+            event.respondWith(
+              caches.match(event.request)
+                .then(response => response || fetch(event.request))
+            );
+          });
+        `;
+
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+
+        navigator.serviceWorker.register(swUrl)
+          .catch(err => console.log('Service Worker non registrato:', err));
+      }
+    }
+  </script>
+</body>
+</html>

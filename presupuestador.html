@@ -327,6 +327,10 @@ body {
         </div>
         <div class="trow grand"><span>TOTALE</span><span id="tgrand">€0</span></div>
       </div>
+      <p style="font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:9px;padding-top:8px;border-top:1px solid var(--brd)">
+        I prezzi del listino sono <strong>indicativi e riferiti alla media di mercato 2026</strong>, IVA esclusa.
+        Il preventivo definitivo emana sempre dal sopralluogo tecnico.
+      </p>
     </div>
 
     <!-- OPCIONES -->
@@ -451,96 +455,96 @@ const LOGO_B64="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCA
 // CATÁLOGO
 // ═══════════════════════════════════════════════════════════
 const CAT=[
- {code:"AA-001",cat:"Aria Condizionata",name:"Installazione A.A. fino a 3.499 Fg",desc:"Split freddo/caldo fino a 3.499 frigorie. 3m tubazione, cable TPR, scarico UI/UE, valvola termica.",time:"3–5 ore",price:135000},
- {code:"AA-002",cat:"Aria Condizionata",name:"Installazione A.A. 3.500–5.499 Fg",desc:"Split 3.500–5.499 frigorie. Tubazione, cable TPR, scarico e valvola termica.",time:"4–6 ore",price:160000},
- {code:"AA-003",cat:"Aria Condizionata",name:"Installazione A.A. 5.500–6.299 Fg",desc:"Split 5.500–6.299 frigorie. 5m tubazione, cable TPR, scarico e valvola termica.",time:"5–7 ore",price:200000},
- {code:"AA-004",cat:"Aria Condizionata",name:"Installazione A.A. 6.300–7.999 Fg",desc:"Split 6.300–7.999 frigorie. Tubazione di grande diametro, cable TPR e valvola termica.",time:"5–8 ore",price:220000},
- {code:"AA-005",cat:"Aria Condizionata",name:"Installazione A.A. 8.000–8.999 Fg",desc:"Split 8.000–8.999 frigorie. Tubazione calibrata, cable TPR, scarico e valvola termica.",time:"6–9 ore",price:270000},
- {code:"AA-006",cat:"Aria Condizionata",name:"Installazione Roof-Top 9.000–14.999 Fg",desc:"Apparecchio Roof-Top o split ad alta capacità. Supporto rinforzato, tubazione industriale, valvola trifase.",time:"1–2 giorni",price:380000},
- {code:"AA-007",cat:"Aria Condizionata",name:"Installazione A.A. 15.000–18.000 Fg",desc:"Apparecchio industriale/commerciale ad alta capacità. Tubazione industriale, supporto strutturale, quadro dedicato.",time:"1–3 giorni",price:440000},
- {code:"AA-008",cat:"Aria Condizionata",name:"Pre-installazione standard (senza apparecchio)",desc:"Tubazioni isolate, cable TPR e cassa da incasso preparati per successivo montaggio dell'apparecchio.",time:"3–5 ore",price:140000},
- {code:"AA-009",cat:"Aria Condizionata",name:"Montaggio split su pre-installazione",desc:"Posa di unità su pre-installazione esistente. Include carica di gas e messa in funzione.",time:"2–3 ore",price:140000},
- {code:"AA-010",cat:"Aria Condizionata",name:"Disinstallazione A.A. fino a 6.000 Fg",desc:"Smontaggio di unità interna ed esterna, recupero del refrigerante e sigillatura.",time:"2–3 ore",price:110000},
- {code:"AA-011",cat:"Aria Condizionata",name:"Visita tecnica A.A. (diagnostico)",desc:"Visita a domicilio, diagnostica del guasto e elaborazione del preventivo.",time:"1–2 ore",price:40000},
- {code:"AA-012",cat:"Aria Condizionata",name:"Pulizia e manutenzione split (senza disinstallazione)",desc:"Lavaggio dei filtri, pulizia delle serpentine interna ed esterna, verifica del gas.",time:"1–2 ore",price:80000},
- {code:"AA-013",cat:"Aria Condizionata",name:"Pulizia e manutenzione split (con disinstallazione)",desc:"Pulizia profonda con smontaggio completo dell'unità. Include rimontaggio e prova.",time:"3–4 ore",price:110000},
- {code:"AA-014",cat:"Aria Condizionata",name:"Riparazione perdita + carica R-410A",desc:"Localizzazione della perdita con rivelatore elettronico, riparazione, vuoto e ricarica di R-410A.",time:"2–4 ore",price:110000},
- {code:"AA-015",cat:"Aria Condizionata",name:"Riparazione perdita + carica R-22",desc:"Localizzazione della perdita, riparazione di giunzione/tubazione, vuoto e ricarica di R-22.",time:"2–4 ore",price:110000},
- {code:"AA-016",cat:"Aria Condizionata",name:"Sostituzione di capacitor",desc:"Diagnosi elettrica e sostituzione del capacitor di marcia/avviamento di compressore o ventilatore.",time:"1–2 ore",price:80000},
+ {code:"AA-001",cat:"Aria Condizionata",name:"Installazione A.A. fino a 3.499 Fg",desc:"Split freddo/caldo fino a 3.499 frigorie. 3m tubazione, cavo TPR, scarico UI/UE, valvola termica.",time:"3–5 ore",price:400},
+ {code:"AA-002",cat:"Aria Condizionata",name:"Installazione A.A. 3.500–5.499 Fg",desc:"Split 3.500–5.499 frigorie. Tubazione, cavo TPR, scarico e valvola termica.",time:"4–6 ore",price:450},
+ {code:"AA-003",cat:"Aria Condizionata",name:"Installazione A.A. 5.500–6.299 Fg",desc:"Split 5.500–6.299 frigorie. 5m tubazione, cavo TPR, scarico e valvola termica.",time:"5–7 ore",price:500},
+ {code:"AA-004",cat:"Aria Condizionata",name:"Installazione A.A. 6.300–7.999 Fg",desc:"Split 6.300–7.999 frigorie. Tubazione di grande diametro, cavo TPR e valvola termica.",time:"5–8 ore",price:550},
+ {code:"AA-005",cat:"Aria Condizionata",name:"Installazione A.A. 8.000–8.999 Fg",desc:"Split 8.000–8.999 frigorie. Tubazione calibrata, cavo TPR, scarico e valvola termica.",time:"6–9 ore",price:620},
+ {code:"AA-006",cat:"Aria Condizionata",name:"Installazione Roof-Top 9.000–14.999 Fg",desc:"Apparecchio Roof-Top o split ad alta capacità. Supporto rinforzato, tubazione industriale, valvola trifase.",time:"1–2 giorni",price:900},
+ {code:"AA-007",cat:"Aria Condizionata",name:"Installazione A.A. 15.000–18.000 Fg",desc:"Apparecchio industriale/commerciale ad alta capacità. Tubazione industriale, supporto strutturale, quadro dedicato.",time:"1–3 giorni",price:1150},
+ {code:"AA-008",cat:"Aria Condizionata",name:"Pre-installazione standard (senza apparecchio)",desc:"Tubazioni isolate, cavo TPR e cassa da incasso preparati per successivo montaggio dell'apparecchio.",time:"3–5 ore",price:380},
+ {code:"AA-009",cat:"Aria Condizionata",name:"Montaggio split su pre-installazione",desc:"Posa di unità su pre-installazione esistente. Include carica di gas e messa in funzione.",time:"2–3 ore",price:330},
+ {code:"AA-010",cat:"Aria Condizionata",name:"Disinstallazione A.A. fino a 6.000 Fg",desc:"Smontaggio di unità interna ed esterna, recupero del refrigerante e sigillatura.",time:"2–3 ore",price:250},
+ {code:"AA-011",cat:"Aria Condizionata",name:"Visita tecnica A.A. (diagnostico)",desc:"Visita a domicilio, diagnostica del guasto e elaborazione del preventivo.",time:"1–2 ore",price:50},
+ {code:"AA-012",cat:"Aria Condizionata",name:"Pulizia e manutenzione split (senza disinstallazione)",desc:"Lavaggio dei filtri, pulizia delle serpentine interna ed esterna, verifica del gas.",time:"1–2 ore",price:120},
+ {code:"AA-013",cat:"Aria Condizionata",name:"Pulizia e manutenzione split (con disinstallazione)",desc:"Pulizia profonda con smontaggio completo dell'unità. Include rimontaggio e prova.",time:"3–4 ore",price:190},
+ {code:"AA-014",cat:"Aria Condizionata",name:"Riparazione perdita + carica R-410A",desc:"Localizzazione della perdita con rivelatore elettronico, riparazione, vuoto e ricarica di R-410A.",time:"2–4 ore",price:210},
+ {code:"AA-015",cat:"Aria Condizionata",name:"Riparazione perdita + carica R-22",desc:"Localizzazione della perdita, riparazione di giunzione/tubazione, vuoto e ricarica di R-22.",time:"2–4 ore",price:190},
+ {code:"AA-016",cat:"Aria Condizionata",name:"Sostituzione di capacitor",desc:"Diagnosi elettrica e sostituzione del capacitor di marcia/avviamento di compressore o ventilatore.",time:"1–2 ore",price:130},
  {code:"AA-017",cat:"Aria Condizionata",name:"M.O. Sostituzione di motocompressore",desc:"Manodopera per sostituzione del compressore. Il costo della M.O. è uguale al valore del compressore.",time:"4–6 ore",price:null},
- {code:"AA-018",cat:"Aria Condizionata",name:"Sostituzione di scheda logica",desc:"Estrazione e sostituzione della scheda di controllo interna/esterna. Programmazione e prova funzionale.",time:"1–3 ore",price:110000},
- {code:"HEL-001",cat:"Refrigerazione",name:"Visita diagnostico a domicilio — frigorifero",desc:"Diagnostico a domicilio. Si detrae dal totale se si esegue la riparazione.",time:"1–2 ore",price:15000},
- {code:"HEL-002",cat:"Refrigerazione",name:"Carica di gas refrigerante — frigorifero",desc:"Verifica, vuoto e ricarica di gas in base al tipo di apparecchio (R-134a, R-600a, ecc.).",time:"1–2 ore",price:33500},
- {code:"HEL-003",cat:"Refrigerazione",name:"Sostituzione di motore compressore — frigorifero",desc:"Sostituzione di motocompressore. Include pezzo e manodopera.",time:"3–5 ore",price:108500},
- {code:"HEL-004",cat:"Refrigerazione",name:"Sostituzione di termostato — frigorifero",desc:"Sostituzione di termostato o controllo di temperatura. Include pezzo e manodopera.",time:"1–2 ore",price:36000},
- {code:"HEL-005",cat:"Refrigerazione",name:"Sostituzione di guarnizione di porta",desc:"Sostituzione della guarnizione in gomma della porta per recuperare la sigillatura ermetica. Prezzo per porta.",time:"30–60 min",price:26000},
- {code:"HEL-006",cat:"Refrigerazione",name:"Riparazione sistema di sbrinamento",desc:"Diagnosi e riparazione del sistema di sbrinamento automatico (resistenza, temporizzatore, sensore).",time:"1–3 ore",price:40000},
- {code:"HEL-007",cat:"Refrigerazione",name:"Sostituzione di ventilatore interno — frigorifero",desc:"Sostituzione di motore e pala del ventilatore interno no-frost. Include pezzo e manodopera.",time:"1–2 ore",price:32500},
- {code:"REF-001",cat:"Refrigerazione",name:"Installazione split residenziale (fino a 3.000 Fg)",desc:"Installazione completa di unità interna ed esterna, tubazione in rame, supporto e messa in funzione.",time:"3–5 ore",price:null},
- {code:"REF-003",cat:"Refrigerazione",name:"Service e manutenzione di split",desc:"Pulizia dei filtri, lavaggio delle serpentine, verifica del gas, misurazione delle correnti e lubrificazione.",time:"1–2 ore",price:null},
- {code:"REF-004",cat:"Refrigerazione",name:"Carica di gas refrigerante — split",desc:"Verifica delle perdite, carica di gas R-32/R-410A/R-22 in base all'apparecchio, prova di tenuta.",time:"1–2 ore",price:null},
- {code:"ELE-010",cat:"Elettricità",name:"Visita tecnica elettrica",desc:"Ispezione visiva, valutazione, diagnosi, consulenza e elaborazione preventivo in cantiere.",time:"1–2 ore",price:47998},
- {code:"ELE-011",cat:"Elettricità",name:"Urgenza elettrica fuori orario",desc:"Lunedì a Sabato a partire dalle 20:00 / Domenica e Festivi. Minimo di fatturazione.",time:"Inmediato",price:115071},
- {code:"ELE-012",cat:"Elettricità",name:"Service / Installazione elettrica (minimo 1 punto)",desc:"Punto completo: canalizzazione, cablaggio regolamentare e connessione. Unità base di quotazione.",time:"Variable",price:95829},
- {code:"ELE-013",cat:"Elettricità",name:"Ora di lavoro elettrico",desc:"Minimo e media di 1 ora di lavoro di installatore elettricista professionista.",time:"1 ora",price:47998},
- {code:"ELE-014",cat:"Elettricità",name:"Canalizzazione in lastra — tubo metallico (x punto)",desc:"Installazione di tubo metallico incassato in lastra. Prezzo per punto (max. 5m tra loro).",time:"Variable",price:48514},
- {code:"ELE-015",cat:"Elettricità",name:"Intonaco muratura mattone comune (x punto)",desc:"Intonaco di tubazione in muratura di mattone comune. Prezzo per punto.",time:"Variable",price:55133},
- {code:"ELE-016",cat:"Elettricità",name:"Intonaco muratura mattone forato (x punto)",desc:"Intonaco di tubazione in muratura di mattone forato. Prezzo per punto.",time:"Variable",price:53823},
- {code:"ELE-017",cat:"Elettricità",name:"Intonaco tubazione a vista — Metal/PVC/Cablecanal",desc:"Installazione di tubazione o canaletta a vista su parete. Prezzo per punto.",time:"Variable",price:44066},
- {code:"ELE-018",cat:"Elettricità",name:"Cablaggio opera nuova — canalizzazione propria",desc:"Cablaggio in opera nuova quando la canalizzazione è stata realizzata dallo stesso professionista.",time:"Variable",price:23579},
- {code:"ELE-019",cat:"Elettricità",name:"Cablaggio opera nuova — canalizzazione altrui",desc:"Cablaggio in opera nuova quando la canalizzazione è stata realizzata da un altro professionista.",time:"Variable",price:32831},
- {code:"ELE-020",cat:"Elettricità",name:"Ricablaggio con apparecchi",desc:"Sostituzione di cablaggio esistente inclusa posa di apparecchi.",time:"Variable",price:49233},
- {code:"ELE-021",cat:"Elettricità",name:"Ricablaggio senza apparecchi",desc:"Sostituzione di cablaggio esistente senza posa di apparecchi.",time:"Variable",price:32831},
- {code:"ELE-022",cat:"Elettricità",name:"Connessione punto / presa semplice / portalampada",desc:"Connessione di punto di presa semplice, punto luce o portalampada. Prezzo per punto.",time:"30 min",price:17113},
- {code:"ELE-023",cat:"Elettricità",name:"Connessione presa doppia",desc:"Connessione di punto di presa doppia. Prezzo per punto.",time:"30 min",price:21675},
- {code:"ELE-024",cat:"Elettricità",name:"Connessione punto combinato",desc:"Connessione di punto combinato (interruttore + presa o altra combinazione). Prezzo per punto.",time:"30 min",price:18419},
- {code:"ELE-025",cat:"Elettricità",name:"Quadro monofasico principale (1 ID + 1 TM + PAT)",desc:"Installazione completa di quadro monofasico principale con differenziale, termomagnetico e messa a terra.",time:"4–8 ore",price:283086},
- {code:"ELE-026",cat:"Elettricità",name:"Solo PAT (picchetto + scatola di ispezione)",desc:"Infissione di picchetto di rame, scatola di ispezione e connessione a quadro.",time:"2–3 ore",price:143689},
- {code:"ELE-027",cat:"Elettricità",name:"Quadro trifasico principale (1 ID + 1 TM + PAT)",desc:"Installazione di quadro trifasico principale con differenziale e termomagnetico tetrapolare.",time:"6–10 ore",price:383351},
- {code:"ELE-028",cat:"Elettricità",name:"Quadro sezionale — fino a 8 poli",desc:"Installazione di quadro sezionale di distribuzione fino a 8 poli.",time:"3–5 ore",price:201195},
- {code:"ELE-029",cat:"Elettricità",name:"Quadro sezionale — 8 a 36 poli",desc:"Installazione di quadro sezionale da 8 a 36 poli. Include canalizzazione e connessione.",time:"1–2 giorni",price:804881},
- {code:"ELE-030",cat:"Elettricità",name:"Modulo bipolare aggiuntivo (ID/ITM)",desc:"Inserimento di modulo differenziale o termomagnetico bipolare aggiuntivo in quadro esistente.",time:"1 ora",price:69601},
- {code:"ELE-031",cat:"Elettricità",name:"Installazione Spot LED / applique semplice",desc:"Installazione e connessione di apparecchio applique da parete semplice o spot LED. Prezzo per unità.",time:"30 min",price:26261},
- {code:"ELE-032",cat:"Elettricità",name:"Ventilatore da soffitto",desc:"Installazione e connessione di ventilatore da soffitto senza luminaria. Include fissaggio e prova.",time:"1–2 ore",price:95829},
- {code:"ELE-033",cat:"Elettricità",name:"Ventilatore da soffitto con luminaria (1 effetto)",desc:"Installazione e connessione di ventilatore da soffitto con luminaria integrata di 1 effetto.",time:"1–2 ore",price:119824},
- {code:"ELE-034",cat:"Elettricità",name:"Emergenza — Attenzione immediata (Lun–Sab 8–20)",desc:"Servizio di emergenza con attenzione immediata in orario feriale esteso. Prezzo minimo.",time:"Inmediato",price:95829},
- {code:"ELE-035",cat:"Elettricità",name:"Giornata — Operaio Specializzato (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Operaio Specializzato.",time:"8 ore",price:43760},
- {code:"ELE-036",cat:"Elettricità",name:"Giornata — Operaio Elettricista (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Operaio Elettricista.",time:"8 ore",price:37432},
- {code:"ELE-037",cat:"Elettricità",name:"Giornata — Aiutante (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Aiutante Elettricista.",time:"8 ore",price:31840},
- {code:"RED-001",cat:"Reti e Dati",name:"Punto di rete Cat.6 (tenditura + connessione)",desc:"Installazione di punto di rete UTP Cat.6, canalizzato o incassato, con prova di continuità.",time:"30–60 min",price:null},
- {code:"RED-002",cat:"Reti e Dati",name:"Montaggio e installazione di rack",desc:"Installazione di rack a parete o a pavimento, patch panel, switch, organizzatore e etichettatura.",time:"4–8 ore",price:null},
- {code:"RED-003",cat:"Reti e Dati",name:"Installazione e configurazione di rete WiFi",desc:"Installazione di router/access point, configurazione SSID, sicurezza WPA3 e prova di copertura.",time:"1–2 ore",price:null},
- {code:"SEG-001",cat:"Sicurezza",name:"Installazione telecamere IP (fino a 4 telecamere)",desc:"Installazione di fino a 4 telecamere IP con DVR/NVR, configurazione e accesso remoto.",time:"4–8 ore",price:null},
- {code:"SEG-002",cat:"Sicurezza",name:"Installazione di sistema di allarme",desc:"Centralina di allarme, sensori di movimento, contatti magnetici e sirena perimetrale.",time:"4–6 ore",price:null},
- {code:"SEG-003",cat:"Sicurezza",name:"Installazione di controllo accessi",desc:"Lettore scheda/impronta, serratura elettrica e centralina di controllo accessi.",time:"3–5 ore",price:null},
- {code:"MAN-001",cat:"Mantenimiento",name:"Manutenzione preventiva residenziale",desc:"Revisione generale dell'impianto elettrico, quadro, interruttori magnetotermici, illuminazione e prese.",time:"2–4 ore",price:null},
- {code:"MAN-002",cat:"Mantenimiento",name:"Manutenzione preventiva commerciale/corporativa",desc:"Revisione di quadri, circuiti, climatizzazione, illuminazione e reti. Relazione tecnica inclusa.",time:"4–8 ore",price:null},
- {code:"MAN-003",cat:"Mantenimiento",name:"Diagnosi e preventivo tecnico",desc:"Visita tecnica, rilevamento degli impianti, elaborazione di relazione e preventivo dettagliato.",time:"1–2 ore",price:null},
- {code:"MAN-004",cat:"Mantenimiento",name:"Guardia tecnica / Emergenza",desc:"Servizio di assistenza urgente fuori orario. Diagnosi e risoluzione sul momento.",time:"Inmediato",price:null},
- {code:"AUT-001",cat:"Automazione",name:"Domotica residenziale base",desc:"Automazione di illuminazione, tapparelle e climatizzazione tramite centralina e app mobile.",time:"1–2 giorni",price:null},
- {code:"AUT-002",cat:"Automazione",name:"Sensori di presenza / temporizzatori",desc:"Installazione di sensori di movimento o crepuscolari per controllo automatico dell'illuminazione.",time:"1–3 ore",price:null},
- {code:"AUT-003",cat:"Automazione",name:"Automazione di cancello/barriera",desc:"Motore, scheda di controllo, pulsantiere, controllo remoto e fine corsa.",time:"3–5 ore",price:null},
- {code:"CLI-001",cat:"Climatizzazione",name:"Installazione caldaia a gas (tiro bilanciato)",desc:"Installazione di caldaia a gas con uscita combustione all'esterno, connessione a rete e prova.",time:"4–6 ore",price:null},
- {code:"CLI-002",cat:"Climatizzazione",name:"Manutenzione di caldaia",desc:"Pulizia dei bruciatori, verifica delle valvole, controllo di pressione, spurgo dei radiatori e prova.",time:"2–4 ore",price:null},
- {code:"PLO-001",cat:"Idraulica",name:"Visita tecnica di idraulica (diagnostico)",desc:"Visita a domicilio per diagnostico, rilevamento e elaborazione del preventivo. Fascia $19.310 – $83.902.",time:"1–2 ore",price:51606},
- {code:"PLO-002",cat:"Idraulica",name:"Semplice sblocco di tubazione",desc:"Sblocco di lavandino da cucina, lavabo, water o scarico con metodi convenzionali. Fascia $30.000 – $52.000.",time:"1–2 ore",price:41000},
- {code:"PLO-003",cat:"Idraulica",name:"Sblocco URGENTE / fognario",desc:"Servizio di sblocco urgente o fognario con attrezzature speciali. Fascia $50.000 – $90.000.",time:"1–3 ore",price:70000},
- {code:"PLO-004",cat:"Idraulica",name:"Sostituzione di valvola d'intercettazione",desc:"Sostituzione della valvola d'intercettazione dell'acqua. Include interruzione dell'erogazione, sostituzione e prova di tenuta. Fascia $31.000 – $48.000.",time:"1 ora",price:39500},
- {code:"PLO-005",cat:"Idraulica",name:"Sostituzione di rubinetteria",desc:"Sostituzione della rubinetteria da cucina, lavabo o bidet. Include connessione e prova. Fascia $30.000 – $50.000.",time:"1–2 ore",price:40000},
- {code:"PLO-006",cat:"Idraulica",name:"Sostituzione di sifone sotto il piano",desc:"Sostituzione del sifone del lavandino sotto il piano o del lavabo. Include connessione e prova di tenuta. Fascia $20.000 – $30.000.",time:"30–60 min",price:25000},
- {code:"PLO-007",cat:"Idraulica",name:"Sostituzione / installazione di lavandino",desc:"Installazione o sostituzione di lavandino da cucina o da bagno. Include connessione di scarico e prove. Fascia $28.351 – $59.439.",time:"2–3 ore",price:43895},
- {code:"PLO-008",cat:"Idraulica",name:"Installazione / sostituzione di bidet",desc:"Posa o sostituzione di bidet completo con rubinetteria e connessione. Fascia $29.713 – $50.716.",time:"2–3 ore",price:40215},
- {code:"PLO-009",cat:"Idraulica",name:"Installazione / sostituzione di water",desc:"Posa o sostituzione di water completo con serbatoio e connessione. Fascia $27.578 – $50.707.",time:"2–3 ore",price:39143},
- {code:"PLO-010",cat:"Idraulica",name:"Installazione di colonna doccia",desc:"Installazione di colonna doccia con rubinetteria termostatica o monocomando. Fascia $46.000 – $75.000.",time:"2–3 ore",price:60500},
- {code:"PLO-011",cat:"Idraulica",name:"Installazione box doccia senza colonna",desc:"Montaggio e installazione di box doccia senza colonna. Include livellamento, sigillatura e prova. Fascia $50.000 – $71.000.",time:"3–5 ore",price:60500},
- {code:"PLO-012",cat:"Idraulica",name:"Installazione box doccia con colonna",desc:"Montaggio e installazione di box doccia con colonna idromassaggio. Include connessioni e prova. Fascia $99.169 – $214.159.",time:"4–7 ore",price:156664},
- {code:"PLO-013",cat:"Idraulica",name:"Installazione box doccia di 1 anta",desc:"Posa di box doccia da bagno di 1 anta. Include fori, fissaggio e sigillatura. Fascia $35.840 – $69.847.",time:"2–3 ore",price:52844},
- {code:"PLO-014",cat:"Idraulica",name:"Installazione box doccia da bagno regolabile",desc:"Posa di box doccia da bagno tipo regolabile (scorrevole o pieghevole). Fascia $41.372 – $95.219.",time:"2–4 ore",price:68296},
- {code:"PLO-015",cat:"Idraulica",name:"Posa / sostituzione pompa pressurizzatrice",desc:"Installazione o sostituzione di pompa pressurizzatrice dell'acqua. Include connessione elettrica e di tubazione. Fascia $54.600 – $109.000.",time:"2–4 ore",price:81800},
- {code:"PLO-016",cat:"Idraulica",name:"Installazione di lavastoviglie",desc:"Connessione di ingresso acqua, scarico e elettrica per lavastoviglie. Fascia $22.661 – $40.363.",time:"1–2 ore",price:31512},
- {code:"PLO-017",cat:"Idraulica",name:"Installazione di lavatrice",desc:"Connessione di ingresso acqua, scarico e elettrica per lavatrice. Fascia $51.222 – $97.780.",time:"1–2 ore",price:74501},
- {code:"PLO-018",cat:"Idraulica",name:"Installazione di asciugatrice",desc:"Connessione elettrica e di scarico per asciugatrice. Include livellamento e prova. Fascia $25.561 – $39.710.",time:"1 ora",price:32635},
- {code:"PLO-019",cat:"Idraulica",name:"Installazione di lavastoviglie",desc:"Connessione di ingresso acqua, scarico e elettrica per lavastoviglie. Fascia $26.067 – $40.652.",time:"1–2 ore",price:33360},
+ {code:"AA-018",cat:"Aria Condizionata",name:"Sostituzione di scheda logica",desc:"Estrazione e sostituzione della scheda di controllo interna/esterna. Programmazione e prova funzionale.",time:"1–3 ore",price:220},
+ {code:"HEL-001",cat:"Refrigerazione",name:"Visita diagnostico a domicilio — frigorifero",desc:"Diagnostico a domicilio. Si detrae dal totale se si esegue la riparazione.",time:"1–2 ore",price:40},
+ {code:"HEL-002",cat:"Refrigerazione",name:"Carica di gas refrigerante — frigorifero",desc:"Verifica, vuoto e ricarica di gas in base al tipo di apparecchio (R-134a, R-600a, ecc.).",time:"1–2 ore",price:90},
+ {code:"HEL-003",cat:"Refrigerazione",name:"Sostituzione di motore compressore — frigorifero",desc:"Sostituzione di motocompressore. Include pezzo e manodopera.",time:"3–5 ore",price:290},
+ {code:"HEL-004",cat:"Refrigerazione",name:"Sostituzione di termostato — frigorifero",desc:"Sostituzione di termostato o controllo di temperatura. Include pezzo e manodopera.",time:"1–2 ore",price:95},
+ {code:"HEL-005",cat:"Refrigerazione",name:"Sostituzione di guarnizione di porta",desc:"Sostituzione della guarnizione in gomma della porta per recuperare la sigillatura ermetica. Prezzo per porta.",time:"30–60 min",price:65},
+ {code:"HEL-006",cat:"Refrigerazione",name:"Riparazione sistema di sbrinamento",desc:"Diagnosi e riparazione del sistema di sbrinamento automatico (resistenza, temporizzatore, sensore).",time:"1–3 ore",price:120},
+ {code:"HEL-007",cat:"Refrigerazione",name:"Sostituzione di ventilatore interno — frigorifero",desc:"Sostituzione di motore e pala del ventilatore interno no-frost. Include pezzo e manodopera.",time:"1–2 ore",price:110},
+ {code:"REF-001",cat:"Refrigerazione",name:"Installazione split residenziale (fino a 3.000 Fg)",desc:"Installazione completa di unità interna ed esterna, tubazione in rame, supporto e messa in funzione.",time:"3–5 ore",price:380},
+ {code:"REF-003",cat:"Refrigerazione",name:"Service e manutenzione di split",desc:"Pulizia dei filtri, lavaggio delle serpentine, verifica del gas, misurazione delle correnti e lubrificazione.",time:"1–2 ore",price:120},
+ {code:"REF-004",cat:"Refrigerazione",name:"Carica di gas refrigerante — split",desc:"Verifica delle perdite, carica di gas R-32/R-410A/R-22 in base all'apparecchio, prova di tenuta.",time:"1–2 ore",price:110},
+ {code:"ELE-010",cat:"Elettricità",name:"Visita tecnica elettrica",desc:"Ispezione visiva, valutazione, diagnosi, consulenza e elaborazione preventivo in cantiere.",time:"1–2 ore",price:60},
+ {code:"ELE-011",cat:"Elettricità",name:"Urgenza elettrica fuori orario",desc:"Lunedì a Sabato a partire dalle 20:00 / Domenica e Festivi. Minimo di fatturazione.",time:"Inmediato",price:140},
+ {code:"ELE-012",cat:"Elettricità",name:"Service / Installazione elettrica (minimo 1 punto)",desc:"Punto completo: canalizzazione, cablaggio regolamentare e connessione. Unità base di quotazione.",time:"Variable",price:95},
+ {code:"ELE-013",cat:"Elettricità",name:"Ora di lavoro elettrico",desc:"Minimo e media di 1 ora di lavoro di installatore elettricista professionista.",time:"1 ora",price:38},
+ {code:"ELE-014",cat:"Elettricità",name:"Canalizzazione in lastra — tubo metallico (x punto)",desc:"Installazione di tubo metallico incassato in lastra. Prezzo per punto (max. 5m tra loro).",time:"Variable",price:40},
+ {code:"ELE-015",cat:"Elettricità",name:"Intonaco muratura mattone comune (x punto)",desc:"Intonaco di tubazione in muratura di mattone comune. Prezzo per punto.",time:"Variable",price:55},
+ {code:"ELE-016",cat:"Elettricità",name:"Intonaco muratura mattone forato (x punto)",desc:"Intonaco di tubazione in muratura di mattone forato. Prezzo per punto.",time:"Variable",price:50},
+ {code:"ELE-017",cat:"Elettricità",name:"Intonaco tubazione a vista — Metal/PVC/Cablecanal",desc:"Installazione di tubazione o canaletta a vista su parete. Prezzo per punto.",time:"Variable",price:42},
+ {code:"ELE-018",cat:"Elettricità",name:"Cablaggio opera nuova — canalizzazione propria",desc:"Cablaggio in opera nuova quando la canalizzazione è stata realizzata dallo stesso professionista.",time:"Variable",price:28},
+ {code:"ELE-019",cat:"Elettricità",name:"Cablaggio opera nuova — canalizzazione altrui",desc:"Cablaggio in opera nuova quando la canalizzazione è stata realizzata da un altro professionista.",time:"Variable",price:38},
+ {code:"ELE-020",cat:"Elettricità",name:"Ricablaggio con apparecchi",desc:"Sostituzione di cablaggio esistente inclusa posa di apparecchi.",time:"Variable",price:55},
+ {code:"ELE-021",cat:"Elettricità",name:"Ricablaggio senza apparecchi",desc:"Sostituzione di cablaggio esistente senza posa di apparecchi.",time:"Variable",price:38},
+ {code:"ELE-022",cat:"Elettricità",name:"Connessione punto / presa semplice / portalampada",desc:"Connessione di punto di presa semplice, punto luce o portalampada. Prezzo per punto.",time:"30 min",price:55},
+ {code:"ELE-023",cat:"Elettricità",name:"Connessione presa doppia",desc:"Connessione di punto di presa doppia. Prezzo per punto.",time:"30 min",price:65},
+ {code:"ELE-024",cat:"Elettricità",name:"Connessione punto combinato",desc:"Connessione di punto combinato (interruttore + presa o altra combinazione). Prezzo per punto.",time:"30 min",price:58},
+ {code:"ELE-025",cat:"Elettricità",name:"Quadro monofasico principale (1 ID + 1 TM + PAT)",desc:"Installazione completa di quadro monofasico principale con differenziale, termomagnetico e messa a terra.",time:"4–8 ore",price:620},
+ {code:"ELE-026",cat:"Elettricità",name:"Solo PAT (picchetto + scatola di ispezione)",desc:"Infissione di picchetto di rame, scatola di ispezione e connessione a quadro.",time:"2–3 ore",price:260},
+ {code:"ELE-027",cat:"Elettricità",name:"Quadro trifasico principale (1 ID + 1 TM + PAT)",desc:"Installazione di quadro trifasico principale con differenziale e termomagnetico tetrapolare.",time:"6–10 ore",price:950},
+ {code:"ELE-028",cat:"Elettricità",name:"Quadro sezionale — fino a 8 poli",desc:"Installazione di quadro sezionale di distribuzione fino a 8 poli.",time:"3–5 ore",price:380},
+ {code:"ELE-029",cat:"Elettricità",name:"Quadro sezionale — 8 a 36 poli",desc:"Installazione di quadro sezionale da 8 a 36 poli. Include canalizzazione e connessione.",time:"1–2 giorni",price:1150},
+ {code:"ELE-030",cat:"Elettricità",name:"Modulo bipolare aggiuntivo (ID/ITM)",desc:"Inserimento di modulo differenziale o termomagnetico bipolare aggiuntivo in quadro esistente.",time:"1 ora",price:75},
+ {code:"ELE-031",cat:"Elettricità",name:"Installazione Spot LED / applique semplice",desc:"Installazione e connessione di apparecchio applique da parete semplice o spot LED. Prezzo per unità.",time:"30 min",price:55},
+ {code:"ELE-032",cat:"Elettricità",name:"Ventilatore da soffitto",desc:"Installazione e connessione di ventilatore da soffitto senza luminaria. Include fissaggio e prova.",time:"1–2 ore",price:110},
+ {code:"ELE-033",cat:"Elettricità",name:"Ventilatore da soffitto con luminaria (1 effetto)",desc:"Installazione e connessione di ventilatore da soffitto con luminaria integrata di 1 effetto.",time:"1–2 ore",price:150},
+ {code:"ELE-034",cat:"Elettricità",name:"Emergenza — Attenzione immediata (Lun–Sab 8–20)",desc:"Servizio di emergenza con attenzione immediata in orario feriale esteso. Prezzo minimo.",time:"Inmediato",price:110},
+ {code:"ELE-035",cat:"Elettricità",name:"Giornata — Operaio Specializzato (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Operaio Specializzato.",time:"8 ore",price:320},
+ {code:"ELE-036",cat:"Elettricità",name:"Giornata — Operaio Elettricista (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Operaio Elettricista.",time:"8 ore",price:280},
+ {code:"ELE-037",cat:"Elettricità",name:"Giornata — Aiutante (8 ore)",desc:"Manodopera contrattata per giornata completa di 8 ore: Aiutante Elettricista.",time:"8 ore",price:240},
+ {code:"RED-001",cat:"Reti e Dati",name:"Punto di rete Cat.6 (tenditura + connessione)",desc:"Installazione di punto di rete UTP Cat.6, canalizzato o incassato, con prova di continuità.",time:"30–60 min",price:65},
+ {code:"RED-002",cat:"Reti e Dati",name:"Montaggio e installazione di rack",desc:"Installazione di rack a parete o a pavimento, patch panel, switch, organizzatore e etichettatura.",time:"4–8 ore",price:260},
+ {code:"RED-003",cat:"Reti e Dati",name:"Installazione e configurazione di rete WiFi",desc:"Installazione di router/access point, configurazione SSID, sicurezza WPA3 e prova di copertura.",time:"1–2 ore",price:130},
+ {code:"SEG-001",cat:"Sicurezza",name:"Installazione telecamere IP (fino a 4 telecamere)",desc:"Installazione di fino a 4 telecamere IP con DVR/NVR, configurazione e accesso remoto.",time:"4–8 ore",price:680},
+ {code:"SEG-002",cat:"Sicurezza",name:"Installazione di sistema di allarme",desc:"Centralina di allarme, sensori di movimento, contatti magnetici e sirena perimetrale.",time:"4–6 ore",price:750},
+ {code:"SEG-003",cat:"Sicurezza",name:"Installazione di controllo accessi",desc:"Lettore scheda/impronta, serratura elettrica e centralina di controllo accessi.",time:"3–5 ore",price:680},
+ {code:"MAN-001",cat:"Manutenzione",name:"Manutenzione preventiva residenziale",desc:"Revisione generale dell'impianto elettrico, quadro, interruttori magnetotermici, illuminazione e prese.",time:"2–4 ore",price:190},
+ {code:"MAN-002",cat:"Manutenzione",name:"Manutenzione preventiva commerciale/corporativa",desc:"Revisione di quadri, circuiti, climatizzazione, illuminazione e reti. Relazione tecnica inclusa.",time:"4–8 ore",price:480},
+ {code:"MAN-003",cat:"Manutenzione",name:"Diagnosi e preventivo tecnico",desc:"Visita tecnica, rilevamento degli impianti, elaborazione di relazione e preventivo dettagliato.",time:"1–2 ore",price:65},
+ {code:"MAN-004",cat:"Manutenzione",name:"Guardia tecnica / Emergenza",desc:"Servizio di assistenza urgente fuori orario. Diagnosi e risoluzione sul momento.",time:"Inmediato",price:130},
+ {code:"AUT-001",cat:"Automazione",name:"Domotica residenziale base",desc:"Automazione di illuminazione, tapparelle e climatizzazione tramite centralina e app mobile.",time:"1–2 giorni",price:2600},
+ {code:"AUT-002",cat:"Automazione",name:"Sensori di presenza / temporizzatori",desc:"Installazione di sensori di movimento o crepuscolari per controllo automatico dell'illuminazione.",time:"1–3 ore",price:95},
+ {code:"AUT-003",cat:"Automazione",name:"Automazione di cancello/barriera",desc:"Motore, scheda di controllo, pulsantiere, controllo remoto e fine corsa.",time:"3–5 ore",price:1250},
+ {code:"CLI-001",cat:"Climatizzazione",name:"Installazione caldaia a gas (tiro bilanciato)",desc:"Installazione di caldaia a gas con uscita combustione all'esterno, connessione a rete e prova.",time:"4–6 ore",price:1150},
+ {code:"CLI-002",cat:"Climatizzazione",name:"Manutenzione di caldaia",desc:"Pulizia dei bruciatori, verifica delle valvole, controllo di pressione, spurgo dei radiatori e prova.",time:"2–4 ore",price:160},
+ {code:"PLO-001",cat:"Idraulica",name:"Visita tecnica di idraulica (diagnostico)",desc:"Visita a domicilio per diagnostico, rilevamento e elaborazione del preventivo. Fascia €50 – €90",time:"1–2 ore",price:60},
+ {code:"PLO-002",cat:"Idraulica",name:"Semplice sblocco di tubazione",desc:"Sblocco di lavandino da cucina, lavabo, water o scarico con metodi convenzionali. Fascia €90 – €150",time:"1–2 ore",price:110},
+ {code:"PLO-003",cat:"Idraulica",name:"Sblocco URGENTE / fognario",desc:"Servizio di sblocco urgente o fognario con attrezzature speciali. Fascia €150 – €280",time:"1–3 ore",price:210},
+ {code:"PLO-004",cat:"Idraulica",name:"Sostituzione di valvola d'intercettazione",desc:"Sostituzione della valvola d'intercettazione dell'acqua. Include interruzione dell'erogazione, sostituzione e prova di tenuta. Fascia €90 – €140",time:"1 ora",price:115},
+ {code:"PLO-005",cat:"Idraulica",name:"Sostituzione di rubinetteria",desc:"Sostituzione della rubinetteria da cucina, lavabo o bidet. Include connessione e prova. Fascia €90 – €150",time:"1–2 ore",price:115},
+ {code:"PLO-006",cat:"Idraulica",name:"Sostituzione di sifone sotto il piano",desc:"Sostituzione del sifone del lavandino sotto il piano o del lavabo. Include connessione e prova di tenuta. Fascia €60 – €90",time:"30–60 min",price:75},
+ {code:"PLO-007",cat:"Idraulica",name:"Sostituzione / installazione di lavandino",desc:"Installazione o sostituzione di lavandino da cucina o da bagno. Include connessione di scarico e prove. Fascia €110 – €180",time:"2–3 ore",price:145},
+ {code:"PLO-008",cat:"Idraulica",name:"Installazione / sostituzione di bidet",desc:"Posa o sostituzione di bidet completo con rubinetteria e connessione. Fascia €110 – €150",time:"2–3 ore",price:125},
+ {code:"PLO-009",cat:"Idraulica",name:"Installazione / sostituzione di water",desc:"Posa o sostituzione di water completo con serbatoio e connessione. Fascia €110 – €160",time:"2–3 ore",price:130},
+ {code:"PLO-010",cat:"Idraulica",name:"Installazione di colonna doccia",desc:"Installazione di colonna doccia con rubinetteria termostatica o monocomando. Fascia €180 – €280",time:"2–3 ore",price:215},
+ {code:"PLO-011",cat:"Idraulica",name:"Installazione box doccia senza colonna",desc:"Montaggio e installazione di box doccia senza colonna. Include livellamento, sigillatura e prova. Fascia €220 – €320",time:"3–5 ore",price:265},
+ {code:"PLO-012",cat:"Idraulica",name:"Installazione box doccia con colonna",desc:"Montaggio e installazione di box doccia con colonna idromassaggio. Include connessioni e prova. Fascia €450 – €800",time:"4–7 ore",price:560},
+ {code:"PLO-013",cat:"Idraulica",name:"Installazione box doccia di 1 anta",desc:"Posa di box doccia da bagno di 1 anta. Include fori, fissaggio e sigillatura. Fascia €150 – €250",time:"2–3 ore",price:195},
+ {code:"PLO-014",cat:"Idraulica",name:"Installazione box doccia da bagno regolabile",desc:"Posa di box doccia da bagno tipo regolabile (scorrevole o pieghevole). Fascia €180 – €350",time:"2–4 ore",price:245},
+ {code:"PLO-015",cat:"Idraulica",name:"Posa / sostituzione pompa pressurizzatrice",desc:"Installazione o sostituzione di pompa pressurizzatrice dell'acqua. Include connessione elettrica e di tubazione. Fascia €250 – €400",time:"2–4 ore",price:310},
+ {code:"PLO-016",cat:"Idraulica",name:"Allaccio lavatrice",desc:"Connessione di ingresso acqua, scarico e elettrica per lavastoviglie. Fascia €100 – €150",time:"1–2 ore",price:125},
+ {code:"PLO-017",cat:"Idraulica",name:"Allaccio lavastoviglie",desc:"Connessione di ingresso acqua, scarico e elettrica per lavatrice. Fascia €140 – €200",time:"1–2 ore",price:165},
+ {code:"PLO-018",cat:"Idraulica",name:"Installazione di asciugatrice",desc:"Connessione elettrica e di scarico per asciugatrice. Include livellamento e prova. Fascia €100 – €140",time:"1 ora",price:120},
+ {code:"PLO-019",cat:"Idraulica",name:"Sostituzione guarnizioni e sifone doccia",desc:"Connessione di ingresso acqua, scarico e elettrica per lavastoviglie. Fascia €110 – €190",time:"1–2 ore",price:150},
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -627,7 +631,7 @@ function renderCatalog(){
         <div class="idesc">${item.desc}</div>
       </div>
       <div class="imeta">
-        <div class="iprice">${item.price?fmt(item.price):'A cotizar'}</div>
+        <div class="iprice">${item.price?fmt(item.price):'Da preventivare'}</div>
         <div class="itime">${item.time}</div>
       </div>
       <div class="iadd${inCart?' added':''}">${inCart?'✓':'+'}</div>
@@ -825,8 +829,8 @@ function buildPreview(){
     <div class="dochdr">
       <div>
         <div class="docconame">Valve Electronics <span>ELECTRONICS</span></div>
-        <div class="doccosub">Soluzioni Tecniche Residenziali e Corporate</div>
-        <div class="doccocont">02 1234567 · info@valveeletttronica.it · Italia</div>
+        <div class="doccosub">Soluzioni tecniche per abitazioni e attivita'</div>
+        <div class="doccocont">02 1234567 · info@valveelectronics.it · Italia</div>
       </div>
       <div class="doctblock">
         <div class="doctype">${isP?'PREVENTIVO':'SCONTRINO / FATTURA'}</div>
@@ -886,7 +890,7 @@ function buildPreview(){
           ${isP?`<div><span class="lbl">Validità: </span>${days} giorni dalla emissione</div>`:''}
           <div><span class="lbl">Materiali: </span>Non inclusi salvo indicazione</div>
         </div>
-        ${notes?`<div class="docnotes">Notas: ${notes}</div>`:''}
+        ${notes?`<div class="docnotes">Note: ${notes}</div>`:''}
       </div>
 
       <div class="docsigs">
@@ -895,7 +899,7 @@ function buildPreview(){
       </div>
     </div>
     <div class="docftr">
-      Valve Electronics ELECTRONICS &nbsp;·&nbsp; 02 1234567 &nbsp;·&nbsp; info@valveeletttronica.it &nbsp;·&nbsp; Italia
+      Valve Electronics ELECTRONICS &nbsp;·&nbsp; 02 1234567 &nbsp;·&nbsp; info@valveelectronics.it &nbsp;·&nbsp; Italia
     </div>`;
 }
 
@@ -979,14 +983,14 @@ function genPDF(){
   doc.setFontSize(17);
   doc.setFont('helvetica','bold');
   doc.setTextColor(255,255,255);
-  doc.text('Valve ENERGETICA',M+37,16);
+  doc.text('Valve ELECTRONICS',M+37,16);
   doc.setFont('helvetica','normal');
   doc.setFontSize(7.5);
   doc.setTextColor(170,190,215);
-  doc.text('Soluzioni Tecniche Residenziali e Corporate',M+25,21);
+  doc.text('Soluzioni tecniche per abitazioni e aziende',M+25,21);
   doc.setFontSize(7);
   doc.setTextColor(120,140,175);
-  doc.text('02 1234567  |  info@valveeletttronica.it  |  Italia',M+25,26);
+  doc.text('+39 02 0000000  |  info@valveelectronics.it',M+25,26);
 
   // Doc type + number right
   doc.setFontSize(13);
@@ -1092,7 +1096,7 @@ function genPDF(){
   doc.setTextColor(255,255,255);
   doc.setFont('helvetica','bold');
   doc.setFontSize(10);
-  doc.text('TOTAL',tX+4,y+9);
+  doc.text('TOTALE',tX+4,y+9);
   doc.setTextColor(244,121,32);
   doc.setFontSize(11);
   doc.text(fmt(t.grand),W-M-2,y+9,{align:'right'});
@@ -1111,7 +1115,7 @@ function genPDF(){
   doc.setFont('helvetica','bold');doc.text('Garanzia: ',c2,y+11);doc.setFont('helvetica','normal');doc.text('90 giorni sulla manodopera',c2+doc.getTextWidth('Garanzia: '),y+11);
   if(isP){doc.setFont('helvetica','bold');doc.text('Validità: ',M+4,y+17);doc.setFont('helvetica','normal');doc.text(`${days} giorni dalla emissione`,M+4+doc.getTextWidth('Validità: '),y+17);}
   doc.setFont('helvetica','bold');doc.text('Materiali: ',c2,y+17);doc.setFont('helvetica','normal');doc.text('Non inclusi salvo indicazione',c2+doc.getTextWidth('Materiali: '),y+17);
-  if(notes){doc.setFont('helvetica','italic');doc.setFontSize(7);doc.setTextColor(100,100,100);doc.text('Notas: '+notes,M+4,y+23,{maxWidth:CW-8});}
+  if(notes){doc.setFont('helvetica','italic');doc.setFontSize(7);doc.setTextColor(100,100,100);doc.text('Note: '+notes,M+4,y+23,{maxWidth:CW-8});}
   y+=condH+8;
 
   // ── Signatures
@@ -1132,7 +1136,7 @@ function genPDF(){
     doc.setFillColor(244,121,32);doc.rect(0,285,W,1.5,'F');
     doc.setFillColor(27,42,74);doc.rect(0,286.5,W,10.5,'F');
     doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(106,120,160);
-    doc.text('Valve Electronics  |  02 1234567  |  info@valveeletttronica.it  |  Italia',W/2,292.5,{align:'center'});
+    doc.text('Valve Electronics  |  +39 02 0000000  |  info@valveelectronics.it',W/2,292.5,{align:'center'});
     if(pages>1){doc.setTextColor(150,150,150);doc.text(`Pag. ${p}/${pages}`,W-M,292.5,{align:'right'});}
   }
 
@@ -1154,14 +1158,14 @@ function pdfHeader(doc, titulo, subtitulo){
     doc.setFillColor(...ora); doc.roundedRect(9,6,30,30,4,4,'F');
     doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(10);
     doc.text('Valve',24,19,{align:'center'});
-    doc.setFontSize(6); doc.text('ENERGETICA',24,25,{align:'center'});
+    doc.setFontSize(6); doc.text('ELECTRONICS',24,25,{align:'center'});
   }
   doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(17);
-  doc.text('Valve ENERGETICA',47,17);
+  doc.text('Valve ELECTRONICS',47,17);
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(170,190,215);
-  doc.text('Soluzioni Tecniche Residenziali e Corporate',47,24);
+  doc.text('Soluzioni tecniche per abitazioni e aziende',47,24);
   doc.setFontSize(7.5); doc.setTextColor(120,140,175);
-  doc.text('02 1234567  |  info@valveeletttronica.it  |  Italia',47,30.5);
+  doc.text('+39 02 0000000  |  info@valveelectronics.it',47,30.5);
   doc.setFillColor(...ora); doc.rect(0,42,W,2,'F');
   doc.setFillColor(240,242,248); doc.rect(0,44,W,16,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...navy);
@@ -1248,7 +1252,7 @@ function pdfFooter(doc,page,total){
   doc.setFillColor(...ora); doc.rect(0,285,W,1.2,'F');
   doc.setFillColor(...navy); doc.rect(0,286.2,W,10.8,'F');
   doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(106,120,160);
-  doc.text('Valve ENERGETICA  |  apexenergetica@gmail.com  |  11 6053-0525',W/2,291,{align:'center'});
+  doc.text('Valve Electronics(TM)  |  +39 02 0000000  |  info@valveelectronics.it',W/2,291,{align:'center'});
   doc.setTextColor(140,150,170);
   doc.text('Documento per uso interno — Compilare a mano',W/2,294.5,{align:'center'});
   if(total>1){ doc.text(`Pag. ${page}/${total}`,196,294.5,{align:'right'}); }
@@ -1282,7 +1286,7 @@ function genPlanillaAC(){
   }
 
   // DATI DELL'APPARECCHIO
-  nb(60); y=pdfSec(doc,y,'DATI DELL'APPARECCHIO');
+  nb(60); y=pdfSec(doc,y,"DATI DELL'APPARECCHIO");
   y=pdfRow2(doc,y,'Marca / Modelo','N\u00b0 di Serie / N\u00b0 di Apparecchio');
   y=pdfRow2(doc,y,'Capacità (Frigorie / BTU)','Tipo di gas refrigerante');
   y=pdfRow2(doc,y,'Ubicazione (ambiente / settore)','Tipo di installazione (split / cassette / altro)');
@@ -1312,7 +1316,7 @@ function genPlanillaAC(){
   nb(42); y=pdfSec(doc,y,'MISURAZIONI TERMICHE');
   const mt=[
     {label:'Temperatura mandata (aria fredda)',hasValue:true,unit:'\u00b0C'},
-    {label:'Temperatura ritorno (presa d\'aria)',hasValue:true,unit:'\u00b0C'},
+    {label:"Temperatura ritorno (presa d'aria)",hasValue:true,unit:'\u00b0C'},
     {label:'Temperatura ambiente interna',hasValue:true,unit:'\u00b0C'},
     {label:'Differenza di temperatura (DT)',hasValue:true,unit:'\u00b0C'},
     {label:'Temperatura ambiente esterna',hasValue:true,unit:'\u00b0C'},
@@ -1323,7 +1327,7 @@ function genPlanillaAC(){
   // CHECKLIST TECNICO
   nb(20); y=pdfSec(doc,y,'CHECKLIST TECNICO   ( B = Buono     R = Regolare     M = Male     N/A = Non applicabile )');
   const checks=[
-    'Pulizia dei filtri dell\'aria',
+    "Pulizia dei filtri dell'aria",
     'Pulizia serpentina evaporatore (interna)',
     'Pulizia serpentina condensatore (esterna)',
     'Stato dello scarico / vassoio di condensa',
@@ -1386,7 +1390,7 @@ function genPlanillaAC(){
   y+=4;
 
   // PROXIMA VISITA + ESTADO
-  nb(18); y=pdfRow2(doc,y,'Prossima visita programmata (data)','Stato generale dell'apparecchio  (Buono / Regolare / Critico)');
+  nb(18); y=pdfRow2(doc,y,'Prossima visita programmata (data)','Stato generale dell\'apparecchio  (Buono / Regolare / Critico)');
   y+=3;
 
   // OBSERVACIONES Y RECOMENDACIONES

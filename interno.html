@@ -342,7 +342,7 @@ body {
         <div class="dash-card" onclick="showView('planos')" role="button" tabindex="0">
           <span class="dash-card-icon" aria-hidden="true">📐</span>
           <div class="dash-card-title">Planimimetrie e quadri</div>
-          <p class="dash-card-desc">Editor di planimetrie elettriche, schemi di quadri e diagrammi d\'impianto.</p>
+          <p class="dash-card-desc">Editor di planimetrie elettriche, schemi di quadri e diagrammi d'impianto.</p>
           <span class="dash-card-arrow" aria-hidden="true">→</span>
         </div>
         <div class="dash-card" onclick="showView('manuales')" role="button" tabindex="0">
@@ -679,7 +679,7 @@ function agregarManuales(e) {
       const id = `m_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
       const url = URL.createObjectURL(new Blob([ev.target.result], { type: file.type || 'application/octet-stream' }));
       manualBlobs[id] = url;
-      manuales.push({ id, nombre: file.name.replace(/\.[^.]+$/, ''), tipo: file.name.split('.').pop().toUpperCase(), categoria: detectarCategoria(file.name), fecha: new Date().toLocaleDateString('es-AR') });
+      manuales.push({ id, nombre: file.name.replace(/\.[^.]+$/, ''), tipo: file.name.split('.').pop().toUpperCase(), categoria: detectarCategoria(file.name), fecha: new Date().toLocaleDateString('it-IT') });
       guardarMetaManuales();
       renderManuales();
     };
@@ -810,7 +810,7 @@ function guardarTip() {
     tipo:     document.getElementById('tip-tipo').value,
     servicio: document.getElementById('tip-servicio').value,
     link:     document.getElementById('tip-link').value.trim(),
-    fecha:    new Date().toLocaleDateString('es-AR')
+    fecha:    new Date().toLocaleDateString('it-IT')
   });
   saveTips();
   cerrarModalTip();

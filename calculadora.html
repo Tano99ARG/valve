@@ -556,7 +556,7 @@ body {
     <div class="calc">
       <div class="calc-hd"><span class="calc-ico">💧</span><span class="calc-tt">Tubazione acqua</span></div>
       <div class="calc-bd">
-        <div class="fld"><span class="fld-lbl">Cantidad de bocas / artefactos</span><input class="inp" id="ag-bocas" type="number" placeholder="4" oninput="calcAgua()"></div>
+        <div class="fld"><span class="fld-lbl">Numero di prese / apparecchi</span><input class="inp" id="ag-bocas" type="number" placeholder="4" oninput="calcAgua()"></div>
         <div class="fld"><span class="fld-lbl">Tipo de servicio</span>
           <select class="sel" id="ag-tipo" onchange="calcAgua()">
             <option value="0.1">Bagno / cucina domestico</option>
@@ -595,7 +595,7 @@ body {
 // ═══════════ UTILS ═══════════
 const $=id=>document.getElementById(id);
 const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
-const fmt=(n,d=2)=>{if(n===null||!isFinite(n))return '—';return n.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:d})};
+const fmt=(n,d=2)=>{if(n===null||!isFinite(n))return '—';return n.toLocaleString('it-IT',{minimumFractionDigits:0,maximumFractionDigits:d})};
 const RHO={cu:0.0178,al:0.0282}; // Ω·mm²/m a temperatura de servicio
 const STD_BREAKERS=[6,10,13,16,20,25,32,40,50,63,80,100,125,160];
 // Ampacità Rame in tubo (CEI 64-8, PVC, 2-3 cond. caricati) — referenziale
@@ -724,7 +724,7 @@ function calcCO(){
   const p=num('co-p'),h=num('co-h'),pr=num('co-precio');
   if(p===null||h===null||pr===null){$('co-out').textContent='—';$('co-dia').textContent='—';$('co-mes').textContent='—';return;}
   const kwhDia=p/1000*h;const kwhMes=kwhDia*30;const costo=kwhMes*pr;
-  $('co-out').innerHTML='$ '+fmt(costo,0);
+  $('co-out').innerHTML='\u20ac '+fmt(costo,0);
   $('co-dia').textContent=fmt(kwhDia,2)+' kWh';
   $('co-mes').textContent=fmt(kwhMes,1)+' kWh';
 }
