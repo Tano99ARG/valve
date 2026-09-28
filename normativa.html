@@ -129,6 +129,7 @@ const $=id=>document.getElementById(id);
 const CATS=[
   {id:'electrico', name:'Elettrico (CEI)', accent:'#008F6E', desc:'Punti chiave della CEI 64-8 (Impianti elettrici a bassa tensione) e CEI 64-100 (Messa a terra).'},
   {id:'gas', name:'Gas (UNI 9039/EN 1775)', accent:'#e85d4a', desc:'Riferimento rapido di tenuta, ventilazione e materiali secondo UNI 9039 e EN 1775.'},
+  {id:'fgas', name:'Gas refrigeranti (Reg. UE 2024/573)', accent:'#00D4AA', desc:'Refrigeranti in divieto progressivo, scadenze, patentino F-gas e recupero gas secondo CEI EN 378.'},
   {id:'solar', name:'Solare (Direttiva 2018/2001)', accent:'#f1c40f', desc:'Requisiti di generazione distribuita e connessione alla rete per utenti-generatori (Direttiva RED II).'},
   {id:'tablas', name:'Tabelle rapide', accent:'#9b59b6', desc:'Tabelle di riferimento di uso trasversale: gradi di protezione, colori normalizzati e distanze.'},
 ];
@@ -167,6 +168,35 @@ const NORMS=[
    points:['Separazione minima da conduttori e scatole elettriche in incrocii e parallelismi','Evitare il passaggio di tubazioni gas per condotti di ventilazione o canalizzazioni elettriche','Distanza minima da fonti di calore e apparecchi che generano fiamma aperta','Segnaletica e protezione meccanica nei tratti esposti a danni']},
   {id:'habilitacion',cat:'gas',name:'Abilitazione e sigillo normativo',tag:'UNI 9039',
    points:['Ogni impianto nuovo o modificato richiede Dichiarazione di Installazione Interna (DI) firmata dal tecnico abilitato','Il distributore abilita il servizio dopo l\'approvazione della prova di tenuta','Conservare la documentazione di abilitazione insieme agli impianti della installazione','Le modifiche successive devono essere dichiarate']},
+
+  // GAS REFRIGERANTI (F-GAS)
+  {id:'fgas-tabella',cat:'fgas',name:'Refrigeranti: GWP, classe e stato di legge',tag:'Reg. UE 2024/573',
+   table:{head:['Refrigerante','GWP','Classe','Impiego tipico','Stato in UE / Italia'],rows:[
+     ['R-32','675','A2L','Split residenziali, pompe di calore','<b>In uso</b> sulle nuove installazioni'],
+     ['R-290 (propano)','~3','A3','Pompe di calore monoblocco','<b>In uso</b>, in diffusione come alternativa naturale'],
+     ['R-600a (isobutano)','~3','A3','Frigoriferi e congelatori domestici','<b>In uso</b> su tutti i nuovi apparecchi'],
+     ['R-410A','2088','A1','Split e pompe di calore di generazione precedente','Non immettabile dal <b>1&deg; gennaio 2025</b>'],
+     ['R-22','1810','A1','Split molto datati, ancora in campo','Vietato sulle nuove macchine'],
+     ['R-134a','1430','A1','Frigoriferi di generazione precedente','Solo manutenzione'],
+     ['R-404A','3922','A1','Vetrine e gruppi di refrigerazione','Solo manutenzione'],
+   ]}},
+  {id:'fgas-scadenze',cat:'fgas',name:'Divieti e scadenze',tag:'Reg. UE 2024/573',
+   table:{head:['Data','Divieto o obbligo'],rows:[
+     ['1&deg; gen 2025','Immissione sul mercato di monosplit con &lt; 3 kg di gas a GWP &ge; 750 (esaurisce R-410A)'],
+     ['1&deg; gen 2025','Uso di gas vergini a GWP &ge; 2500 per la manutenzione delle apparecchiature fisse di refrigerazione'],
+     ['<b>1&deg; gen 2026</b>','Uso di gas vergini a GWP &ge; 2500 per la manutenzione di <b>climatizzatori e pompe di calore</b>'],
+     ['1&deg; gen 2030','Scade la deroga riciclato/rigenerato per la refrigerazione (GWP &ge; 2500)'],
+     ['1&deg; gen 2032','Uso vietato a GWP &ge; 750 nella manutenzione della refrigerazione fissa, esclusi i chiller; scade anche la deroga per clima'],
+     ['12 marzo 2027','Adeguamento del sistema di certificazione nazionale al Regolamento'],
+   ]}},
+  {id:'fgas-deroghe',cat:'fgas',name:'Cosa resta ammesso in manutenzione',tag:'Reg. UE 2024/573',
+   points:["Il divieto colpisce i <b>gas vergini</b>: per gli impianti gi&agrave; in campo si pu&ograve; usare gas <b>riciclato o rigenerato</b> fino alle scadenze indicate","Non riguarda la <b>ricarica dopo riparazione</b> su un circuito che era gi&agrave; a R-410A o R-22, purch&eacute; documentata e con patentino valido","Non &egrave; pi&ugrave; consentito installare <b>macchine nuove</b> con questi gas: la scelta si fa su R-32 o R-290","La sostituzione del gas di un impianto esistente non &egrave; una conversione semplice: servono interventi su compressore, olio e dimensionamento delle linee"],
+   warn:"Prima di accettare un lavoro, verificare sempre il gas sulla targa dell'apparecchio e la scadenza applicabile: caricare un gas vietato &egrave; sanzionabile."},
+  {id:'fgas-cert',cat:'fgas',name:'Patentino F-gas e adempimenti',tag:'DPR 146/2018 / DPR 43/2012',
+   points:["Gli interventi su apparecchiature con F-gas richiedono <b>persona e impresa certificate</b> (patentino F-gas), con validit&agrave; <b>7 anni</b>","L'obbligo di certificazione si estende anche ai <b>refrigeranti alternativi</b>: ammoniaca, CO<sub>2</sub> e idrocarburi come R-290 e R-600a","Iscrizione al <b>Registro telematico nazionale</b> e alimentazione della <b>Banca dati F-Gas</b> (ISPRA) per l'acquisto e la vendita di gas","Il <b>libretto d'impianto</b> riporta tipo e quantit&agrave; di gas, interventi, controlli delle perdite e quantit&agrave; recuperate","La normativa italiana &egrave; in revisione (nuovo DPR): verificare gli aggiornamenti prima di applicarli"]},
+  {id:'fgas-recupero',cat:'fgas',name:'Recupero gas e sicurezza',tag:'CEI EN 378 / CEI 11-27',
+   points:["Prima di aprire il circuito: <b>recuperare</b> il gas in un cilindro apposito e registrarne la quantit&agrave;","Controllo delle perdite con <b>rivelatore elettronico</b> o acqua saponata; la fiamma non &egrave; ammessa","Dopo l'intervento: <b>vuoto</b> con pompa, quindi prova di tenuta con aria o gas inerte e infine carica <b>per peso</b>","Per R-290 e R-600a (classe <b>A3</b>) servono cautela nelle fonti di ignizione, ventilazione e limiti di carica in base al volume del locale","Per R-32 (classe <b>A2L</b>) valutare il sensore di perdita e la ventilazione secondo le indicazioni del produttore","Non miscelare mai gas diversi e non usare ossigeno come agente di pressione: per R-32 e R-290 &egrave; pericoloso"],
+   warn:"La classe di infiammabilit&agrave; (A1, A2L, A3) cambia radicalmente le precauzioni: R-32 non &egrave; un R-410A e R-290 non &egrave; un R-32."},
 
   // SOLAR
   {id:'usuario-gen',cat:'solar',name:'Utente-generatore e connessione alla rete',tag:'Direttiva RED II',

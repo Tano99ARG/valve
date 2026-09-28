@@ -161,24 +161,24 @@ body {
   <div class="view-intro"><h2>Calcoli elettrici</h2><p>Legge di Ohm, potenza, caduta di tensione, sezione conduttori e protezioni secondo CEI 64-8.</p></div>
   <div class="grid">
 
-    <!-- Ley de Ohm -->
+    <!-- Legge di Ohm -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">Ω</span><span class="calc-tt">Ley de Ohm / Potencia</span></div>
+      <div class="calc-hd"><span class="calc-ico">Ω</span><span class="calc-tt">Legge di Ohm / Potenza</span></div>
       <div class="calc-bd">
         <p class="note">Completa due valori qualsiasi e si calcolano gli altri.</p>
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Tensione <small>V</small></span><input class="inp" id="ohm-v" type="number" placeholder="220" oninput="calcOhm('v')"></div>
-          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="ohm-i" type="number" placeholder="—" oninput="calcOhm('i')"></div>
+          <div class="fld"><span class="fld-lbl">Corrente <small>A</small></span><input class="inp" id="ohm-i" type="number" placeholder="—" oninput="calcOhm('i')"></div>
           <div class="fld"><span class="fld-lbl">Resistencia <small>Ω</small></span><input class="inp" id="ohm-r" type="number" placeholder="—" oninput="calcOhm('r')"></div>
-          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="ohm-p" type="number" placeholder="—" oninput="calcOhm('p')"></div>
+          <div class="fld"><span class="fld-lbl">Potenza <small>W</small></span><input class="inp" id="ohm-p" type="number" placeholder="—" oninput="calcOhm('p')"></div>
         </div>
         <button class="conv-cat" style="width:100%;text-align:center" onclick="clearOhm()">Limpiar</button>
       </div>
     </div>
 
-    <!-- Potencia y corriente -->
+    <!-- Potenza e corrente -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">⚡</span><span class="calc-tt">Potencia ↔ Corriente</span></div>
+      <div class="calc-hd"><span class="calc-ico">⚡</span><span class="calc-tt">Potenza ↔ Corrente</span></div>
       <div class="calc-bd">
         <div class="fld"><span class="fld-lbl">Sistema</span>
           <select class="sel" id="pc-sys" onchange="calcPC()">
@@ -187,13 +187,13 @@ body {
           </select>
         </div>
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="pc-p" type="number" placeholder="2200" oninput="calcPC()"></div>
+          <div class="fld"><span class="fld-lbl">Potenza <small>W</small></span><input class="inp" id="pc-p" type="number" placeholder="2200" oninput="calcPC()"></div>
           <div class="fld"><span class="fld-lbl">Tensione <small>V</small></span><input class="inp" id="pc-v" type="number" placeholder="220" oninput="calcPC()"></div>
         </div>
         <div class="fld"><span class="fld-lbl">Factor de potencia <small>cos φ</small></span><input class="inp" id="pc-fp" type="number" step="0.01" value="0.9" oninput="calcPC()"></div>
         <div class="res">
-          <div class="res-main"><span class="res-lbl">Corriente</span><span class="res-val" id="pc-out">—</span></div>
-          <div class="res-sub"><div class="res-line">Potencia aparente <b id="pc-va">—</b></div></div>
+          <div class="res-main"><span class="res-lbl">Corrente</span><span class="res-val" id="pc-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Potenza apparente <b id="pc-va">—</b></div></div>
         </div>
       </div>
     </div>
@@ -209,8 +209,8 @@ body {
             <select class="sel" id="ct-mat" onchange="calcCT()"><option value="cu">Rame</option><option value="al">Aluminio</option></select></div>
         </div>
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="ct-i" type="number" placeholder="20" oninput="calcCT()"></div>
-          <div class="fld"><span class="fld-lbl">Longitud <small>m</small></span><input class="inp" id="ct-l" type="number" placeholder="30" oninput="calcCT()"></div>
+          <div class="fld"><span class="fld-lbl">Corrente <small>A</small></span><input class="inp" id="ct-i" type="number" placeholder="20" oninput="calcCT()"></div>
+          <div class="fld"><span class="fld-lbl">Lunghezza <small>m</small></span><input class="inp" id="ct-l" type="number" placeholder="30" oninput="calcCT()"></div>
         </div>
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Sezione <small>mm²</small></span><input class="inp" id="ct-s" type="number" placeholder="4" oninput="calcCT()"></div>
@@ -236,8 +236,8 @@ body {
             <select class="sel" id="sc-mat" onchange="calcSC()"><option value="cu">Rame</option><option value="al">Aluminio</option></select></div>
         </div>
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="sc-i" type="number" placeholder="25" oninput="calcSC()"></div>
-          <div class="fld"><span class="fld-lbl">Longitud <small>m</small></span><input class="inp" id="sc-l" type="number" placeholder="40" oninput="calcSC()"></div>
+          <div class="fld"><span class="fld-lbl">Corrente <small>A</small></span><input class="inp" id="sc-i" type="number" placeholder="25" oninput="calcSC()"></div>
+          <div class="fld"><span class="fld-lbl">Lunghezza <small>m</small></span><input class="inp" id="sc-l" type="number" placeholder="40" oninput="calcSC()"></div>
         </div>
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Tensione <small>V</small></span><input class="inp" id="sc-v" type="number" placeholder="220" oninput="calcSC()"></div>
@@ -257,16 +257,16 @@ body {
       <div class="calc-bd">
         <div class="fld"><span class="fld-lbl">Modalità di calcolo</span>
           <select class="sel" id="pr-mode" onchange="togglePR();calcPR()"><option value="i">Per corrente nota</option><option value="p">Per potenza e tensione</option></select></div>
-        <div id="pr-byi"><div class="fld"><span class="fld-lbl">Corriente de carga <small>A</small></span><input class="inp" id="pr-i" type="number" placeholder="18" oninput="calcPR()"></div></div>
+        <div id="pr-byi"><div class="fld"><span class="fld-lbl">Corrente de carga <small>A</small></span><input class="inp" id="pr-i" type="number" placeholder="18" oninput="calcPR()"></div></div>
         <div id="pr-byp" style="display:none">
           <div class="grid2">
-            <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="pr-p" type="number" placeholder="3500" oninput="calcPR()"></div>
+            <div class="fld"><span class="fld-lbl">Potenza <small>W</small></span><input class="inp" id="pr-p" type="number" placeholder="3500" oninput="calcPR()"></div>
             <div class="fld"><span class="fld-lbl">Sistema</span><select class="sel" id="pr-sys" onchange="calcPR()"><option value="mono">Mono 220V</option><option value="tri">Tri 380V</option></select></div>
           </div>
         </div>
         <div class="res">
           <div class="res-main"><span class="res-lbl">Termomagnetica</span><span class="res-val" id="pr-out">—</span></div>
-          <div class="res-sub"><div class="res-line">Corriente de carga <b id="pr-load">—</b></div><div class="res-line">Sezione suggerita <b id="pr-cable">—</b></div></div>
+          <div class="res-sub"><div class="res-line">Corrente de carga <b id="pr-load">—</b></div><div class="res-line">Sezione suggerita <b id="pr-cable">—</b></div></div>
         </div>
         <p class="note">Disyuntor ≥ corriente de carga y ≤ ampacidad del cable. Diferencial de 30mA obligatorio en circuitos terminales.</p>
       </div>
@@ -276,7 +276,7 @@ body {
     <div class="calc">
       <div class="calc-hd"><span class="calc-ico">📐</span><span class="calc-tt">Correzione fattore di potenza</span></div>
       <div class="calc-bd">
-        <div class="fld"><span class="fld-lbl">Potencia activa <small>kW</small></span><input class="inp" id="fp-p" type="number" placeholder="50" oninput="calcFP()"></div>
+        <div class="fld"><span class="fld-lbl">Potenza attiva <small>kW</small></span><input class="inp" id="fp-p" type="number" placeholder="50" oninput="calcFP()"></div>
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">cos φ actual</span><input class="inp" id="fp-1" type="number" step="0.01" placeholder="0.75" oninput="calcFP()"></div>
           <div class="fld"><span class="fld-lbl">cos φ objetivo</span><input class="inp" id="fp-2" type="number" step="0.01" value="0.95" oninput="calcFP()"></div>
@@ -321,7 +321,7 @@ body {
       <div class="calc-hd"><span class="calc-ico">💲</span><span class="calc-tt">Costo de consumo</span></div>
       <div class="calc-bd">
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="co-p" type="number" placeholder="1500" oninput="calcCO()"></div>
+          <div class="fld"><span class="fld-lbl">Potenza <small>W</small></span><input class="inp" id="co-p" type="number" placeholder="1500" oninput="calcCO()"></div>
           <div class="fld"><span class="fld-lbl">Ore / giorno</span><input class="inp" id="co-h" type="number" placeholder="6" oninput="calcCO()"></div>
         </div>
         <div class="fld"><span class="fld-lbl">Prezzo <small>€/kWh</small></span><input class="inp" id="co-precio" type="number" step="0.01" placeholder="65" oninput="calcCO()"></div>
@@ -348,16 +348,16 @@ body {
         <div class="fld"><span class="fld-lbl">Sistema de acometida</span>
           <select class="sel" id="fd-sys" onchange="calcFD()"><option value="mono">Monofase 220V</option><option value="tri">Trifase 380V</option></select></div>
         <div class="res">
-          <div class="res-main"><span class="res-lbl">Potencia contratada</span><span class="res-val" id="fd-out">—</span></div>
-          <div class="res-sub"><div class="res-line">Carga instalada total <b id="fd-inst">—</b></div><div class="res-line">Corriente de acometida <b id="fd-i">—</b></div><div class="res-line">Disyuntor general sugerido <b id="fd-br">—</b></div></div>
+          <div class="res-main"><span class="res-lbl">Potenza contratta</span><span class="res-val" id="fd-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Carga instalada total <b id="fd-inst">—</b></div><div class="res-line">Corrente de acometida <b id="fd-i">—</b></div><div class="res-line">Disyuntor general sugerido <b id="fd-br">—</b></div></div>
         </div>
         <p class="note">Fattore di domanda orientativo: 100% illuminazione, 100% primi 3000W di prese + 35% del resto, 75% in scaldabagno/AC se coesistono. Verificare con regolamento del distributore locale.</p>
       </div>
     </div>
 
-    <!-- Puesta a tierra -->
+    <!-- Dispersore di terra -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">⏚</span><span class="calc-tt">Puesta a tierra (jabalina)</span></div>
+      <div class="calc-hd"><span class="calc-ico">⏚</span><span class="calc-tt">Dispersore di terra</span></div>
       <div class="calc-bd">
         <p class="note">Resistenza stimata di elettrodo verticale semplice (formula di Dwight, suolo omogeneo).</p>
         <div class="grid2">
@@ -372,13 +372,13 @@ body {
           <div class="fld"><span class="fld-lbl">ρ personalizada <small>Ω·m</small></span><input class="inp" id="pt-rho" type="number" value="100" oninput="calcPT()"></div>
         </div>
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Longitud jabalina <small>m</small></span><input class="inp" id="pt-l" type="number" value="1.5" step="0.1" oninput="calcPT()"></div>
+          <div class="fld"><span class="fld-lbl">Lunghezza dispersore <small>m</small></span><input class="inp" id="pt-l" type="number" value="1.5" step="0.1" oninput="calcPT()"></div>
           <div class="fld"><span class="fld-lbl">Diametro <small>mm</small></span><input class="inp" id="pt-d" type="number" value="16" oninput="calcPT()"></div>
         </div>
-        <div class="fld"><span class="fld-lbl">Jabalinas en paralelo</span><input class="inp" id="pt-n" type="number" value="1" min="1" oninput="calcPT()"></div>
+        <div class="fld"><span class="fld-lbl">Dispersori in parallelo</span><input class="inp" id="pt-n" type="number" value="1" min="1" oninput="calcPT()"></div>
         <div class="res">
           <div class="res-main"><span class="res-lbl">Resistencia a tierra</span><span class="res-val" id="pt-out">—</span></div>
-          <div class="res-sub"><div class="res-line">Una jabalina <b id="pt-uno">—</b></div></div>
+          <div class="res-sub"><div class="res-line">Un dispersore <b id="pt-uno">—</b></div></div>
           <span id="pt-badge"></span>
         </div>
         <p class="note">R = (ρ/2πL)·[ln(8L/d)−1]. Più jabaline: separare ≥2× la lunghezza per efficienza reale (~85-90% per elettrodo aggiuntivo).</p>
@@ -388,14 +388,14 @@ body {
   </div>
 </div>
 
-<!-- ══════════ REFRIGERACIÓN ══════════ -->
+<!-- ══════════ REFRIGERAZIONE ══════════ -->
 <div class="view" id="v-clima">
   <div class="view-intro"><h2>Refrigerazione e climatizzazione</h2><p>Dimensionamento apparecchi, carica gas refrigerante e conversione unità di frigorio.</p></div>
   <div class="grid">
 
-    <!-- Dimensionado AC -->
+    <!-- Dimensionamento split -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">❄️</span><span class="calc-tt">Dimensionado de equipo</span></div>
+      <div class="calc-hd"><span class="calc-ico">❄️</span><span class="calc-tt">Dimensionamento apparecchio</span></div>
       <div class="calc-bd">
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Superficie <small>m²</small></span><input class="inp" id="ac-m2" type="number" placeholder="25" oninput="calcAC()"></div>
@@ -420,14 +420,26 @@ body {
       </div>
     </div>
 
-    <!-- Carga de gas -->
+    <!-- Carica gas -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">🧪</span><span class="calc-tt">Carga de gas adicional</span></div>
+      <div class="calc-hd"><span class="calc-ico">🧪</span><span class="calc-tt">Carica gas aggiuntiva</span></div>
       <div class="calc-bd">
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Refrigerante</span>
             <select class="sel" id="gas-ref" onchange="calcGas()">
-              <option value="r410">R-410A</option><option value="r32">R-32</option><option value="r22">R-22</option><option value="r134">R-134a</option><option value="r404">R-404A</option>
+              <optgroup label="In uso sulle nuove installazioni">
+                <option value="r32" selected>R-32 &middot; GWP 675 &middot; split e pompe di calore</option>
+                <option value="r290">R-290 propano &middot; GWP ~3 &middot; monoblocco, in diffusione</option>
+              </optgroup>
+              <optgroup label="Solo manutenzione di impianti gi&agrave; installati">
+                <option value="r410">R-410A &middot; GWP 2088 &middot; non pi&ugrave; immettabile dal 2025</option>
+                <option value="r22">R-22 &middot; GWP 1810 &middot; vietato per nuove macchine</option>
+              </optgroup>
+              <optgroup label="Refrigerazione domestica">
+                <option value="r600a">R-600a isobutano &middot; GWP ~3 &middot; frigo e congelatori</option>
+                <option value="r134">R-134a &middot; GWP 1430 &middot; solo manutenzione</option>
+                <option value="r404">R-404A &middot; GWP 3922 &middot; solo manutenzione</option>
+              </optgroup>
             </select></div>
           <div class="fld"><span class="fld-lbl">Linea di liquido</span>
             <select class="sel" id="gas-dia" onchange="calcGas()">
@@ -435,15 +447,15 @@ body {
             </select></div>
         </div>
         <div class="grid2">
-          <div class="fld"><span class="fld-lbl">Longitud total <small>m</small></span><input class="inp" id="gas-l" type="number" placeholder="12" oninput="calcGas()"></div>
+          <div class="fld"><span class="fld-lbl">Lunghezza totale <small>m</small></span><input class="inp" id="gas-l" type="number" placeholder="12" oninput="calcGas()"></div>
           <div class="fld"><span class="fld-lbl">Carica di fabbrica <small>m</small></span><input class="inp" id="gas-lf" type="number" value="5" oninput="calcGas()"></div>
         </div>
         <div class="res">
           <div class="res-main"><span class="res-lbl">Carga extra</span><span class="res-val" id="gas-out">—</span></div>
-          <div class="res-sub"><div class="res-line">Metros adicionales <b id="gas-extra">—</b></div><div class="res-line">Factor de carga <b id="gas-factor">—</b></div></div>
+          <div class="res-sub"><div class="res-line">Metri aggiuntivi <b id="gas-extra">—</b></div><div class="res-line">Fattore di carica <b id="gas-factor">—</b></div></div>
           <span id="gas-badge"></span>
         </div>
-        <p class="note">Verificare sempre la targa dell'apparecchio: la carica di fabbrica e il g/m variano secondo il produttore.</p>
+        <p class="note"><strong>Leggere la targa dell'apparecchio</strong> per carica di fabbrica e gas: i g/m sono valori indicativi di linea di liquido e variano per produttore e lunghezza. Dal <strong>1&deg; gennaio 2025</strong> R-410A non pu&ograve; pi&ugrave; essere immesso sul mercato; dal <strong>1&deg; gennaio 2026</strong> &egrave; vietato l'uso di gas vergini con GWP &ge; 2500 per la manutenzione di climatizzatori e pompe di calore. Per i nuovi impianti residenziali la scelta &egrave; <strong>R-32</strong>, in transizione verso <strong>R-290</strong>. Attenzione alla classe di infiammabilit&agrave;: R-32 &egrave; A2L, R-290 e R-600a sono A3 e impongono limiti di carica e ventilazione secondo CEI EN 378.</p>
       </div>
     </div>
 
@@ -469,16 +481,16 @@ body {
   <div class="view-intro"><h2>Energia solare fotovoltaica</h2><p>Dimensionamento sistemi FV e banco batterie (Direttiva RED II 2018/2001).</p></div>
   <div class="grid">
 
-    <!-- Dimensionado FV -->
+    <!-- Dimensionamento FV -->
     <div class="calc">
-      <div class="calc-hd"><span class="calc-ico">☀️</span><span class="calc-tt">Dimensionado fotovoltaico</span></div>
+      <div class="calc-hd"><span class="calc-ico">☀️</span><span class="calc-tt">Dimensionamento fotovoltaico</span></div>
       <div class="calc-bd">
         <div class="fld"><span class="fld-lbl">Consumo giornaliero <small>kWh/giorno</small></span><input class="inp" id="fv-cons" type="number" placeholder="12" oninput="calcFV()"></div>
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">HSP <small>sole pico h/giorno</small></span><input class="inp" id="fv-hsp" type="number" step="0.1" value="4.5" oninput="calcFV()"></div>
-          <div class="fld"><span class="fld-lbl">Potencia panel <small>Wp</small></span><input class="inp" id="fv-panel" type="number" value="550" oninput="calcFV()"></div>
+          <div class="fld"><span class="fld-lbl">Potenza panel <small>Wp</small></span><input class="inp" id="fv-panel" type="number" value="550" oninput="calcFV()"></div>
         </div>
-        <div class="fld"><span class="fld-lbl">Rendimiento del sistema <small>%</small></span><input class="inp" id="fv-ef" type="number" value="80" oninput="calcFV()"></div>
+        <div class="fld"><span class="fld-lbl">Rendimento del sistema <small>%</small></span><input class="inp" id="fv-ef" type="number" value="80" oninput="calcFV()"></div>
         <div class="res">
           <div class="res-main"><span class="res-lbl">Paneles necesarios</span><span class="res-val" id="fv-out">—</span></div>
           <div class="res-sub"><div class="res-line">Potenza da installare <b id="fv-pot">—</b></div><div class="res-line">Generazione stimata <b id="fv-gen">—</b></div></div>
@@ -525,7 +537,7 @@ body {
             <option value="9300">Gas natural (9300 kcal/m³)</option>
             <option value="22000">GLP / envasado (22000 kcal/m³)</option>
           </select></div>
-        <div class="fld"><span class="fld-lbl">Potencia del artefacto <small>kcal/h</small></span><input class="inp" id="cg-pot" type="number" placeholder="9000" oninput="calcCaudal()"></div>
+        <div class="fld"><span class="fld-lbl">Potenza dell'apparecchio <small>kcal/h</small></span><input class="inp" id="cg-pot" type="number" placeholder="9000" oninput="calcCaudal()"></div>
         <div class="res">
           <div class="res-main"><span class="res-lbl">Caudal</span><span class="res-val" id="cg-out">—</span></div>
           <div class="res-sub"><div class="res-line">En kW <b id="cg-kw">—</b></div></div>
@@ -540,7 +552,7 @@ body {
       <div class="calc-bd">
         <div class="grid2">
           <div class="fld"><span class="fld-lbl">Caudal <small>m³/h</small></span><input class="inp" id="dc-caudal" type="number" step="0.1" placeholder="2.5" oninput="calcDiam()"></div>
-          <div class="fld"><span class="fld-lbl">Longitud tramo <small>m</small></span><input class="inp" id="dc-long" type="number" placeholder="15" oninput="calcDiam()"></div>
+          <div class="fld"><span class="fld-lbl">Lunghezza tratto <small>m</small></span><input class="inp" id="dc-long" type="number" placeholder="15" oninput="calcDiam()"></div>
         </div>
         <div class="fld"><span class="fld-lbl">Material</span>
           <select class="sel" id="dc-mat" onchange="calcDiam()"><option value="epoxi">Ferro epossidato / acciaio</option><option value="cobre">Rame</option></select></div>
@@ -577,12 +589,12 @@ body {
 <div class="view" id="v-conv">
   <div class="view-intro"><h2>Convertitore di unità</h2><p>Conversione istantanea tra unità. Modifica qualsiasi campo e il resto si aggiorna.</p></div>
   <div class="conv-cats" id="conv-cats">
-    <button class="conv-cat on" data-c="pot">Potencia</button>
+    <button class="conv-cat on" data-c="pot">Potenza</button>
     <button class="conv-cat" data-c="temp">Temperatura</button>
     <button class="conv-cat" data-c="pres">Pressione</button>
     <button class="conv-cat" data-c="ener">Energia</button>
     <button class="conv-cat" data-c="caud">Caudal</button>
-    <button class="conv-cat" data-c="long">Longitud</button>
+    <button class="conv-cat" data-c="long">Lunghezza</button>
     <button class="conv-cat" data-c="awg">Sezione mm² ↔ AWG</button>
   </div>
   <div class="conv-panel" id="conv-panel"></div>
@@ -770,17 +782,17 @@ function calcPT(){
   const d=dmm/1000; // a metros
   // Formula di Dwight per elettrodo verticale: R = (ρ/(2πL)) × [ln(8L/d) − 1]
   const rUno= (rho/(2*Math.PI*l)) * (Math.log(8*l/d)-1);
-  // Para n jabalinas en paralelo: eficiencia ~85-90% por electrodo adicional (simplificado)
+  // Per n dispersori in parallelo: efficienza ~85-90% per dispersore aggiuntivo (semplificato)
   const efic=0.87;
   let rTotal=rUno;
   if(n>1){
-    // resistencia equivalente con factor de eficiencia de conjunto
+    // resistenza equivalente con fattore di efficienza di gruppo
     rTotal=rUno/(n*efic);
   }
   $('pt-out').innerHTML=fmt(rTotal,2)+' <small>Ω</small>';
   $('pt-uno').textContent=fmt(rUno,2)+' Ω';
   let b='badge-ok',txt='✓ Apto para PE residencial (<25Ω)';
-  if(rTotal>25&&rTotal<=40){b='badge-warn';txt='⚠ Alto — considerar jabalina adicional';}
+  if(rTotal>25&&rTotal<=40){b='badge-warn';txt='⚠ Alto — valutare un dispersore aggiuntivo';}
   else if(rTotal>40){b='badge-bad';txt='✗ Eccessivo — richiede trattamento del suolo o più elettrodi';}
   $('pt-badge').innerHTML=`<span class="res-badge ${b}">${txt}</span>`;
 }
@@ -790,7 +802,7 @@ function calcAC(){
   const m2=num('ac-m2'),h=num('ac-h')||2.6,exp=parseFloat($('ac-exp').value);
   const pers=num('ac-pers')||0,eq=num('ac-eq')||0;
   if(m2===null){$('ac-out').textContent='—';$('ac-btu').textContent='—';$('ac-kw').textContent='—';$('ac-badge').innerHTML='';return;}
-  // frig/h = m² × factor (ajustado por altura) + personas×100 + equipos(W)×0.86
+  // frig/h = m² × fattore (aggiustato per altezza) + persone×100 + apparecchi(W)×0.86
   const factorAltura= h>2.6 ? (h/2.6) : 1;
   let frig= m2*exp*factorAltura + pers*100 + eq*0.86;
   const btu= frig*3.968;
@@ -799,19 +811,21 @@ function calcAC(){
   $('ac-btu').textContent=fmt(btu,0)+' BTU/h';
   $('ac-kw').textContent=fmt(kw,2)+' kW';
   // apparecchio commerciale standard
-  const equipos=[{f:2250,n:'2250 frig (9000 BTU)'},{f:3000,n:'3000 frig (12000 BTU)'},{f:4500,n:'4500 frig (18000 BTU)'},{f:5500,n:'5500 frig (24000 BTU)'},{f:8000,n:'8000 frig (32000 BTU)'}];
-  const eqSel=equipos.find(e=>e.f>=frig);
+  const apparecchi=[{f:2250,n:'2250 frig (9000 BTU)'},{f:3000,n:'3000 frig (12000 BTU)'},{f:4500,n:'4500 frig (18000 BTU)'},{f:5500,n:'5500 frig (24000 BTU)'},{f:8000,n:'8000 frig (32000 BTU)'}];
+  const eqSel=apparecchi.find(e=>e.f>=frig);
   $('ac-badge').innerHTML=`<span class="res-badge badge-ok">Apparecchio suggerito: ${eqSel?eqSel.n:'> 8000 frig (multi/central)'}</span>`;
 }
 
-// ═══════════ CARGA DE GAS ═══════════
+// ═══════════ CARICA GAS ═══════════
 // g/m de linea di liquido aggiuntiva, per refrigerante e diametro
 const GM={
-  r410:{6.35:20,9.52:55,12.7:115},
-  r32: {6.35:16,9.52:44,12.7:92},
-  r22: {6.35:16,9.52:50,12.7:107},
-  r134:{6.35:17,9.52:50,12.7:105},
-  r404:{6.35:20,9.52:55,12.7:115}
+  r32:  {6.35:16,9.52:44, 12.7:92},   // A2L - lievemente infiammabile
+  r290: {6.35:12,9.52:33, 12.7:70},   // A3 - infiammabile
+  r600a:{6.35: 9,9.52:24, 12.7:50},   // A3 - pressione bassa
+  r410: {6.35:20,9.52:55, 12.7:115},
+  r22:  {6.35:16,9.52:50, 12.7:107},
+  r134: {6.35:17,9.52:50, 12.7:105},
+  r404: {6.35:20,9.52:55, 12.7:115}
 };
 function calcGas(){
   const ref=$('gas-ref').value,dia=parseFloat($('gas-dia').value);
@@ -825,12 +839,12 @@ function calcGas(){
   $('gas-factor').textContent=gm+' g/m';
   let b,txt;
   if(extra<=0){b='badge-ok';txt='✓ Entro carica di fabbrica';}
-  else if(carga<500){b='badge-ok';txt='✓ Carga adicional menor';}
+  else if(carga<500){b='badge-ok';txt='✓ Carica aggiuntiva minima';}
   else{b='badge-warn';txt='⚠ Carga significativa — pesar refrigerante';}
   $('gas-badge').innerHTML=`<span class="res-badge ${b}">${txt}</span>`;
 }
 
-// ═══════════ CONVERSOR DE FRÍO ═══════════
+// ═══════════ CONVERTITORE DI FREDDO ═══════════
 // base: frig/h (=kcal/h).  1 BTU/h=0.252 frig ; 1 kW=860 frig ; 1 TR=3024 frig
 function calcFrio(src){
   let frig;
@@ -845,7 +859,7 @@ function calcFrio(src){
   if(src!=='tr')$('fr-tr').value=+(frig/3024).toFixed(3);
 }
 
-// ═══════════ DIMENSIONADO FV ═══════════
+// ═══════════ DIMENSIONAMENTO FV ═══════════
 function calcFV(){
   const cons=num('fv-cons'),hsp=num('fv-hsp')||4.5,panel=num('fv-panel')||550,ef=(num('fv-ef')||80)/100;
   if(cons===null){$('fv-out').textContent='—';$('fv-pot').textContent='—';$('fv-gen').textContent='—';return;}
@@ -908,11 +922,11 @@ function calcAgua(){
   $('ag-caudal').textContent=fmt(caudal,2)+' L/s';
 }
 
-// ═══════════ CONVERSOR DE UNIDADES ═══════════
+// ═══════════ CONVERSO DI UNITA' ═══════════
 const CONV={
-  pot:{title:'Potencia',desc:'Watt, kW, HP, CV, BTU/h, kcal/h y frigorie/h.',base:'W',
+  pot:{title:'Potenza',desc:'Watt, kW, HP, CV, BTU/h, kcal/h e frigorie/h.',base:'W',
     units:[['W','Watt',1],['kW','Kilowatt',1000],['HP','Cavallo di forza',745.7],['CV','Cavallo vapore',735.5],['BTUh','BTU/ora',0.293071],['kcalh','kcal/ora',1.163],['frig','Frigorie/h',1.163]]},
-  temp:{title:'Temperatura',desc:'Celsius, Fahrenheit y Kelvin.',base:'C',special:true,
+  temp:{title:'Temperatura',desc:'Celsius, Fahrenheit e Kelvin.',base:'C',special:true,
     units:[['C','Celsius °C'],['F','Fahrenheit °F'],['K','Kelvin']]},
   pres:{title:'Pressione',desc:'bar, psi, kPa, atmosfera, kg/cm² e mca.',base:'bar',
     units:[['bar','Bar',1],['psi','PSI',0.0689476],['kPa','Kilopascal',0.01],['atm','Atmosfera',1.01325],['kgcm2','kg/cm²',0.980665],['mca','Metri col. acqua',0.0980665]]},
@@ -920,7 +934,7 @@ const CONV={
     units:[['kWh','Kilowatt-hora',1],['MJ','Megajoule',0.277778],['kcal','Kilocaloria',0.00116222],['BTU','BTU',0.000293071],['Wh','Watt-hora',0.001]]},
   caud:{title:'Caudal',desc:'L/s, L/min, m³/h y galloni al minuto.',base:'Ls',
     units:[['Ls','Litri/secondo',1],['Lmin','Litri/minuto',0.0166667],['m3h','m³/ora',0.277778],['gpm','Galloni/min (US)',0.0630902],['m3s','m³/secondo',1000]]},
-  long:{title:'Longitud',desc:'metri, cm, mm, pollici e piedi.',base:'m',
+  long:{title:'Lunghezza',desc:'metri, cm, mm, pollici e piedi.',base:'m',
     units:[['m','Metro',1],['cm','Centimetro',0.01],['mm','Millimetro',0.001],['in','Pollice',0.0254],['ft','Piede',0.3048],['km','Chilometro',1000]]},
 };
 const AWG_TBL=[

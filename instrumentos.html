@@ -198,11 +198,11 @@ const INSTR=[
    apps:['Verifica livelli illuminamento secondo normativa sicurezza','Progettazione e regolazione impianti luminosi','Controllo qualità installazione luminarie'],
    tip:'Misurare all\'altezza del piano di lavoro (0.75–0.85m) e in più punti dell\'ambiente per ottenere una media rappresentativa.'},
 
-  // REFRIGERACIÓN
+  // REFRIGERAZIONE
   {id:'manometro',cat:'refrigeracion',name:'Set di manometri (multiplo)',sub:'Diagnosi pressioni del ciclo frigorifero',
-   specs:['Manometro bassa (0–500 psi) e alta (0–800 psi)','Corpo a 2 o 4 vie secondo modello','Tubi con connessione rapida 1/4" SAE','Quadranti con scale di pressione e temperatura di saturazione per refrigerante'],
+   specs:['Manometro bassa (0–30 bar) e alta (0–60 bar) per impianti R-32, R-410A e R-22','Bassa pressione 0–10 bar per R-600a e altri gas a bassa pressione','Corpo a 2 o 4 vie secondo modello','Tubi con connessione rapida 1/4" SAE','Quadranti con scale di pressione e temperatura di saturazione per refrigerante'],
    apps:['Carica e recupero refrigerante','Diagnosi pressioni di lavoro del sistema','Rilevamento guasti nel ciclo (valvole, compressore, ostruzioni)','Verifica vuoto durante disidratazione'],
-   tip:'Verificare periodicamente la calibrazione del manometro contro vuoto assoluto (0 psi = 0 in/Hg) per evitare diagnosi errate.'},
+   tip:'Verificare la calibrazione contro il vuoto assoluto (0 bar = 0 inHg). La scala va scelta sul gas: un manometro pensato per R-410A non ha risoluzione utile su R-600a, che lavora a pressioni molto basse.'},
   {id:'termopinza',cat:'refrigeracion',name:'Termometro a pinza / contatto',sub:'Misura temperatura in tubazioni',
    specs:['Range tipico -50°C a 150°C','Precisione tipica ±0.5°C','Sonda tipo K o pinza specifica per tubo di rame'],
    apps:['Misura surriscaldamento e sottoraffreddamento','Verifica temperatura in linee di aspirazione e liquido','Diagnosi carica refrigerante per metodo temperature'],
@@ -216,9 +216,9 @@ const INSTR=[
    apps:['Carica refrigerante per peso esatto secondo targa apparecchio','Controllo recupero gas durante manutenzione','Tracciabilità carica per relazioni tecniche'],
    tip:'Tara la bilancia con il cilindro e i tubi collegati (senza gas circolante) prima di avviare la carica, per non introdurre errore di peso.'},
   {id:'detfuga',cat:'refrigeracion',name:'Rilevatore elettronico di fughe',sub:'Localizzazione perdite di refrigerante',
-   specs:['Sensibilità da 3 g/anno secondo modello','Sensore a diodo riscaldato o infrarosso','Allarme sonoro e visivo graduato per intensità'],
+   specs:['Sensibilità da 3 g/anno secondo modello','Sensore a diodo riscaldato o infrarosso','Allarme sonoro e visivo graduato per intensità','Versioni dedicate ai refrigeranti naturali (R-290, R-600a)'],
    apps:['Localizzazione fughe in giunzioni, valvole e serpentine','Verifica tenuta dopo riparazione','Ispezioni periodiche di manutenzione preventiva'],
-   tip:'Spostare la sonda lentamente (2–3 cm/s) e il più vicino possibile alla superficie senza toccarla, poiché il gas è più denso dell\'aria e tende a cadere.'},
+   tip:'Spostare la sonda lentamente (2–3 cm/s) e il pi&ograve; vicino possibile alla superficie senza toccarla: i refrigeranti pi&ugrave; comuni sono pi&ugrave; densi dell\'aria e si accumulano in basso. Usare un rilevatore calibrato sul gas da cercare: un sensore tarato per gli HFC pu&ograve; non rilevare R-290 o R-600a.'},
   {id:'vacuo',cat:'refrigeracion',name:'Pompa a vuoto + vuometro (micronmetro)',sub:'Disidratazione e verifica di tenuta',
    specs:['Portata di estrazione tipica 4–8 CFM','Vuoto finale raggiungibile inferiore a 50 micron','Vuometro digitale ad alta risoluzione (lettura in micron)'],
    apps:['Disidratazione e degassificazione circuiti prima della carica','Verifica tenuta del sistema prima dell\'avviamento','Eliminazione umidità e aria non condensabile'],

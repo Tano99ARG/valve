@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<meta name="description" content="Protocollo di installazione Starlink: sopralluogo, posizionamento, montaggio, alimentazione, configurazione rete e collaudo.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%2300D4AA'/></svg>" type="image/svg+xml">
+<title>Valve Electronics — Protocollo Installazione Starlink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh;
+  padding-top:constant(safe-area-inset-top);padding-top:env(safe-area-inset-top)}
+
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fd);font-weight:700;font-size:.85rem;letter-spacing:.04em;padding:9px 16px;border-radius:4px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-ghost{background:none;color:var(--dim);border:1px solid var(--b1)}
+.btn-ghost:hover{color:var(--w);border-color:var(--b2)}
+.btn-ora{background:var(--ora);color:#04211c}
+.btn-ora:hover{background:var(--ora2)}
+
+.wrap{max-width:920px;margin:0 auto;padding:26px 5vw 90px}
+
+.hd{margin-bottom:22px}
+.hd h1{font-family:var(--fd);font-size:1.7rem;font-weight:800;letter-spacing:.02em;line-height:1.15}
+.hd p{color:var(--dim);font-size:.9rem;margin-top:6px}
+
+.nota{background:rgba(0,212,170,.07);border:1px solid rgba(0,212,170,.3);border-left:3px solid var(--ora);border-radius:5px;padding:13px 16px;font-size:.85rem;color:#bcd8d2;margin-bottom:20px}
+.nota b{color:var(--ora)}
+
+.sect{background:var(--card);border:1px solid var(--b1);border-radius:6px;margin-bottom:18px;overflow:hidden}
+.sect-hd{padding:13px 20px;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,rgba(0,212,170,.06),transparent);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sect-n{width:26px;height:26px;border-radius:50%;background:rgba(0,212,170,.14);border:1px solid rgba(0,212,170,.4);color:var(--ora);font-family:var(--fm);font-size:.8rem;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.sect-tt{font-family:var(--fd);font-size:1.02rem;font-weight:700;flex:1;min-width:140px}
+.sect-cnt{font-family:var(--fm);font-size:.72rem;color:var(--mut)}
+.sect-bd{padding:16px 20px}
+
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.flbl{font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.inp,.sel,.txt{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:10px 12px;border-radius:4px;outline:none;transition:border-color .15s;width:100%}
+.inp:focus,.sel:focus,.txt:focus{border-color:var(--ora)}
+.inp[readonly]{opacity:.7}
+.sel{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238089a8' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.sel option{background:var(--surf)}
+.txt{resize:vertical;min-height:70px}
+
+.citem{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1)}
+.citem:last-child{border-bottom:none}
+.citem-lbl{flex:1;min-width:190px;font-size:.9rem}
+.citem-lbl small{display:block;color:var(--mut);font-size:.78rem;line-height:1.45;margin-top:2px}
+.citem-opts{display:flex;gap:5px;flex:0 0 auto}
+.copt{font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.05em;padding:7px 12px;border-radius:3px;border:1px solid var(--b1);background:none;color:var(--dim);cursor:pointer;transition:all .15s;min-width:44px}
+.copt:hover{border-color:var(--b2);color:var(--w)}
+.copt.ok.on{background:rgba(46,204,113,.18);border-color:var(--grn);color:var(--grn)}
+.copt.bad.on{background:rgba(231,76,60,.18);border-color:var(--red);color:var(--red)}
+.copt.na.on{background:rgba(128,137,168,.15);border-color:var(--mut);color:var(--dim)}
+.citem-note{width:100%;margin-top:7px;display:none}
+.citem-note.show{display:block}
+.citem-note input{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.85rem;padding:8px 10px;border-radius:3px;outline:none;width:100%}
+.citem-note input:focus{border-color:var(--ora)}
+
+.crit{background:rgba(231,76,60,.06)}
+.meas{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px}
+.meas .inp{font-family:var(--fm)}
+
+.summary-bar{display:flex;gap:16px;padding:12px 18px;background:var(--card2);border:1px solid var(--b1);border-radius:5px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.sb-item{font-family:var(--fm);font-size:.78rem;display:flex;align-items:center;gap:6px;color:var(--dim)}
+.sb-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.sb-n{color:var(--w);font-weight:700}
+.sb-alert{margin-left:auto;font-family:var(--fd);font-weight:700;font-size:.82rem;letter-spacing:.04em;color:var(--grn)}
+.sb-alert.bad{color:var(--red)}
+
+.sig-wrap{display:flex;flex-direction:column;gap:8px}
+canvas.sig{background:#f8f9fb;border:1px solid var(--b1);border-radius:4px;width:100%;height:150px;touch-action:none;cursor:crosshair}
+.sig-acts{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sig-hint{font-size:.78rem;color:var(--mut)}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .top-actions .btn span.lbl{display:none}
+  .citem-opts{width:100%;justify-content:space-between}
+  .copt{flex:1}
+}
+@media(pointer:coarse){
+  a,button,input,select,textarea{min-height:44px}
+  input,select,textarea{font-size:16px !important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="20,2 38,34 2,34" fill="#4A8EC2" opacity=".75"/><polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/><path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/></svg>
+    <div class="brand">Valve <b>Electronics</b><span>PROTOCOLLO INSTALLAZIONE</span></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn btn-ghost" onclick="clearForm()"><span class="lbl">Azzera</span>⟲</button>
+    <button class="btn btn-ora" onclick="genPDF()">⬇ <span class="lbl">PDF</span></button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hd">
+    <h1>Protocollo di installazione Starlink</h1>
+    <p>Checklist per sopralluogo, montaggio, alimentazione, configurazione e collaudo. Da compilare in cantiere e allegare alla relazione.</p>
+  </div>
+
+  <div class="nota">
+    <b>Prima di iniziare.</b> L&rsquo;analisi del campo visivo eseguita con l&rsquo;app Starlink sul telefono fa testo: la parabola ha bisogno di cielo libero su un settore ampio (circa 110&deg; in azimut, 25&ndash;55&deg; in elevazione). Albero o Camino che oggi non ingombrano possono farlo fra tre anni: valutare con criterio di lungo periodo, non solo con la foto del giorno.
+  </div>
+
+  <div class="summary-bar" id="summary"></div>
+
+  <!-- ══════ 1. DATI ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">1</div><div class="sect-tt">Dati intervento</div></div>
+    <div class="sect-bd">
+      <div class="fgrid">
+        <div class="fld"><label class="flbl" for="cliente">Cliente</label><input class="inp" id="cliente" placeholder="Nome e cognome"></div>
+        <div class="fld"><label class="flbl" for="indirizzo">Indirizzo</label><input class="inp" id="indirizzo" placeholder="Via, numero civico"></div>
+        <div class="fld"><label class="flbl" for="localita">Localit&agrave;</label><input class="inp" id="localita" placeholder="Comune, provincia"></div>
+        <div class="fld"><label class="flbl" for="data">Data</label><input class="inp" id="data" type="date"></div>
+      </div>
+      <div class="fgrid">
+        <div class="fld"><label class="flbl" for="tecnico">Tecnico</label><input class="inp" id="tecnico" placeholder="Nome installatore"></div>
+        <div class="fld"><label class="flbl" for="tipo-lavoro">Tipo di intervento</label>
+          <select class="sel" id="tipo-lavoro">
+            <option>Nuova installazione</option>
+            <option>Sostituzione di impianto esistente</option>
+            <option>Spostamento parabola esistente</option>
+            <option>Assistenza / ricerca guasti</option>
+          </select></div>
+        <div class="fld"><label class="flbl" for="piano">Servizio</label>
+          <select class="sel" id="piano">
+            <option>Standard</option>
+            <option>Performance</option>
+            <option>High Performance</option>
+            <option>Roam (veicolo)</option>
+          </select></div>
+        <div class="fld"><label class="flbl" for="kit">Composizione del kit</label>
+          <select class="sel" id="kit">
+            <option>Solo parabola + router</option>
+            <option>Parabola + router + kit secondario</option>
+            <option>Accessori: PoE / switch / prolunga</option>
+          </select></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ 2. SOPRALLUOGO ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">2</div><div class="sect-tt">Sopralluogo e sicurezza in cantiere</div><div class="sect-cnt" id="cnt-2"></div></div>
+    <div class="sect-bd" id="sec-2"></div>
+  </section>
+
+  <!-- ══════ 3. POSIZIONAMENTO ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">3</div><div class="sect-tt">Posizionamento e ostacoli</div><div class="sect-cnt" id="cnt-3"></div></div>
+    <div class="sect-bd" id="sec-3"></div>
+  </section>
+
+  <!-- ══════ 4. MONTAGGIO ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">4</div><div class="sect-tt">Montaggio meccanico</div><div class="sect-cnt" id="cnt-4"></div></div>
+    <div class="sect-bd" id="sec-4"></div>
+  </section>
+
+  <!-- ══════ 5. ALIMENTAZIONE ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">5</div><div class="sect-tt">Alimentazione elettrica</div><div class="sect-cnt" id="cnt-5"></div></div>
+    <div class="sect-bd" id="sec-5"></div>
+    <div class="sect-bd" style="border-top:1px solid var(--b1)">
+      <div class="fld"><label class="flbl" for="note-alim">Note alimentazione</label>
+        <textarea class="txt" id="note-alim" placeholder="Scolo di carico verificato, quota del quadro, presenza di impianto FV, valutazione del dimensionamento elettrico"></textarea></div>
+    </div>
+  </section>
+
+  <!-- ══════ 6. CONFIGURAZIONE ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">6</div><div class="sect-tt">Configurazione e rete</div><div class="sect-cnt" id="cnt-6"></div></div>
+    <div class="sect-bd" id="sec-6"></div>
+  </section>
+
+  <!-- ══════ 7. COLLAUDO ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">7</div><div class="sect-tt">Collaudo e misure</div><div class="sect-cnt" id="cnt-7"></div></div>
+    <div class="sect-bd">
+      <div class="fld"><label class="flbl">Misure rilevate in fase di collaudo</label></div>
+      <div class="meas">
+        <div class="fld"><label class="flbl" for="m-ping">Latenza <small>ms</small></label><input class="inp" id="m-ping" type="number" placeholder="es. 38"></div>
+        <div class="fld"><label class="flbl" for="m-down">Download <small>Mbps</small></label><input class="inp" id="m-down" type="number" placeholder="es. 145"></div>
+        <div class="fld"><label class="flbl" for="m-up">Upload <small>Mbps</small></label><input class="inp" id="m-up" type="number" placeholder="es. 12"></div>
+        <div class="fld"><label class="flbl" for="m-segnale">Segnale <small>mBars</small></label><input class="inp" id="m-segnale" type="number" placeholder="es. 4"></div>
+      </div>
+      <div class="fld" style="margin-top:12px"><label class="flbl" for="note-collaudo">Note di collaudo</label>
+        <textarea class="txt" id="note-collaudo" placeholder="Screening effettuato in due momenti della giornata, risultati, eventuali vincoli"></textarea></div>
+    </div>
+  </section>
+
+  <!-- ══════ 8. CONSEGNA ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">8</div><div class="sect-tt">Consegna al cliente</div><div class="sect-cnt" id="cnt-8"></div></div>
+    <div class="sect-bd" id="sec-8"></div>
+  </section>
+
+  <!-- ══════ FIRME ══════ -->
+  <section class="sect">
+    <div class="sect-hd"><div class="sect-n">✓</div><div class="sect-tt">Firme</div></div>
+    <div class="sect-bd">
+      <div class="sig-wrap">
+        <div class="flbl">Firma del cliente</div>
+        <canvas class="sig" id="sig"></canvas>
+        <div class="sig-acts">
+          <span class="sig-hint">Firma con dito, stiletto o mouse</span>
+          <button class="btn btn-ghost" onclick="clearSig()">Cancella firma</button>
+        </div>
+      </div>
+      <div class="fld" style="margin-top:18px"><label class="flbl" for="note-finali">Osservazioni finali</label>
+        <textarea class="txt" id="note-finali" placeholder="Materiali lasciati in cantiere, lavorazioni successive consigliate, sopralluoghi futuri"></textarea></div>
+    </div>
+  </section>
+
+  <p style="text-align:center;color:var(--mut);font-size:.78rem;margin-top:26px">
+    Documento interno Valve Electronics &middot; compilare a mano sul posto o su tablet<br>
+    Scarica il PDF &rarr; firma insieme al cliente &rarr; conserva nella documentazione dell&rsquo;ordine
+  </p>
+
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* =======================================================================
+   CONTENUTO DEL PROTOCOLLO
+   ======================================================================= */
+const SECTIONS = {
+  2: [
+    {t:'Accesso al luogo di installazione sicuro',
+     s:'Scala, ponte, accesso al tetto o alla facciata idonei. Nessun lavoro in quota senza presidio.'},
+    {t:'Fotodocumentazione dello stato iniziale',
+     s:'Prima di toccare qualsiasi cosa: foto di parabola, staffa, cablaggio e punto di alimentazione.'},
+    {t:'Analisi ostacoli eseguita con l\'app Starlink',
+     s:'L\'app fornisce la mappa del cielo visibile dalla posizione scelta. Va eseguita sul posto, non a tavolino.', crit:true},
+    {t:'Alberi, pali, camini e strutture valutati nel tempo',
+     s:'Considerare la crescita della vegetazione: un albero in-bandiera oggi può ostruire fra qualche anno.'},
+    {t:'Luogo di installazione condiviso con il cliente',
+     s:'Se l\'antenna va su un tetto o una facciata non di proprietà serve il consenso esplicito del titolare.'},
+  ],
+  3: [
+    {t:'Settore di cielo libero verificato in app',
+     s:'Circa 110&deg; in azimut e 25&ndash;55&deg; in elevazione devono essere liberi da ostacoli.', crit:true},
+    {t:'Quota scelta compatibile con il limite di neve e la copertura',
+     s:'Rimuovere la neve accumulata sulla parabola &egrave; necessario per non compromettere il segnale.'},
+    {t:'Posizione preferibilmente a sud (emisfero nord)',
+     s:'Nell&rsquo;emisfero boreale una posizione a sud migliora la visibilit&agrave; dei satelliti.'},
+    {t:'Assenza di cavi aerei, impianti o strutture nell\'angolo di elevazione',
+     s:'Linee elettriche e impianti fotovoltaici vicini possono creare interferenza.'},
+    {t:'Accesso mantenuto per la manutenzione futura',
+     s:'Deve restare possibile raggiungere la parabola per pulizia neve e sostituzione, senza impalcatura.'},
+  ],
+  4: [
+    {t:'Staffa e supporto scelti per il tipo di parete',
+     s:'Staffa a parete, a palo o su tetto. Su tetto va verificata la portata e la tenuta del fissaggio.'},
+    {t:'Bulloneria e tasselli adatti al materiale del supporto',
+     s:'Muratura, legno, metallo o lamiera: la scelta del tassello è parte della posa.'},
+    {t:'Staffa in posizione, a piombo e ben serrata',
+     s:'La parabola non deve poter ruotare sotto carico di vento.'},
+    {t:'Parabola montata e orientata come da verifica in app',
+     s:'Se l\'app richiede un orientamento specifico, va rispettato dopo il montaggio.', crit:true},
+    {t:'Cavo di alimentazione passato e protetto',
+     s:'Guidacavo, canalina o tubazione. Nessun cavo teso o esposto a usura meccanica.'},
+    {t:'Lunghezza del cavo compatibile con l\'installazione',
+     s:'Il cavo fornito ha lunghezza limitata: per tratte lunghe serve il kit prolunga corretto.'},
+    {t:'Nessun punto di saldatura o giunzione lasciato all\'aperto',
+     s:'Ogni giunzione va protetta e verificata per infiltrazioni.'},
+  ],
+  5: [
+    {t:'Presa di alimentazione in posizione idonea',
+     s:'Vicino alla parabola, all&#39;esterno o in ambiente protetto, secondo il prodotto.', crit:true},
+    {t:'Nessuna multipresa o prolunga',
+     s:'Il kit consuma in media 150&ndash;200 W e pu&ograve; avere picchi: va alimentato da una presa diretta.', crit:true},
+    {t:'Massima corrente di lunghezza compatibile con la sezione',
+     s:'Verificare la portata reale della linea: cavi lunghi o sottili causano cadute di tensione.', crit:true},
+    {t:'Messa a terra della parabola e del supporto',
+     s:' collegare a terra la struttura secondo CEI 64-8.'},
+    {t:'Se alimentazione da batteria o impianto FV: dimensionamento verificato',
+     s:'Il fabbisogno continuo va confrontato con la potenza disponibile e con l&rsquo;autonomia.'},
+  ],
+  6: [
+    {t:'Modalit&agrave; installatore attivata sull\'app',
+     s:'Dall\'app Starlink, sezione Installazione, si avvia il puntamento assistito.'},
+    {t:'Account cliente creato o recuperato',
+     s:'Se l\'account esiste gi&agrave;, non crearne uno nuovo: i servizi si spostano tra account.'},
+    {t:'Servizio attivato e abbonamento configurato',
+     s:'Piano, indirizzo di spedizione e modalit&agrave; di pagamento.'},
+    {t:'Accesso alla rete Wi-Fi configurato',
+     s:'Nome rete e password scelti con il cliente e annotati nella consegna.'},
+    {t:'Dispositivo secondario configurato in cascata',
+     s:'Se presente il kit secondario o uno switch, la rete si estende in ethernet.'},
+    {t:'Router accessibile dal telefono del cliente',
+     s:'Verificare che l&rsquo;app installata sul telefono del cliente risulti collegata.'},
+  ],
+  8: [
+    {t:'Velocit&agrave; effettive illustrate al cliente',
+     s:'I dati dipendono dall\'orbita e dal carico della rete: spiegare che non sono garantiti.'},
+    {t:'Limiti di uso e policy spiegati',
+     s:'Servizio con uso personale e domestico, non per rivendita o rivestream.'},
+    {t:'App installata e funzionante sul telefono del cliente',
+     s:'Con le credenziali dell&rsquo;account già collegate.'},
+    {t:'Credenziali e nome rete consegnati',
+     s:'Annotare in chiaro sul foglio di consegna, non lasciare solo a memoria.'},
+    {t:'Istruzioni per lo spostamento o la dismissione',
+     s:'La parabola pu&ograve; essere rimossa e rimontata altrove, ma serve personale.'},
+    {t:'Appuntamento di controllo dopo some giorni d\'uso',
+     s:'Stabilire un richiamo a due settimane circa.'},
+  ],
+};
+
+/* =======================================================================
+   RENDER
+   ======================================================================= */
+function buildSection(n){
+  const box = $('sec-' + n);
+  if(!box) return;
+  box.innerHTML = '';
+  SECTIONS[n].forEach((item, i) => {
+    const id = 'it' + n + '_' + i;
+    const el = document.createElement('div');
+    el.className = 'citem' + (item.crit ? ' crit' : '');
+    el.innerHTML =
+      '<div class="citem-lbl">' + item.t + '<small>' + item.s + '</small></div>' +
+      '<div class="citem-opts">' +
+        '<button class="copt ok"   data-st="ok"  data-id="' + id + '">OK</button>' +
+        '<button class="copt bad"  data-st="bad" data-id="' + id + '">NO</button>' +
+        '<button class="copt na"   data-st="na"  data-id="' + id + '">N/A</button>' +
+      '</div>' +
+      '<div class="citem-note" id="note-' + id + '">' +
+        '<input type="text" placeholder="Annotazione per questo punto" data-note="' + id + '">' +
+      '</div>';
+    box.appendChild(el);
+  });
+}
+
+function setStatus(id, st){
+  const row = document.querySelector('.citem .copt[data-id="' + id + '"]');
+  if(!row) return;
+  row.closest('.citem').querySelectorAll('.copt')
+    .forEach(b => b.classList.toggle('on', b.dataset.st === st));
+  const note = $('note-' + id);
+  if(!note) return;
+  // la nota si apre solo se il punto non e' regolare
+  note.classList.toggle('show', st === 'bad');
+  save();
+}
+
+function updateSummary(){
+  const all = document.querySelectorAll('.citem');
+  let ok = 0, bad = 0, na = 0;
+  all.forEach(r => {
+    const on = r.querySelector('.copt.on');
+    if(!on) return;
+    if(on.dataset.st === 'ok') ok++;
+    else if(on.dataset.st === 'bad') bad++;
+    else na++;
+  });
+  const tot = all.length, done = ok + bad + na;
+  $('summary').innerHTML =
+    '<div class="sb-item"><span class="sb-dot" style="background:var(--grn)"></span>Regolari <span class="sb-n">' + ok + '</span></div>' +
+    '<div class="sb-item"><span class="sb-dot" style="background:var(--red)"></span>Non regolari <span class="sb-n">' + bad + '</span></div>' +
+    '<div class="sb-item"><span class="sb-dot" style="background:var(--mut)"></span>Non applicabile <span class="sb-n">' + na + '</span></div>' +
+    '<div class="sb-item">Compilati <span class="sb-n">' + done + '/' + tot + '</span></div>' +
+    '<div class="sb-alert' + (bad ? ' bad' : '') + '">' +
+      (done === 0 ? 'Da iniziare'
+        : bad ? 'Ci sono punti da rivedere'
+        : done === tot ? 'Intervento conforme' : 'In completamento') +
+    '</div>';
+  // conteggio per sezione
+  for(let n = 2; n <= 8; n++){
+    const box = $('sec-' + n);
+    if(!box) continue;
+    const rows = box.querySelectorAll('.citem');
+    const b = box.querySelectorAll('.copt.bad.on').length;
+    const c = $('cnt-' + n);
+    if(c) c.textContent = b ? b + ' da rivedere' : (rows.length + ' punti');
+  }
+  save();
+}
+
+/* =======================================================================
+   FIRMA
+   ======================================================================= */
+let sigCtx, sigOn = false;
+function initSig(){
+  const c = $('sig');
+  sigCtx = c.getContext('2d');
+  const resize = () => {
+    const dpr = window.devicePixelRatio || 1;
+    const dat = sigOn ? sigCtx.getImageData(0, 0, c.width, c.height) : null;
+    c.width = c.offsetWidth * dpr;
+    c.height = c.offsetHeight * dpr;
+    sigCtx.scale(dpr, dpr);
+    sigCtx.fillStyle = '#f8f9fb';
+    sigCtx.fillRect(0, 0, c.width, c.height);
+    sigCtx.strokeStyle = '#1a1a2e';
+    sigCtx.lineWidth = 2.2;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+    if(dat) sigCtx.putImageData(dat, 0, 0);
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  const pos = e => {
+    const r = c.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  };
+  const start = e => {
+    e.preventDefault();
+    sigOn = true;
+    const p = pos(e);
+    sigCtx.beginPath();
+    sigCtx.moveTo(p.x, p.y);
+  };
+  const move = e => {
+    if(!sigOn) return;
+    e.preventDefault();
+    const p = pos(e);
+    sigCtx.lineTo(p.x, p.y);
+    sigCtx.stroke();
+  };
+  const end = () => { sigOn = false; save(); };
+  c.addEventListener('mousedown', start);
+  c.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  c.addEventListener('touchstart', start, {passive:false});
+  c.addEventListener('touchmove', move, {passive:false});
+  c.addEventListener('touchend', end);
+}
+function clearSig(){
+  const c = $('sig');
+  sigCtx.fillStyle = '#f8f9fb';
+  sigCtx.fillRect(0, 0, c.width, c.height);
+  save();
+}
+function hasSig(){
+  const c = $('sig');
+  const d = sigCtx.getImageData(0, 0, c.width, c.height).data;
+  for(let i = 0; i < d.length; i += 4){
+    // il fondo e' #f8f9fb; se un canale scende sotto ~230 c'e' inchiostro
+    if(d[i] < 230 || d[i+1] < 230 || d[i+2] < 230) return true;
+  }
+  return false;
+}
+
+/* =======================================================================
+   PERSISTENZA
+   ======================================================================= */
+const KEY = 'valve-starlink-v1';
+const FIELDS = ['cliente','indirizzo','localita','data','tecnico','tipo-lavoro','piano','kit',
+                'note-alim','note-collaudo','note-finali','m-ping','m-down','m-up','m-segnale'];
+
+function save(){
+  try{
+    const d = { f:{}, s:{}, n:{} };
+    FIELDS.forEach(k => d.f[k] = $(k).value);
+    document.querySelectorAll('.copt').forEach(b => {
+      if(b.classList.contains('on')) d.s[b.dataset.id] = b.dataset.st;
+    });
+    document.querySelectorAll('[data-note]').forEach(i => { d.n[i.dataset.note] = i.value; });
+    d.sig = hasSig() ? $('sig').toDataURL('image/png') : '';
+    localStorage.setItem(KEY, JSON.stringify(d));
+  }catch(e){ /* quota o modalita' privata */ }
+}
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    FIELDS.forEach(k => { if(d.f && d.f[k] != null) $(k).value = d.f[k]; });
+    if(!$('data').value) $('data').value = new Date().toISOString().slice(0,10);
+    if(d.s) Object.keys(d.s).forEach(id => {
+      const btn = document.querySelector('.copt[data-id="' + id + '"][data-st="' + d.s[id] + '"]');
+      if(btn) btn.click();
+    });
+    if(d.n) Object.keys(d.n).forEach(id => {
+      const inp = document.querySelector('[data-note="' + id + '"]');
+      if(inp && d.n[id]){
+        inp.value = d.n[id];
+        inp.closest('.citem-note').classList.add('show');
+      }
+    });
+    if(d.sig){
+      const img = new Image();
+      img.onload = () => sigCtx.drawImage(img, 0, 0, $('sig').width, $('sig').height);
+      img.src = d.sig;
+    }
+  }catch(e){ /* dati non leggibili */ }
+}
+
+function clearForm(){
+  if(!confirm('Azzerare tutta la checklist? I dati salvati su questo dispositivo verranno persi.')) return;
+  localStorage.removeItem(KEY);
+  FIELDS.forEach(k => { if($(k).tagName === 'SELECT') $(k).selectedIndex = 0; else $(k).value = ''; });
+  $('data').value = new Date().toISOString().slice(0,10);
+  document.querySelectorAll('.copt.on').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.citem-note').forEach(n => n.classList.remove('show'));
+  document.querySelectorAll('[data-note]').forEach(i => i.value = '');
+  clearSig();
+  updateSummary();
+}
+
+/* =======================================================================
+   PDF
+   ======================================================================= */
+function genPDF(){
+  const doc = new jspdf.jsPDF({unit:'mm', format:'a4'});
+  const W = 210, H = 297, M = 14;
+  const CW = W - M * 2;
+  const NAVY = [27,42,74], ORA = [0,143,110], MUT = [120,130,160], BORD = [210,214,224], GRN = [46,163,94], RED = [200,60,50];
+
+  const val = id => ($(id).value || '').trim();
+  const tcol = t => t === 'bad' ? RED : (t === 'ok' ? GRN : MUT);
+
+  let y = 0;
+
+  function header(){
+    doc.setFillColor(...NAVY);
+    doc.rect(0, 0, W, 30, 'F');
+    doc.setFillColor(0, 212, 170);
+    doc.rect(0, 30, W, 1.2, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(16);
+    doc.text('Valve Electronics', M, 14);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.setTextColor(150,175,205);
+    doc.text('Protocollo di installazione Starlink', M, 21);
+    doc.setFontSize(8.5);
+    doc.setTextColor(0,212,170);
+    doc.text('Documento di cantiere', W - M, 14, {align:'right'});
+    doc.setTextColor(150,175,205);
+    doc.setFontSize(7.5);
+    doc.text('Compilare a mano e firmare con il cliente', W - M, 21, {align:'right'});
+    y = 38;
+  }
+
+  function need(h){ if(y + h > H - 20){ footer(); doc.addPage(); y = 18; } }
+
+  function sectTitle(num, text){
+    need(12);
+    doc.setFillColor(240,243,248);
+    doc.rect(M, y - 4, CW, 8, 'F');
+    doc.setFillColor(...ORA);
+    doc.rect(M, y - 4, 1.2, 8, 'F');
+    doc.setTextColor(...NAVY);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10.5);
+    doc.text(num + '.  ' + text, M + 4, y + 1.4);
+    y += 11;
+  }
+
+  function kv(label, value){
+    if(!value) return;
+    need(6);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+    doc.setTextColor(...MUT);
+    doc.text(label + ':', M, y);
+    doc.setFont('helvetica','bold'); doc.setTextColor(30,35,50);
+    const w = doc.getTextWidth(label + ': ');
+    doc.text(String(value), M + w, y, {maxWidth: CW - w});
+    y += 6;
+  }
+
+  function checkRow(item, state, note){
+    need(11);
+    const isCrit = item.crit;
+    if(isCrit){ doc.setFillColor(253,244,244); doc.rect(M, y - 3.4, CW, 8.4, 'F'); }
+    // stato
+    const col = tcol(state);
+    doc.setDrawColor(...col); doc.setLineWidth(0.4);
+    doc.circle(M + 2.2, y, 1.9, state ? 'S' : 'D');
+    if(state){
+      doc.setFillColor(...col);
+      doc.circle(M + 2.2, y, 1.9, 'F');
+      doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold'); doc.setFontSize(6);
+      doc.text(state === 'ok' ? 'O' : (state === 'na' ? '-' : 'X'), M + 2.2, y + 0.7, {align:'center'});
+    }
+    // testo
+    doc.setTextColor(30,35,50);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+    const lines = doc.splitTextToSize(item.t, CW - 12);
+    doc.text(lines, M + 6, y);
+    let dy = lines.length * 4.2;
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.2);
+    doc.setTextColor(...MUT);
+    const sub = doc.splitTextToSize(item.s, CW - 12);
+    doc.text(sub, M + 6, y + dy);
+    dy += sub.length * 3.6;
+    if(note){
+      doc.setTextColor(190,90,40);
+      doc.setFontSize(7);
+      doc.text(doc.splitTextToSize('Nota: ' + note, CW - 12), M + 6, y + dy);
+      dy += doc.splitTextToSize('Nota: ' + note, CW - 12).length * 3.6;
+    }
+    y += dy + 3.4;
+  }
+
+  function noteBlock(label, value){
+    if(!value) return;
+    need(10);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+    doc.setTextColor(...NAVY);
+    doc.text(label, M, y);
+    y += 5;
+    doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.setTextColor(60,70,90);
+    const lines = doc.splitTextToSize(value, CW);
+    doc.text(lines, M, y);
+    y += lines.length * 4.2 + 3;
+  }
+
+  function footer(){
+    doc.setDrawColor(...BORD); doc.setLineWidth(0.3);
+    doc.line(M, H - 14, W - M, H - 14);
+    doc.setFontSize(6.8);
+    doc.setTextColor(...MUT);
+    doc.text('Valve Electronics  |  info@valveelectronics.it', M, H - 10);
+    doc.text('Pagina ' + (doc.getNumberOfPages()), W - M, H - 10, {align:'right'});
+  }
+
+  // stato dei check
+  const stateOf = id => {
+    const on = document.querySelector('.copt.on[data-id="' + id + '"]');
+    return on ? on.dataset.st : null;
+  };
+  const noteOf = id => {
+    const i = document.querySelector('[data-note="' + id + '"]');
+    return i ? i.value.trim() : '';
+  };
+
+  header();
+
+  // dati
+  sectTitle('1', 'Dati intervento');
+  kv('Cliente', val('cliente'));
+  kv('Indirizzo', val('indirizzo'));
+  kv('Località', val('localita'));
+  kv('Data', val('data'));
+  kv('Tecnico', val('tecnico'));
+  kv('Tipo di intervento', val('tipo-lavoro'));
+  kv('Servizio', val('piano'));
+  kv('Kit', val('kit'));
+  y += 3;
+
+  const TITLES = {2:'Sopralluogo e sicurezza in cantiere', 3:'Posizionamento e ostacoli',
+                   4:'Montaggio meccanico', 5:'Alimentazione elettrica',
+                   6:'Configurazione e rete', 7:'Collaudo e misure', 8:'Consegna al cliente'};
+
+  [2,3,4,5,6,7,8].forEach(n => {
+    sectTitle(n, TITLES[n]);
+    if(n === 5) noteBlock('Note alimentazione', val('note-alim'));
+    if(n === 7){
+      const m = [];
+      if(val('m-ping'))   m.push('Latenza: ' + val('m-ping') + ' ms');
+      if(val('m-down'))   m.push('Download: ' + val('m-down') + ' Mbps');
+      if(val('m-up'))     m.push('Upload: ' + val('m-up') + ' Mbps');
+      if(val('m-segnale'))m.push('Segnale: ' + val('m-segnale') + ' mBars');
+      if(m.length){
+        need(6);
+        doc.setFont('helvetica','bold'); doc.setFontSize(8.5);
+        doc.setTextColor(...NAVY);
+        doc.text('Misure rilevate', M, y);
+        y += 5.5;
+        doc.setFont('courier','normal'); doc.setFontSize(8.5);
+        doc.setTextColor(0,120,95);
+        doc.text(m.join('      '), M, y);
+        y += 7;
+      }
+      noteBlock('Note di collaudo', val('note-collaudo'));
+    }
+    if(SECTIONS[n]) SECTIONS[n].forEach((item, i) => {
+      const id = 'it' + n + '_' + i;
+      checkRow(item, stateOf(id), noteOf(id));
+    });
+  });
+
+  noteBlock('Osservazioni finali', val('note-finali'));
+
+  // firme
+  need(34);
+  y += 4;
+  doc.setDrawColor(...BORD); doc.setLineWidth(0.3);
+  doc.line(M, y, W - M, y);
+  y += 5;
+  const half = CW / 2 - 4;
+  if(hasSig()){
+    const img = $('sig').toDataURL('image/png');
+    try{ doc.addImage(img, 'PNG', M, y, half * 0.62, 18); }catch(e){}
+  } else {
+    doc.setDrawColor(200,205,215);
+    for(let i = 0; i < 4; i++) doc.line(M + i * 6, y + 6, M + i * 6, y + 16);
+  }
+  doc.setDrawColor(160,168,185); doc.setLineWidth(0.4);
+  doc.line(M, y + 20, M + half, y + 20);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+  doc.setTextColor(...MUT);
+  doc.text('Firma del cliente', M, y + 24.5);
+  doc.line(M + half + 8, y + 20, M + half + 8 + half, y + 20);
+  doc.text('Firma del tecnico', M + half + 8, y + 24.5);
+
+  footer();
+  const nomeFile = 'protocollo-starlink-' + (val('data') || 'bozza') + '.pdf';
+  doc.save(nomeFile);
+  return { doc: doc, file: nomeFile };
+}
+
+/* =======================================================================
+   AVVIO
+   ======================================================================= */
+function init(){
+  for(let n = 2; n <= 8; n++) buildSection(n);
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.copt');
+    if(!b) return;
+    const row = b.closest('.citem');
+    const was = row.querySelector('.copt.on');
+    if(was === b){ b.classList.remove('on'); setStatus(b.dataset.id, null); }
+    else setStatus(b.dataset.id, b.dataset.st);
+    updateSummary();
+  });
+
+  document.addEventListener('input', e => {
+    if(e.target.matches('[data-note]')) save();
+  });
+
+  FIELDS.forEach(k => {
+    const el = $(k);
+    if(el) el.addEventListener('input', save);
+  });
+
+  initSig();
+  $('data').value = new Date().toISOString().slice(0,10);
+  load();
+  updateSummary();
+}
+
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
