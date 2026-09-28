@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1A2E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Valve Electronics">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Valve Electronics — Designer Telecamere","short_name":"Telecamere","description":"Progettazione layout di videosorveglianza","start_url":".","display":"standalone","background_color":"%231A1A2E","theme_color":"%231A1A2E","icons":[{"src":"data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27><rect width=%27192%27 height=%27192%27 rx=%2724%27 fill=%27%231A1A2E%27/><polygon points=%2796,24 176,156 16,156%27 fill=%27%23008F6E%27 opacity=%27.75%27/><polygon points=%2796,24 176,156 96,156%27 fill=%27%2316162A%27 opacity=%27.8%27/><path d=%27M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z%27 fill=%27%2300D4AA%27/></svg>","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"}]}'>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%23008F6E' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%2300D4AA'/></svg>" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%231A1A2E'/><polygon points='96,24 176,156 16,156' fill='%23008F6E' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%2316162A' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%2300D4AA'/></svg>">
+  <title>Valve Electronics — Designer Telecamere</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       PALETTE VALVE ELECTRONICS
+       verde elettrico #00D4AA · grigio scuro #1A1A2E · verde scuro #008F6E
+       ═══════════════════════════════════════════════════════════════ */
+    :root{
+      --bg:#0c0e16;--surf:#12151f;--panel:#181b28;--card:#1e2235;--card2:#222640;
+      --b1:#2a2e45;--b2:#353a58;--b3:#454a68;
+      --ora:#00D4AA;--ora2:#00ffb8;--blu:#008F6E;--blu2:#00b894;
+      --grn:#27ae60;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;
+      --w:#e8eaf4;--dim:#7a82a8;--mut:#3a3f5a;
+      --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;display:flex;flex-direction:column;user-select:none}
+
+    /* Safe area per notch iPhone */
+    body{padding-top:constant(safe-area-inset-top);padding-top:env(safe-area-inset-top)}
+
+    /* ── TOPBAR ── */
+    .topbar{height:48px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;flex-shrink:0;z-index:60}
+    .tb-logo{display:flex;align-items:center;gap:8px;padding:0 16px;border-right:1px solid var(--b1);height:100%;flex-shrink:0}
+    .tb-logo svg{width:24px;height:24px}
+    .tb-brand{font-family:var(--fd);font-weight:800;font-size:.95rem;letter-spacing:.07em;line-height:1}
+    .tb-brand b{color:var(--ora)}
+    .tb-sep{width:1px;height:28px;background:var(--b1);margin:0 4px}
+    .tb-spacer{flex:1}
+    .tb-right{display:flex;align-items:center;gap:6px;padding:0 12px;border-left:1px solid var(--b1)}
+    .btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--fd);font-weight:700;font-size:.78rem;letter-spacing:.05em;padding:6px 12px;border-radius:3px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+    .btn-ghost{background:none;color:var(--dim);border:1px solid var(--b1)}
+    .btn-ghost:hover{color:var(--w);border-color:var(--b2)}
+    .btn-ora{background:var(--ora);color:#fff}
+    .btn-ora:hover{background:var(--ora2)}
+    .btn-blu{background:var(--blu);color:#fff}
+    .btn-blu:hover{background:var(--blu2)}
+
+    /* ── WORKSPACE ── */
+    .ws{display:flex;flex:1;overflow:hidden}
+
+    /* ── LEFT PANEL ── */
+    .lp{width:210px;background:var(--surf);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0}
+    .lp-search{padding:8px}
+    .lp-search input{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.8rem;padding:6px 9px;border-radius:3px;outline:none}
+    .lp-search input:focus{border-color:var(--ora)}
+    .lp-cats{display:flex;flex-wrap:wrap;gap:3px;padding:4px 8px 6px;border-bottom:1px solid var(--b1)}
+    .lp-cat{font-family:var(--fd);font-size:.68rem;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:2px;cursor:pointer;border:1px solid var(--b1);color:var(--dim);background:none;transition:all .15s}
+    .lp-cat:hover{color:var(--w);border-color:var(--b2)}
+    .lp-cat.on{background:var(--ora);border-color:var(--ora);color:#fff}
+    .lp-list{flex:1;overflow-y:auto;padding:4px 6px}
+    .lp-list::-webkit-scrollbar{width:3px}
+    .lp-list::-webkit-scrollbar-thumb{background:var(--b2)}
+    .comp-row{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:3px;cursor:grab;border:1px solid transparent;transition:all .15s;margin-bottom:2px}
+    .comp-row:hover{background:var(--card);border-color:var(--b1)}
+    .comp-row:active{cursor:grabbing;opacity:.6}
+    .comp-sym{width:34px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .comp-sym svg{width:100%;height:100%;overflow:visible}
+    .comp-info .cn{font-family:var(--fd);font-size:.8rem;font-weight:700;line-height:1.2;color:var(--w)}
+    .comp-info .cs{font-size:.65rem;color:var(--dim);margin-top:1px}
+
+    /* ── CANVAS AREA ── */
+    .ca{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+    .ctb{height:36px;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:4px;padding:0 10px;flex-shrink:0}
+    .tb-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:3px;cursor:pointer;color:var(--dim);font-size:.85rem;transition:all .15s}
+    .tb-btn:hover{background:var(--card);color:var(--w);border-color:var(--b1)}
+    .tb-btn.on{background:rgba(0,212,170,.15);color:var(--ora);border-color:rgba(0,212,170,.3)}
+    .tsep{width:1px;height:18px;background:var(--b1);margin:0 3px}
+    .zoom-lbl{font-family:var(--fm);font-size:.7rem;color:var(--dim);min-width:38px;text-align:center}
+    .cursor-info{margin-left:auto;font-family:var(--fm);font-size:.68rem;color:var(--mut)}
+
+    .cscroll{flex:1;overflow:auto;position:relative;cursor:crosshair}
+    .cscroll::-webkit-scrollbar{width:8px;height:8px}
+    .cscroll::-webkit-scrollbar-track{background:var(--bg)}
+    .cscroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+
+    #cvs{
+      position:relative;width:3200px;height:2400px;
+      background-color:var(--bg);
+      background-image:
+        linear-gradient(rgba(0,212,170,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,170,.06) 1px,transparent 1px),
+        linear-gradient(rgba(0,212,170,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,170,.025) 1px,transparent 1px);
+      background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+      transform-origin:0 0;
+    }
+    #cvs.pan-mode{cursor:grab}
+    #cvs.pan-mode:active{cursor:grabbing}
+
+    /* ── PLACED COMPONENTS ── */
+    .placed{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:move}
+    .placed-body{background:var(--card);border:1.5px solid var(--b2);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 6px;position:relative;transition:border-color .1s}
+    .placed.sel .placed-body{border-color:var(--ora);box-shadow:0 0 0 3px rgba(0,212,170,.2)}
+    .placed-lbl{font-family:var(--fm);font-size:.6rem;color:var(--dim);margin-top:3px;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .placed-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-family:var(--fm);font-size:.52rem;font-weight:700;padding:1px 5px;border-radius:2px;white-space:nowrap;pointer-events:none}
+    .del-btn{position:absolute;top:-8px;right:-8px;width:15px;height:15px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;cursor:pointer;border:none;pointer-events:all;z-index:10}
+    .placed.sel .del-btn{display:flex}
+
+    /* ── RIGHT PANEL ── */
+    .rp{width:224px;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+    .rp::-webkit-scrollbar{width:3px}
+    .rp::-webkit-scrollbar-thumb{background:var(--b2)}
+    .rp-hdr{padding:10px 12px;border-bottom:1px solid var(--b1);font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.15em;color:var(--dim);text-transform:uppercase}
+    .rp-body{padding:10px 12px;display:flex;flex-direction:column;gap:10px}
+    .prow{display:flex;flex-direction:column;gap:3px}
+    .plbl{font-family:var(--fd);font-size:.65rem;font-weight:700;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+    .pinp{background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.8rem;padding:6px 8px;border-radius:3px;outline:none;width:100%;transition:border-color .15s}
+    .pinp:focus{border-color:var(--ora)}
+    .pinp-sel{appearance:none;-webkit-appearance:none}
+    .pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .psep{height:1px;background:var(--b1)}
+    .pempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;color:var(--mut)}
+    .pempty-ico{font-size:1.8rem;opacity:.3}
+    .pempty-txt{font-size:.75rem;line-height:1.5}
+    .spec-block{background:linear-gradient(180deg,rgba(0,212,170,.08),rgba(0,212,170,.02));border:1px solid var(--b1);border-left:2px solid var(--blu);padding:9px 11px;border-radius:3px}
+    .spec-hdr{font-family:var(--fd);font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--blu2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+    .spec-line{font-family:var(--fm);font-size:.66rem;color:var(--dim);line-height:1.65;display:flex;gap:5px}
+    .spec-line b{color:var(--w);font-weight:400}
+    .spec-tag{display:inline-block;font-family:var(--fm);font-size:.6rem;padding:1px 5px;border-radius:2px;margin-top:5px;background:rgba(0,212,170,.12);color:var(--ora);border:1px solid rgba(0,212,170,.25)}
+
+    /* ── STATUS BAR ── */
+    .stbar{height:22px;background:var(--surf);border-top:1px solid var(--b1);display:flex;align-items:center;gap:16px;padding:0 12px;flex-shrink:0}
+    .sti{font-family:var(--fm);font-size:.62rem;color:var(--mut);display:flex;align-items:center;gap:4px}
+    .sti-dot{width:5px;height:5px;border-radius:50%;background:var(--grn)}
+
+    /* ── MODAL ── */
+    .mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center}
+    .mbg.open{display:flex}
+    .mbox{background:var(--panel);border:1px solid var(--b1);max-width:480px;width:92%;padding:26px;position:relative;max-height:90vh;overflow-y:auto}
+    .mbox::-webkit-scrollbar{width:3px}
+    .mbox::-webkit-scrollbar-thumb{background:var(--b2)}
+    .tpl-card{background:var(--card);border:1px solid var(--b1);border-radius:6px;padding:14px 16px;margin-bottom:12px;display:flex;gap:13px;align-items:flex-start;cursor:pointer;transition:border-color .15s,background .15s}
+    .tpl-card:hover{border-color:var(--ora);background:var(--card2)}
+    .tpl-ico{font-size:1.6rem;flex-shrink:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--surf);border-radius:6px}
+    .tpl-tt{font-family:var(--fd);font-size:1.05rem;font-weight:700;margin-bottom:3px}
+    .tpl-meta{font-family:var(--fm);font-size:.7rem;color:var(--blu2);margin-bottom:5px}
+    .tpl-desc{font-size:.8rem;color:var(--dim);line-height:1.45}
+    .mtitle{font-family:var(--fd);font-size:1.2rem;font-weight:800;margin-bottom:18px}
+    .mclose{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--dim);font-size:1.1rem;cursor:pointer}
+    .mclose:hover{color:var(--w)}
+    .mrow{margin-bottom:12px}
+    .mlbl{font-family:var(--fd);font-size:.67rem;font-weight:700;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:4px}
+    .minp{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.85rem;padding:8px 10px;border-radius:3px;outline:none}
+    .minp:focus{border-color:var(--ora)}
+    .mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .macts{display:flex;gap:8px;margin-top:18px}
+    .macts .btn{flex:1;justify-content:center;padding:10px;font-size:.85rem}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(6px);background:var(--card);border:1px solid var(--b2);border-left:3px solid var(--ora);padding:9px 16px;font-size:.8rem;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:999;font-family:var(--fb);white-space:nowrap}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ── SMARTPHONE ── */
+    @media (max-width: 768px) {
+      .lp{position:fixed;left:0;top:48px;bottom:0;width:280px;z-index:100;transform:translateX(-100%);transition:transform .25s}
+      .lp.open{transform:translateX(0)}
+      .rp{position:fixed;right:0;top:48px;bottom:0;width:280px;z-index:100;transform:translateX(100%);transition:transform .25s}
+      .rp.open{transform:translateX(0)}
+      .tb-btn{min-width:36px;min-height:36px}
+      .comp-row{min-height:44px}
+      .placed-lbl{font-size:.7rem}
+      .topbar{overflow-x:auto}
+      .tb-brand{font-size:.8rem}
+      .btn{font-size:.7rem;padding:8px 10px}
+    }
+
+    /* Tap targets 44px+ per smartphone */
+    @media (pointer: coarse) {
+      a, button, input, select, textarea { min-height: 44px; }
+      input, select, textarea { font-size: 16px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOPBAR — Logo e strumenti principali
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21L19,12L23,21L21,21L23,28L17,28L19,21Z" fill="#00D4AA"/>
+    </svg>
+    <div class="tb-brand">Valve Electronics <b>TELECAMERE</b></div>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-spacer"></div>
+  <div class="tb-right">
+    <button class="btn btn-ghost" onclick="openTplModal()">📋 Modelli</button>
+    <button class="btn btn-ghost" onclick="clearAll()">✕ Pulisci</button>
+    <button class="btn btn-ghost" onclick="saveProj()">💾 Salva</button>
+    <label class="btn btn-ghost" style="cursor:pointer">📂 Carica<input type="file" accept=".json" onchange="loadProj(event)" style="display:none"></label>
+    <button class="btn btn-blu" onclick="openPDF()">📄 PDF</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     WORKSPACE — Pannelli e canvas
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="ws">
+
+  <!-- LEFT PANEL — Catalogo componenti -->
+  <div class="lp" id="lp">
+    <div class="lp-search"><input id="comp-q" type="text" placeholder="Cerca componente…" oninput="buildCatalog()"></div>
+    <div class="lp-cats" id="lp-cats"></div>
+    <div class="lp-list" id="lp-list"></div>
+  </div>
+
+  <!-- CANVAS — Area di lavoro con griglia -->
+  <div class="ca">
+    <div class="ctb">
+      <button class="tb-btn on" id="tb-sel" title="Seleziona (S)" onclick="setTool('sel')">↖</button>
+      <button class="tb-btn" id="tb-pan" title="Pan (P)" onclick="setTool('pan')">✋</button>
+      <div class="tsep"></div>
+      <button class="tb-btn" onclick="doZoom(1.2)" title="Zoom +">+</button>
+      <span class="zoom-lbl" id="zlbl">100%</span>
+      <button class="tb-btn" onclick="doZoom(.83)" title="Zoom -">−</button>
+      <button class="tb-btn" onclick="fitView()" title="Inquadra">⊡</button>
+      <div class="tsep"></div>
+      <button class="tb-btn" title="Elimina selezionato" onclick="deleteSelected()">🗑</button>
+      <span class="cursor-info" id="cinfo">x:0 y:0</span>
+    </div>
+    <div class="cscroll" id="cscroll">
+      <div id="cvs"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — Proprietà -->
+  <div class="rp" id="rp">
+    <div class="rp-hdr">Proprietà</div>
+    <div class="rp-body" id="proj-fields">
+      <div class="prow"><div class="plbl">Progetto</div><input class="pinp" id="p-nom" type="text" placeholder="Impianto videosorveglianza"></div>
+      <div class="prow"><div class="plbl">Cliente</div><input class="pinp" id="p-cli" type="text" placeholder="Nome cliente"></div>
+      <div class="pgrid2">
+        <div class="prow"><div class="plbl">Data</div><input class="pinp" id="p-data" type="date"></div>
+        <div class="prow"><div class="plbl">Tecnico</div><input class="pinp" id="p-tec" type="text" placeholder="Nome"></div>
+      </div>
+    </div>
+    <div class="psep" style="margin:0 12px"></div>
+    <div id="comp-rp">
+      <div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>
+    </div>
+  </div>
+
+</div><!-- /ws -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     STATUS BAR — Informazioni di stato
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="stbar">
+  <div class="sti"><div class="sti-dot"></div>Valve Electronics Telecamere v1.0</div>
+  <div class="sti" id="st-comp">Componenti: 0</div>
+  <div class="sti" id="st-tool">Strumento: Seleziona</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL PDF — Export con jsPDF
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="mbg" id="mpdf">
+  <div class="mbox">
+    <button class="mclose" onclick="closePDF()">✕</button>
+    <div class="mtitle">Esporta planimetria PDF</div>
+    <div class="mrow"><label class="mlbl" for="pdf-tit">Titolo della planimetria</label><input class="minp" id="pdf-tit" type="text" placeholder="Layout videosorveglianza"></div>
+    <div class="mgrid2">
+      <div class="mrow"><label class="mlbl">N° planimetria</label><input class="minp" id="pdf-num" type="text" placeholder="VT-001"></div>
+      <div class="mrow"><label class="mlbl">Revisione</label><input class="minp" id="pdf-rev" type="text" placeholder="A"></div>
+    </div>
+    <div class="mgrid2">
+      <div class="mrow"><label class="mlbl">Foglio</label>
+        <select class="minp" id="pdf-hoja"><option>A4 Orizzontale</option><option>A4 Verticale</option><option>A3 Orizzontale</option></select>
+      </div>
+      <div class="mrow"><label class="mlbl">Scala</label>
+        <select class="minp" id="pdf-esc"><option>S/E</option><option>1:10</option><option>1:20</option><option>1:50</option></select>
+      </div>
+    </div>
+    <div class="mrow"><label class="mlbl">Osservazioni</label><input class="minp" id="pdf-obs" type="text" placeholder="Note per il cartellino"></div>
+    <div class="macts">
+      <button class="btn btn-ghost" onclick="closePDF()">Annulla</button>
+      <button class="btn btn-ora" onclick="genPDF()">📄 Genera PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MODAL MODELLI — Layout precaricati
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="mbg" id="mtpl">
+  <div class="mbox" style="max-width:560px">
+    <button class="mclose" onclick="closeTplModal()">✕</button>
+    <div class="mtitle">Modelli precaricati</div>
+    <p style="color:var(--dim);font-size:.82rem;margin-bottom:16px;line-height:1.5">
+      Caricano componenti corretti e dati tecnici su una griglia già posizionata. Seleziona un modello per iniziare rapidamente.
+    </p>
+    <div id="tpl-list"></div>
+    <div class="macts">
+      <button class="btn btn-ghost" onclick="closeTplModal()">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast per notifiche -->
+<div class="toast" id="toast"></div>
+
+<!-- Mobile menu toggle -->
+<button id="mobile-menu-btn" style="display:none;position:fixed;bottom:20px;left:20px;z-index:200;width:50px;height:50px;border-radius:50%;background:var(--ora);color:#fff;border:none;font-size:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,.3)" onclick="toggleMobileMenu()">☰</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  MOBILE MENU — Hamburger per smartphone
+// ═══════════════════════════════════════════════════════════════
+function toggleMobileMenu(){
+  const lp=document.getElementById('lp');
+  const rp=document.getElementById('rp');
+  if(lp.classList.contains('open')){lp.classList.remove('open');rp.classList.remove('open')}
+  else{lp.classList.add('open')}
+}
+if(window.innerWidth<768){document.getElementById('mobile-menu-btn').style.display='block'}
+window.addEventListener('resize',()=>{document.getElementById('mobile-menu-btn').style.display=window.innerWidth<768?'block':'none'});
+
+// ═══════════════════════════════════════════════════════════════
+//  CATALOGO COMPONENTI — SVG realistici con gradienti
+// ═══════════════════════════════════════════════════════════════
+let _gid=0;
+function gradId(){return 'g'+(_gid++)}
+
+// Telecamera IP Dome
+function svgDome(){
+  const g1=gradId(),g2=gradId(),g3=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8e8e8"/><stop offset="1" stop-color="#b0b0b0"/></linearGradient>
+      <radialGradient id="${g2}" cx=".5" cy=".4"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient>
+      <linearGradient id="${g3}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a90d9"/><stop offset="1" stop-color="#1a3a5a"/></linearGradient>
+    </defs>
+    <ellipse cx="20" cy="8" rx="14" ry="6" fill="url(#${g1})" stroke="#888" stroke-width=".5"/>
+    <path d="M6 8 Q6 24 20 26 Q34 24 34 8" fill="url(#${g1})" stroke="#888" stroke-width=".5"/>
+    <ellipse cx="20" cy="26" rx="14" ry="5" fill="url(#${g2})"/>
+    <circle cx="20" cy="24" r="6" fill="url(#${g3})" stroke="#0a1a2a" stroke-width="1"/>
+    <circle cx="20" cy="24" r="2.5" fill="#0a0a0a"/>
+    <circle cx="18" cy="22" r="1" fill="#4a90d9" opacity=".6"/>
+    <rect x="8" y="6" width="3" height="2" rx=".5" fill="#00D4AA"/>
+  </svg>`;
+}
+
+// Telecamera IP Bullet
+function svgBullet(){
+  const g1=gradId(),g2=gradId(),g3=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0d0d0"/><stop offset="1" stop-color="#909090"/></linearGradient>
+      <radialGradient id="${g2}" cx=".5" cy=".5"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
+      <linearGradient id="${g3}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a90d9"/><stop offset="1" stop-color="#1a3a5a"/></linearGradient>
+    </defs>
+    <rect x="4" y="10" width="24" height="12" rx="3" fill="url(#${g1})" stroke="#777" stroke-width=".5"/>
+    <circle cx="30" cy="16" r="8" fill="url(#${g1})" stroke="#777" stroke-width=".5"/>
+    <circle cx="30" cy="16" r="5" fill="url(#${g2})"/>
+    <circle cx="30" cy="16" r="3" fill="url(#${g3})"/>
+    <circle cx="29" cy="15" r="1" fill="#4a90d9" opacity=".7"/>
+    <rect x="6" y="12" width="2" height="2" rx=".5" fill="#00D4AA"/>
+    <rect x="10" y="22" width="8" height="3" rx="1" fill="#666"/>
+  </svg>`;
+}
+
+// Telecamera PTZ
+function svgPTZ(){
+  const g1=gradId(),g2=gradId(),g3=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0e0e0"/><stop offset="1" stop-color="#a0a0a0"/></linearGradient>
+      <radialGradient id="${g2}" cx=".5" cy=".4"><stop offset="0" stop-color="#3a3a3a"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient>
+      <linearGradient id="${g3}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a90d9"/><stop offset="1" stop-color="#1a3a5a"/></linearGradient>
+    </defs>
+    <rect x="14" y="2" width="12" height="6" rx="2" fill="url(#${g1})" stroke="#888" stroke-width=".5"/>
+    <circle cx="20" cy="14" r="10" fill="url(#${g1})" stroke="#888" stroke-width=".5"/>
+    <circle cx="20" cy="14" r="7" fill="url(#${g2})"/>
+    <circle cx="20" cy="14" r="4" fill="url(#${g3})"/>
+    <circle cx="18.5" cy="12.5" r="1.2" fill="#4a90d9" opacity=".7"/>
+    <rect x="16" y="24" width="8" height="4" rx="1" fill="#666"/>
+    <circle cx="20" cy="28" r="2" fill="#444"/>
+  </svg>`;
+}
+
+// Telecamera Termica
+function svgTermica(){
+  const g1=gradId(),g2=gradId(),g3=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c0c0c0"/><stop offset="1" stop-color="#808080"/></linearGradient>
+      <radialGradient id="${g2}" cx=".5" cy=".5"><stop offset="0" stop-color="#4a2a2a"/><stop offset="1" stop-color="#1a0a0a"/></radialGradient>
+      <linearGradient id="${g3}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6b35"/><stop offset="1" stop-color="#8b0000"/></linearGradient>
+    </defs>
+    <rect x="4" y="10" width="24" height="12" rx="3" fill="url(#${g1})" stroke="#777" stroke-width=".5"/>
+    <circle cx="30" cy="16" r="8" fill="url(#${g1})" stroke="#777" stroke-width=".5"/>
+    <circle cx="30" cy="16" r="5" fill="url(#${g2})"/>
+    <circle cx="30" cy="16" r="3" fill="url(#${g3})"/>
+    <circle cx="29" cy="15" r="1" fill="#ff6b35" opacity=".8"/>
+    <rect x="6" y="12" width="2" height="2" rx=".5" fill="#ff6b35"/>
+    <rect x="10" y="22" width="8" height="3" rx="1" fill="#666"/>
+  </svg>`;
+}
+
+// DVR/NVR
+function svgDVR(){
+  const g1=gradId(),g2=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a3a"/><stop offset="1" stop-color="#1a1a2a"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3a4a"/><stop offset="1" stop-color="#2a2a3a"/></linearGradient>
+    </defs>
+    <rect x="4" y="8" width="32" height="18" rx="2" fill="url(#${g1})" stroke="#444" stroke-width=".5"/>
+    <rect x="6" y="10" width="28" height="14" rx="1" fill="url(#${g2})"/>
+    <circle cx="10" cy="17" r="2" fill="#00D4AA"/>
+    <circle cx="10" cy="17" r="1" fill="#00ffb8"/>
+    <rect x="16" y="14" width="16" height="6" rx="1" fill="#0a0a12"/>
+    <rect x="18" y="16" width="12" height="2" rx=".5" fill="#00D4AA" opacity=".6"/>
+    <rect x="30" y="14" width="4" height="6" rx=".5" fill="#333"/>
+  </svg>`;
+}
+
+// Switch POE
+function svgSwitch(){
+  const g1=gradId(),g2=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a3a"/><stop offset="1" stop-color="#1a1a2a"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3a4a"/><stop offset="1" stop-color="#2a2a3a"/></linearGradient>
+    </defs>
+    <rect x="4" y="10" width="32" height="14" rx="2" fill="url(#${g1})" stroke="#444" stroke-width=".5"/>
+    <rect x="6" y="12" width="28" height="10" rx="1" fill="url(#${g2})"/>
+    <rect x="8" y="14" width="4" height="6" rx=".5" fill="#0a0a12"/>
+    <rect x="14" y="14" width="4" height="6" rx=".5" fill="#0a0a12"/>
+    <rect x="20" y="14" width="4" height="6" rx=".5" fill="#0a0a12"/>
+    <rect x="26" y="14" width="4" height="6" rx=".5" fill="#0a0a12"/>
+    <circle cx="9" cy="15" r=".8" fill="#00D4AA"/>
+    <circle cx="15" cy="15" r=".8" fill="#00D4AA"/>
+    <circle cx="21" cy="15" r=".8" fill="#00D4AA"/>
+    <circle cx="27" cy="15" r=".8" fill="#00D4AA"/>
+  </svg>`;
+}
+
+// Monitor
+function svgMonitor(){
+  const g1=gradId(),g2=gradId(),g3=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a3a"/><stop offset="1" stop-color="#1a1a2a"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1628"/><stop offset="1" stop-color="#050a12"/></linearGradient>
+      <linearGradient id="${g3}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a4a"/><stop offset="1" stop-color="#2a2a3a"/></linearGradient>
+    </defs>
+    <rect x="4" y="4" width="32" height="22" rx="2" fill="url(#${g1})" stroke="#444" stroke-width=".5"/>
+    <rect x="6" y="6" width="28" height="18" rx="1" fill="url(#${g2})"/>
+    <rect x="8" y="8" width="10" height="7" rx=".5" fill="#0a2a4a" opacity=".8"/>
+    <rect x="20" y="8" width="10" height="7" rx=".5" fill="#0a2a4a" opacity=".8"/>
+    <rect x="8" y="17" width="10" height="5" rx=".5" fill="#0a2a4a" opacity=".8"/>
+    <rect x="20" y="17" width="10" height="5" rx=".5" fill="#0a2a4a" opacity=".8"/>
+    <rect x="16" y="26" width="8" height="3" rx="1" fill="url(#${g3})"/>
+    <rect x="12" y="29" width="16" height="2" rx="1" fill="url(#${g3})"/>
+  </svg>`;
+}
+
+// Registratore
+function svgRecorder(){
+  const g1=gradId(),g2=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a3a"/><stop offset="1" stop-color="#1a1a2a"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3a3a4a"/><stop offset="1" stop-color="#2a2a3a"/></linearGradient>
+    </defs>
+    <rect x="4" y="10" width="32" height="14" rx="2" fill="url(#${g1})" stroke="#444" stroke-width=".5"/>
+    <rect x="6" y="12" width="28" height="10" rx="1" fill="url(#${g2})"/>
+    <circle cx="10" cy="17" r="2.5" fill="#0a0a12"/>
+    <circle cx="10" cy="17" r="1.5" fill="#333"/>
+    <rect x="16" y="14" width="14" height="6" rx="1" fill="#0a0a12"/>
+    <rect x="18" y="16" width="10" height="2" rx=".5" fill="#00D4AA" opacity=".5"/>
+    <circle cx="32" cy="17" r="1.5" fill="#00D4AA"/>
+  </svg>`;
+}
+
+// Alimentatore
+function svgPower(){
+  const g1=gradId(),g2=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8e8e8"/><stop offset="1" stop-color="#b0b0b0"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a3a4a"/><stop offset="1" stop-color="#2a2a3a"/></linearGradient>
+    </defs>
+    <rect x="8" y="6" width="24" height="20" rx="3" fill="url(#${g1})" stroke="#888" stroke-width=".5"/>
+    <rect x="10" y="8" width="20" height="16" rx="2" fill="url(#${g2})"/>
+    <text x="20" y="18" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#00D4AA">12V</text>
+    <rect x="14" y="26" width="3" height="4" rx=".5" fill="#666"/>
+    <rect x="23" y="26" width="3" height="4" rx=".5" fill="#666"/>
+  </svg>`;
+}
+
+// Antenna WiFi
+function svgAntenna(){
+  const g1=gradId(),g2=gradId();
+  return `<svg viewBox="0 0 40 32" width="40" height="32">
+    <defs>
+      <linearGradient id="${g1}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a3a"/><stop offset="1" stop-color="#1a1a2a"/></linearGradient>
+      <linearGradient id="${g2}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a4a5a"/><stop offset="1" stop-color="#3a3a4a"/></linearGradient>
+    </defs>
+    <rect x="16" y="18" width="8" height="10" rx="1" fill="url(#${g1})" stroke="#444" stroke-width=".5"/>
+    <rect x="18" y="8" width="4" height="12" rx="2" fill="url(#${g2})" stroke="#555" stroke-width=".5"/>
+    <circle cx="20" cy="6" r="3" fill="url(#${g2})" stroke="#555" stroke-width=".5"/>
+    <path d="M14 10 Q10 14 14 18" fill="none" stroke="#00D4AA" stroke-width="1.5" opacity=".7"/>
+    <path d="M26 10 Q30 14 26 18" fill="none" stroke="#00D4AA" stroke-width="1.5" opacity=".7"/>
+    <path d="M12 6 Q6 12 12 20" fill="none" stroke="#00D4AA" stroke-width="1" opacity=".4"/>
+    <path d="M28 6 Q34 12 28 20" fill="none" stroke="#00D4AA" stroke-width="1" opacity=".4"/>
+  </svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DEFINIZIONE CATALOGO
+// ═══════════════════════════════════════════════════════════════
+const CATALOG=[
+  {id:'dome',cat:'Telecamere',name:'Telecamera IP Dome',spec:'4MP · IR 30m · PoE',svg:svgDome,w:40,h:32},
+  {id:'bullet',cat:'Telecamere',name:'Telecamera IP Bullet',spec:'4MP · IR 50m · PoE',svg:svgBullet,w:40,h:32},
+  {id:'ptz',cat:'Telecamere',name:'Telecamera PTZ',spec:'4MP · 30x Zoom · PoE+',svg:svgPTZ,w:40,h:32},
+  {id:'termica',cat:'Telecamere',name:'Telecamera Termica',spec:'640×512 · 12μm · IP67',svg:svgTermica,w:40,h:32},
+  {id:'dvr',cat:'Registrazione',name:'DVR/NVR',spec:'16CH · 4K · HDD 4TB',svg:svgDVR,w:40,h:32},
+  {id:'switch',cat:'Rete',name:'Switch POE',spec:'8 Porte · 150W · Gigabit',svg:svgSwitch,w:40,h:32},
+  {id:'monitor',cat:'Visualizzazione',name:'Monitor',spec:'24" · 1080p · HDMI/VGA',svg:svgMonitor,w:40,h:32},
+  {id:'recorder',cat:'Registrazione',name:'Registratore',spec:'32CH · 4K · RAID',svg:svgRecorder,w:40,h:32},
+  {id:'power',cat:'Alimentazione',name:'Alimentatore',spec:'12V DC · 10A · 120W',svg:svgPower,w:40,h:32},
+  {id:'antenna',cat:'Rete',name:'Antenna WiFi',spec:'2.4/5GHz · 300Mbps · IP65',svg:svgAntenna,w:40,h:32},
+];
+
+const CATS=['Tutte','Telecamere','Registrazione','Rete','Visualizzazione','Alimentazione'];
+let activeCat='Tutte';
+
+// ═══════════════════════════════════════════════════════════════
+//  STATO APPLICAZIONE
+// ═══════════════════════════════════════════════════════════════
+let components=[];      // Componenti posizionati sul canvas
+let selected=null;      // Componente selezionato
+let tool='sel';         // Strumento attivo: sel | pan
+let zoom=1;             // Livello di zoom
+let panX=0,panY=0;      // Offset pan
+let compCounter=0;      // Contatore per ID univoci
+
+// ═══════════════════════════════════════════════════════════════
+//  COSTRUZIONE CATALOGO — Pannello sinistro
+// ═══════════════════════════════════════════════════════════════
+function buildCatalog(){
+  const q=document.getElementById('comp-q').value.toLowerCase();
+  const catsEl=document.getElementById('lp-cats');
+  const listEl=document.getElementById('lp-list');
+
+  // Categorie
+  catsEl.innerHTML=CATS.map(c=>
+    `<button class="lp-cat${c===activeCat?' on':''}" onclick="setCat('${c}')">${c}</button>`
+  ).join('');
+
+  // Filtra componenti
+  const filtered=CATALOG.filter(c=>{
+    const matchCat=activeCat==='Tutte'||c.cat===activeCat;
+    const matchQ=!q||c.name.toLowerCase().includes(q)||c.spec.toLowerCase().includes(q);
+    return matchCat&&matchQ;
+  });
+
+  // Lista componenti
+  listEl.innerHTML=filtered.map(c=>`
+    <div class="comp-row" draggable="true" data-id="${c.id}" ondragstart="dragStart(event,'${c.id}')" onclick="quickAdd('${c.id}')">
+      <div class="comp-sym">${c.svg()}</div>
+      <div class="comp-info">
+        <div class="cn">${c.name}</div>
+        <div class="cs">${c.spec}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Abilita drag & drop
+  listEl.querySelectorAll('.comp-row').forEach(row=>{
+    row.addEventListener('dragstart',e=>dragStart(e,row.dataset.id));
+  });
+}
+
+function setCat(c){activeCat=c;buildCatalog()}
+
+// ═══════════════════════════════════════════════════════════════
+//  DRAG & DROP — Dal catalogo al canvas
+// ═══════════════════════════════════════════════════════════════
+function dragStart(e,id){
+  e.dataTransfer.setData('text/plain',id);
+  e.dataTransfer.effectAllowed='copy';
+}
+
+function quickAdd(id){
+  // Aggiungi al centro del canvas visibile
+  const cvs=document.getElementById('cvs');
+  const rect=cvs.getBoundingClientRect();
+  const x=(rect.width/2-panX)/zoom-20;
+  const y=(rect.height/2-panY)/zoom-16;
+  addComponent(id,x,y);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GESTIONE COMPONENTI — Aggiungi, seleziona, elimina
+// ═══════════════════════════════════════════════════════════════
+function addComponent(id,x,y){
+  const def=CATALOG.find(c=>c.id===id);
+  if(!def)return;
+
+  const comp={
+    uid:'c'+(++compCounter),
+    type:id,
+    name:def.name,
+    x:Math.round(x),
+    y:Math.round(y),
+    note:''
+  };
+  components.push(comp);
+  renderComponent(comp);
+  selectComponent(comp.uid);
+  updateStatus();
+}
+
+function renderComponent(comp){
+  const def=CATALOG.find(c=>c.id===comp.type);
+  const el=document.createElement('div');
+  el.className='placed';
+  el.dataset.uid=comp.uid;
+  el.style.left=comp.x+'px';
+  el.style.top=comp.y+'px';
+  el.innerHTML=`
+    <div class="placed-body">
+      <div class="placed-tag">${comp.name}</div>
+      ${def.svg()}
+      <div class="placed-lbl">${comp.name}</div>
+      <button class="del-btn" onclick="event.stopPropagation();deleteComponent('${comp.uid}')">✕</button>
+    </div>
+  `;
+  el.addEventListener('mousedown',e=>startDrag(e,comp.uid));
+  el.addEventListener('click',e=>{e.stopPropagation();selectComponent(comp.uid)});
+  document.getElementById('cvs').appendChild(el);
+}
+
+function selectComponent(uid){
+  selected=components.find(c=>c.uid===uid);
+  document.querySelectorAll('.placed').forEach(el=>el.classList.remove('sel'));
+  if(selected){
+    const el=document.querySelector(`.placed[data-uid="${uid}"]`);
+    if(el)el.classList.add('sel');
+    renderProperties();
+  }else{
+    document.getElementById('comp-rp').innerHTML='<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>';
+  }
+}
+
+function deleteComponent(uid){
+  components=components.filter(c=>c.uid!==uid);
+  const el=document.querySelector(`.placed[data-uid="${uid}"]`);
+  if(el)el.remove();
+  if(selected&&selected.uid===uid)selected=null;
+  document.getElementById('comp-rp').innerHTML='<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>';
+  updateStatus();
+}
+
+function deleteSelected(){
+  if(selected)deleteComponent(selected.uid);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DRAG & DROP SUL CANVAS — Spostamento componenti
+// ═══════════════════════════════════════════════════════════════
+let dragComp=null,dragOffX=0,dragOffY=0;
+
+function startDrag(e,uid){
+  if(tool!=='sel')return;
+  e.stopPropagation();
+  const comp=components.find(c=>c.uid===uid);
+  if(!comp)return;
+  selectComponent(uid);
+  dragComp=comp;
+  const el=document.querySelector(`.placed[data-uid="${uid}"]`);
+  const rect=el.getBoundingClientRect();
+  dragOffX=e.clientX-rect.left;
+  dragOffY=e.clientY-rect.top;
+  document.addEventListener('mousemove',onDrag);
+  document.addEventListener('mouseup',endDrag);
+}
+
+function onDrag(e){
+  if(!dragComp)return;
+  const cvs=document.getElementById('cvs');
+  const rect=cvs.getBoundingClientRect();
+  const x=(e.clientX-rect.left-panX)/zoom-dragOffX/zoom;
+  const y=(e.clientY-rect.top-panY)/zoom-dragOffY/zoom;
+  dragComp.x=Math.round(x);
+  dragComp.y=Math.round(y);
+  const el=document.querySelector(`.placed[data-uid="${dragComp.uid}"]`);
+  if(el){
+    el.style.left=dragComp.x+'px';
+    el.style.top=dragComp.y+'px';
+  }
+  updateCursorInfo(e);
+}
+
+function endDrag(){
+  dragComp=null;
+  document.removeEventListener('mousemove',onDrag);
+  document.removeEventListener('mouseup',endDrag);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STRUMENTI — Seleziona, Pan, Zoom
+// ═══════════════════════════════════════════════════════════════
+function setTool(t){
+  tool=t;
+  document.getElementById('tb-sel').classList.toggle('on',t==='sel');
+  document.getElementById('tb-pan').classList.toggle('on',t==='pan');
+  document.getElementById('cvs').classList.toggle('pan-mode',t==='pan');
+  updateStatus();
+}
+
+function doZoom(f){
+  zoom=Math.max(.25,Math.min(4,zoom*f));
+  applyTransform();
+}
+
+function fitView(){
+  zoom=1;panX=0;panY=0;
+  applyTransform();
+}
+
+function applyTransform(){
+  const cvs=document.getElementById('cvs');
+  cvs.style.transform=`translate(${panX}px,${panY}px) scale(${zoom})`;
+  document.getElementById('zlbl').textContent=Math.round(zoom*100)+'%';
+}
+
+// Pan con strumento pan
+let panning=false,panStartX=0,panStartY=0;
+document.getElementById('cvs').addEventListener('mousedown',e=>{
+  if(tool==='pan'){
+    panning=true;
+    panStartX=e.clientX-panX;
+    panStartY=e.clientY-panY;
+    document.addEventListener('mousemove',onPan);
+    document.addEventListener('mouseup',endPan);
+  }
+});
+function onPan(e){
+  if(!panning)return;
+  panX=e.clientX-panStartX;
+  panY=e.clientY-panStartY;
+  applyTransform();
+}
+function endPan(){
+  panning=false;
+  document.removeEventListener('mousemove',onPan);
+  document.removeEventListener('mouseup',endPan);
+}
+
+// Drop sul canvas
+document.getElementById('cvs').addEventListener('dragover',e=>{
+  e.preventDefault();
+  e.dataTransfer.dropEffect='copy';
+});
+document.getElementById('cvs').addEventListener('drop',e=>{
+  e.preventDefault();
+  const id=e.dataTransfer.getData('text/plain');
+  const def=CATALOG.find(c=>c.id===id);
+  if(!def)return;
+  const rect=e.currentTarget.getBoundingClientRect();
+  const x=(e.clientX-rect.left-panX)/zoom-def.w/2;
+  const y=(e.clientY-rect.top-panY)/zoom-def.h/2;
+  addComponent(id,x,y);
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  PROPRIETÀ — Pannello destro
+// ═══════════════════════════════════════════════════════════════
+function renderProperties(){
+  const rp=document.getElementById('comp-rp');
+  if(!selected){
+    rp.innerHTML='<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>';
+    return;
+  }
+  const def=CATALOG.find(c=>c.id===selected.type);
+  rp.innerHTML=`
+    <div class="rp-body">
+      <div class="prow"><div class="plbl">Nome</div><input class="pinp" type="text" value="${selected.name}" onchange="updateCompName(this.value)"></div>
+      <div class="pgrid2">
+        <div class="prow"><div class="plbl">X</div><input class="pinp" type="number" value="${selected.x}" onchange="updateCompPos('x',this.value)"></div>
+        <div class="prow"><div class="plbl">Y</div><input class="pinp" type="number" value="${selected.y}" onchange="updateCompPos('y',this.value)"></div>
+      </div>
+      <div class="prow"><div class="plbl">Note</div><input class="pinp" type="text" value="${selected.note||''}" placeholder="Note..." onchange="updateCompNote(this.value)"></div>
+      <div class="spec-block">
+        <div class="spec-hdr">📋 Specifiche</div>
+        <div class="spec-line"><b>${def.spec}</b></div>
+        <div class="spec-tag">${def.cat}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateCompName(v){
+  if(!selected)return;
+  selected.name=v;
+  const el=document.querySelector(`.placed[data-uid="${selected.uid}"] .placed-lbl`);
+  if(el)el.textContent=v;
+  const tag=document.querySelector(`.placed[data-uid="${selected.uid}"] .placed-tag`);
+  if(tag)tag.textContent=v;
+}
+
+function updateCompPos(axis,v){
+  if(!selected)return;
+  selected[axis]=parseInt(v)||0;
+  const el=document.querySelector(`.placed[data-uid="${selected.uid}"]`);
+  if(el){
+    el.style.left=selected.x+'px';
+    el.style.top=selected.y+'px';
+  }
+}
+
+function updateCompNote(v){
+  if(!selected)return;
+  selected.note=v;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SALVA / CARICA PROGETTO — JSON
+// ═══════════════════════════════════════════════════════════════
+function saveProj(){
+  const data={
+    version:1,
+    project:document.getElementById('p-nom').value,
+    client:document.getElementById('p-cli').value,
+    date:document.getElementById('p-data').value,
+    tech:document.getElementById('p-tec').value,
+    components:components
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(data.project||'telecamere')+'.json';
+  a.click();
+  showToast('Progetto salvato');
+}
+
+function loadProj(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      clearAll(false);
+      document.getElementById('p-nom').value=data.project||'';
+      document.getElementById('p-cli').value=data.client||'';
+      document.getElementById('p-data').value=data.date||'';
+      document.getElementById('p-tec').value=data.tech||'';
+      (data.components||[]).forEach(c=>{
+        components.push(c);
+        renderComponent(c);
+      });
+      compCounter=components.length;
+      updateStatus();
+      showToast('Progetto caricato');
+    }catch(err){
+      showToast('Errore nel caricamento');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearAll(confirm=true){
+  if(confirm&&components.length){
+    if(!confirm('Eliminare tutti i componenti?'))return;
+  }
+  components=[];
+  selected=null;
+  document.getElementById('cvs').innerHTML='';
+  document.getElementById('comp-rp').innerHTML='<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>';
+  updateStatus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EXPORT PDF — jsPDF
+// ═══════════════════════════════════════════════════════════════
+function openPDF(){document.getElementById('mpdf').classList.add('open')}
+function closePDF(){document.getElementById('mpdf').classList.remove('open')}
+
+function genPDF(){
+  const {jsPDF}=window.jspdf;
+  const orientation=document.getElementById('pdf-hoja').value.includes('Verticale')?'p':'l';
+  const doc=new jsPDF({orientation,unit:'mm',format:'a4'});
+
+  // Intestazione
+  doc.setFontSize(16);
+  doc.setTextColor(0,212,170);
+  doc.text(document.getElementById('pdf-tit').value||'Layout Videosorveglianza',14,15);
+  doc.setFontSize(10);
+  doc.setTextColor(100,100,100);
+  doc.text(`N° ${document.getElementById('pdf-num').value||'VT-001'} · Rev. ${document.getElementById('pdf-rev').value||'A'} · Scala ${document.getElementById('pdf-esc').value}`,14,22);
+  doc.text(`Cliente: ${document.getElementById('p-cli').value||'-'} · Tecnico: ${document.getElementById('p-tec').value||'-'}`,14,28);
+
+  // Disegna componenti
+  const pageW=orientation==='l'?297:210;
+  const pageH=orientation==='l'?210:297;
+  const scale=Math.min((pageW-20)/800,(pageH-50)/600);
+  const offX=10,offY=40;
+
+  components.forEach((c,i)=>{
+    const def=CATALOG.find(d=>d.id===c.type);
+    const x=offX+c.x*scale;
+    const y=offY+c.y*scale;
+    // Se cambio pagina
+    if(y>pageH-20){
+      doc.addPage();
+    }
+    // Rettangolo componente
+    doc.setDrawColor(0,212,170);
+    doc.setFillColor(30,34,53);
+    doc.roundedRect(x,y,def.w*scale,def.h*scale,1,1,'FD');
+    // Nome
+    doc.setFontSize(7);
+    doc.setTextColor(232,234,244);
+    doc.text(c.name,x+2,y+def.h*scale+3);
+    // Numero
+    doc.setFontSize(6);
+    doc.setTextColor(0,212,170);
+    doc.text(`${i+1}`,x+2,y+4);
+  });
+
+  // Osservazioni
+  const obs=document.getElementById('pdf-obs').value;
+  if(obs){
+    doc.setFontSize(9);
+    doc.setTextColor(100,100,100);
+    doc.text(`Note: ${obs}`,14,pageH-10);
+  }
+
+  doc.save((document.getElementById('pdf-tit').value||'telecamere')+'.pdf');
+  closePDF();
+  showToast('PDF generato');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MODELLI PRECARICATI
+// ═══════════════════════════════════════════════════════════════
+const TEMPLATES=[
+  {
+    id:'negozio',icon:'🏪',title:'Negozio / Retail',
+    desc:'4 telecamere dome, NVR 8 canali, switch POE, monitor 24"',
+    comps:[
+      {type:'dome',x:100,y:80},{type:'dome',x:300,y:80},
+      {type:'dome',x:100,y:200},{type:'dome',x:300,y:200},
+      {type:'dvr',x:500,y:120},{type:'switch',x:500,y:200},
+      {type:'monitor',x:650,y:120}
+    ]
+  },
+  {
+    id:'ufficio',icon:'🏢',title:'Ufficio',
+    desc:'2 telecamere bullet, DVR 4 canali, alimentatore, antenna WiFi',
+    comps:[
+      {type:'bullet',x:100,y:100},{type:'bullet',x:300,y:100},
+      {type:'dvr',x:200,y:250},{type:'power',x:400,y:250},
+      {type:'antenna',x:400,y:100}
+    ]
+  },
+  {
+    id:'magazzino',icon:'🏭',title:'Magazzino',
+    desc:'6 telecamere (dome+bullet), NVR 16 canali, switch POE, monitor, PTZ',
+    comps:[
+      {type:'dome',x:80,y:60},{type:'dome',x:250,y:60},{type:'dome',x:420,y:60},
+      {type:'bullet',x:80,y:180},{type:'bullet',x:250,y:180},{type:'bullet',x:420,y:180},
+      {type:'ptz',x:550,y:120},
+      {type:'dvr',x:150,y:320},{type:'switch',x:350,y:320},
+      {type:'monitor',x:550,y:320}
+    ]
+  }
+];
+
+function openTplModal(){
+  const list=document.getElementById('tpl-list');
+  list.innerHTML=TEMPLATES.map(t=>`
+    <div class="tpl-card" onclick="loadTemplate('${t.id}')">
+      <div class="tpl-ico">${t.icon}</div>
+      <div>
+        <div class="tpl-tt">${t.title}</div>
+        <div class="tpl-meta">${t.comps.length} componenti</div>
+        <div class="tpl-desc">${t.desc}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('mtpl').classList.add('open');
+}
+
+function closeTplModal(){document.getElementById('mtpl').classList.remove('open')}
+
+function loadTemplate(id){
+  const tpl=TEMPLATES.find(t=>t.id===id);
+  if(!tpl)return;
+  clearAll(false);
+  tpl.comps.forEach(c=>addComponent(c.type,c.x,c.y));
+  closeTplModal();
+  showToast(`Modello "${tpl.title}" caricato`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILITY — Toast, Status, Cursor
+// ═══════════════════════════════════════════════════════════════
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function updateStatus(){
+  document.getElementById('st-comp').textContent='Componenti: '+components.length;
+  document.getElementById('st-tool').textContent='Strumento: '+(tool==='sel'?'Seleziona':'Pan');
+}
+
+function updateCursorInfo(e){
+  const cvs=document.getElementById('cvs');
+  const rect=cvs.getBoundingClientRect();
+  const x=Math.round((e.clientX-rect.left-panX)/zoom);
+  const y=Math.round((e.clientY-rect.top-panY)/zoom);
+  document.getElementById('cinfo').textContent=`x:${x} y:${y}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SCORCIATOIE TASTIERA
+// ═══════════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  switch(e.key.toLowerCase()){
+    case 's':setTool('sel');break;
+    case 'p':setTool('pan');break;
+    case 'delete':
+    case 'backspace':deleteSelected();break;
+    case 'escape':
+      selected=null;
+      document.querySelectorAll('.placed').forEach(el=>el.classList.remove('sel'));
+      document.getElementById('comp-rp').innerHTML='<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>';
+      break;
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  SERVICE WORKER — PWA offline support (inline blob)
+// ═══════════════════════════════════════════════════════════════
+if('serviceWorker'in navigator){
+  const swCode=`
+    const CACHE='telecamere-v1';
+    const ASSETS=['./'];
+    self.addEventListener('install',e=>{
+      e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));
+      self.skipWaiting();
+    });
+    self.addEventListener('activate',e=>{
+      e.waitUntil(clients.claim());
+    });
+    self.addEventListener('fetch',e=>{
+      e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(resp=>{
+        const copy=resp.clone();
+        caches.open(CACHE).then(c=>c.put(e.request,copy));
+        return resp;
+      }).catch(()=>caches.match('./'))));
+    });
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIZIALIZZAZIONE
+// ═══════════════════════════════════════════════════════════════
+buildCatalog();
+updateStatus();
+</script>
+</body>
+</html>
