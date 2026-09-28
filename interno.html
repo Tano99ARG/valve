@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics™ — Pannello Interno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:   #1A1A2E;
+  --dark:    #16162A;
+  --panel:   #161616;
+  --card:    #1E1E32;
+  --border:  #252525;
+  --orange:  #00D4AA;
+  --orange2: #4AE8C0;
+  --blue:    #008F6E;
+  --green:   #2ecc71;
+  --white:   #F0F0F0;
+  --muted:   #666;
+  --font-d:  'Barlow Condensed', sans-serif;
+  --font-b:  'Barlow', sans-serif;
+  --sidebar: 220px;
+  --topbar:  56px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 17px; }
+body { background: var(--black); color: var(--white); font-family: var(--font-b); font-size: 1rem; line-height: 1.65; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar);
+  background: var(--panel); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100;
+  transition: transform .3s ease;
+}
+.sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 20px 18px; border-bottom: 1px solid var(--border); }
+.sidebar-logo svg { width: 32px; height: 32px; flex-shrink: 0; }
+.sidebar-brand { font-family: var(--font-d); font-size: 1.05rem; font-weight: 800; letter-spacing: .07em; line-height: 1; }
+.sidebar-brand span { color: var(--orange); display: block; font-size: .6rem; letter-spacing: .2em; margin-top: 2px; }
+.sidebar-badge { margin: 10px 18px 0; background: rgba(244,121,32,.12); border: 1px solid rgba(244,121,32,.25); color: var(--orange); font-family: var(--font-d); font-size: .7rem; font-weight: 700; letter-spacing: .18em; padding: 5px 8px; text-align: center; }
+.sidebar-section { padding: 18px 18px 8px; font-family: var(--font-d); font-size: .68rem; font-weight: 700; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding-bottom: 20px; }
+.nav-item {
+  display: flex; align-items: center; gap: 11px; padding: 12px 18px;
+  font-family: var(--font-d); font-size: 1rem; font-weight: 600; letter-spacing: .04em;
+  color: #8899AA; cursor: pointer; border: none; background: none; width: 100%;
+  text-align: left; text-decoration: none;
+  transition: color .15s, background .15s; border-left: 2px solid transparent;
+}
+.nav-item:hover { color: var(--white); background: rgba(255,255,255,.04); }
+.nav-item.active { color: var(--white); background: rgba(244,121,32,.08); border-left-color: var(--orange); }
+.nav-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-new { margin-left: auto; background: rgba(46,204,113,.15); color: var(--green); border: 1px solid rgba(46,204,113,.3); font-size: .6rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; letter-spacing: .05em; }
+.sidebar-footer { padding: 14px 18px; border-top: 1px solid var(--border); }
+.sidebar-footer a { font-family: var(--font-d); font-size: .8rem; font-weight: 600; color: var(--muted); text-decoration: none; letter-spacing: .05em; transition: color .15s; }
+.sidebar-footer a:hover { color: var(--white); }
+
+/* ── MAIN ── */
+.main { margin-left: var(--sidebar); min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── TOPBAR ── */
+.topbar { height: var(--topbar); background: var(--panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 50; }
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-title { font-family: var(--font-d); font-size: 1.15rem; font-weight: 700; letter-spacing: .05em; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.topbar-date { font-size: .84rem; color: var(--muted); }
+.btn-wpp { display: inline-flex; align-items: center; gap: 7px; background: #25D366; color: #fff; font-family: var(--font-d); font-size: .82rem; font-weight: 700; letter-spacing: .05em; text-decoration: none; padding: 7px 14px; border-radius: 3px; transition: opacity .2s; }
+.btn-wpp:hover { opacity: .85; }
+.hamburger { display: none; background: none; border: none; color: var(--white); font-size: 1.4rem; cursor: pointer; padding: 4px; }
+
+/* ── CONTENT ── */
+.content { flex: 1; padding: 32px 28px; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── SHARED HELPERS ── */
+.view-eyebrow { font-family: var(--font-d); font-size: .72rem; font-weight: 700; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+.view-title { font-family: var(--font-d); font-size: 1.3rem; font-weight: 800; }
+.view-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-d); font-weight: 700; letter-spacing: .05em; border: none; border-radius: 3px; cursor: pointer; transition: background .2s, opacity .2s; text-decoration: none; }
+.btn-primary { background: var(--orange); color: #fff; font-size: .9rem; padding: 10px 18px; }
+.btn-primary:hover { background: var(--orange2); }
+.btn-primary:disabled, .btn-primary[disabled] { opacity: .35; cursor: not-allowed; pointer-events: none; }
+.btn-sm-primary { background: var(--orange); color: #fff; font-size: .78rem; padding: 7px 13px; }
+.btn-sm-ghost { background: var(--card); color: var(--muted); border: 1px solid var(--border); font-size: .78rem; padding: 7px 13px; }
+.btn-sm-ghost:hover { color: var(--white); border-color: #444; }
+.btn-blue { background: rgba(74,142,194,.12); color: var(--blue); border: 1px solid rgba(74,142,194,.25); font-size: .85rem; padding: 9px 16px; width: 100%; justify-content: center; margin-top: auto; }
+.btn-blue:hover { background: rgba(74,142,194,.22); }
+.btn-blue:disabled { opacity: .35; cursor: not-allowed; pointer-events: none; }
+
+.pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.pill { font-family: var(--font-d); font-size: .78rem; font-weight: 600; letter-spacing: .06em; padding: 5px 13px; border-radius: 2px; cursor: pointer; background: var(--card); border: 1px solid var(--border); color: var(--muted); transition: all .15s; }
+.pill:hover, .pill.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+.empty-state { text-align: center; padding: 48px 20px; color: var(--muted); }
+.empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.empty-title { font-family: var(--font-d); font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+
+/* ── DASHBOARD ── */
+.dash-greeting { font-family: var(--font-d); font-size: clamp(1.5rem,3vw,2.2rem); font-weight: 800; margin-bottom: 6px; }
+.dash-greeting span { color: var(--orange); }
+.dash-sub { color: var(--muted); font-size: .9rem; margin-bottom: 32px; }
+.dash-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 14px; margin-bottom: 32px; }
+.dash-card { background: var(--card); border: 1px solid var(--border); padding: 22px 20px; cursor: pointer; transition: border-color .2s, background .2s; position: relative; overflow: hidden; }
+.dash-card:hover { border-color: var(--orange); background: #1d1d1d; }
+.dash-card-icon { font-size: 1.8rem; margin-bottom: 14px; display: block; }
+.dash-card-title { font-family: var(--font-d); font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
+.dash-card-desc { font-size: .9rem; color: var(--muted); line-height: 1.55; }
+.dash-card-arrow { position: absolute; bottom: 18px; right: 18px; color: var(--orange); opacity: 0; transition: opacity .2s, right .2s; }
+.dash-card:hover .dash-card-arrow { opacity: 1; right: 14px; }
+.dash-card.tag-new::before { content: 'NUEVO'; position: absolute; top: 12px; right: 12px; background: var(--green); color: #000; font-family: var(--font-d); font-size: .58rem; font-weight: 800; letter-spacing: .12em; padding: 2px 6px; }
+.section-label { font-family: var(--font-d); font-size: .72rem; font-weight: 700; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.recent-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-item { background: var(--card); border: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+.recent-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+.recent-text { font-size: .88rem; color: #ccc; flex: 1; }
+.recent-time { font-size: .76rem; color: var(--muted); white-space: nowrap; }
+
+/* ── PRESUPUESTADOR ── */
+.embed-wrap { background: var(--card); border: 1px solid var(--border); }
+.embed-bar { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.embed-bar-title { font-family: var(--font-d); font-size: 1rem; font-weight: 700; letter-spacing: .05em; }
+.embed-bar-meta { font-size: .78rem; color: var(--muted); }
+.embed-frame { width: 100%; height: calc(100vh - var(--topbar) - 56px - 48px); min-height: 600px; border: none; display: block; }
+
+/* ── PLANOS ── */
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 14px; }
+.tool-card { background: var(--card); border: 1px solid var(--border); padding: 26px 22px; display: flex; flex-direction: column; gap: 12px; transition: border-color .2s; }
+.tool-card:hover:not(.disabled) { border-color: var(--blue); }
+.tool-card.disabled { opacity: .45; }
+.tool-header { display: flex; align-items: center; gap: 12px; }
+.tool-icon { font-size: 1.6rem; }
+.tool-name { font-family: var(--font-d); font-size: 1.1rem; font-weight: 700; }
+.tool-desc { font-size: .92rem; color: var(--muted); line-height: 1.6; flex: 1; }
+.status { display: flex; align-items: center; gap: 7px; font-size: .82rem; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.status-dot.ok   { background: var(--green); } .status-ok   { color: var(--green); }
+.status-dot.warn { background: #f39c12; }      .status-warn { color: #f39c12; }
+.status-dot.off  { background: var(--muted); } .status-off  { color: var(--muted); }
+.tool-iframe-wrap { display: none; margin-top: 24px; }
+.tool-iframe-bar { background: var(--panel); border: 1px solid var(--border); border-bottom: none; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+.tool-iframe-title { font-family: var(--font-d); font-size: .95rem; font-weight: 700; }
+.tool-iframe-close { background: none; border: 1px solid var(--border); color: var(--muted); font-size: .78rem; padding: 5px 12px; cursor: pointer; font-family: var(--font-d); font-weight: 600; letter-spacing: .05em; }
+.tool-iframe-close:hover { color: var(--white); border-color: #555; }
+.tool-iframe { width: 100%; height: calc(100vh - var(--topbar) - 120px); min-height: 500px; border: 1px solid var(--border); display: block; }
+
+/* ── MANUALES ── */
+.search-input { width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--white); font-family: var(--font-b); font-size: .9rem; padding: 10px 14px; border-radius: 3px; outline: none; transition: border-color .2s; margin-bottom: 20px; }
+.search-input:focus { border-color: var(--orange); }
+.manual-list { display: flex; flex-direction: column; gap: 8px; }
+.manual-item { background: var(--card); border: 1px solid var(--border); padding: 16px 18px; display: flex; align-items: center; gap: 16px; transition: border-color .2s; }
+.manual-item:hover { border-color: var(--orange); }
+.manual-file-icon { font-size: 1.4rem; flex-shrink: 0; width: 36px; text-align: center; }
+.manual-info { flex: 1; min-width: 0; }
+.manual-title { font-family: var(--font-d); font-size: 1.05rem; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.manual-meta { font-size: .82rem; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.manual-cat { background: rgba(244,121,32,.1); color: var(--orange); font-family: var(--font-d); font-size: .74rem; font-weight: 700; letter-spacing: .1em; padding: 2px 7px; }
+.manual-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.upload-zone { border: 1px dashed var(--border); padding: 28px; text-align: center; margin-top: 20px; cursor: pointer; transition: border-color .2s; }
+.upload-zone:hover { border-color: var(--orange); }
+.upload-zone-icon { font-size: 2rem; margin-bottom: 10px; }
+.upload-zone-title { font-family: var(--font-d); font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+.upload-zone-desc { font-size: .82rem; color: var(--muted); }
+
+/* ── TIPS ── */
+.tip-list { display: flex; flex-direction: column; gap: 10px; }
+.tip-item { background: var(--card); border: 1px solid var(--border); padding: 18px 20px; display: flex; gap: 16px; align-items: flex-start; transition: border-color .2s; }
+.tip-item:hover { border-color: rgba(74,142,194,.35); }
+.tip-badge { font-family: var(--font-d); font-size: .68rem; font-weight: 700; letter-spacing: .12em; padding: 3px 8px; flex-shrink: 0; margin-top: 2px; }
+.tip-badge.tip    { background: rgba(74,142,194,.15); color: var(--blue); }
+.tip-badge.tuto   { background: rgba(244,121,32,.15); color: var(--orange); }
+.tip-badge.alerta { background: rgba(231,76,60,.15); color: #e74c3c; }
+.tip-body { flex: 1; min-width: 0; }
+.tip-title { font-family: var(--font-d); font-size: 1.05rem; font-weight: 700; margin-bottom: 5px; }
+.tip-desc { font-size: .92rem; color: var(--muted); line-height: 1.6; }
+.tip-footer { display: flex; gap: 12px; margin-top: 8px; align-items: center; flex-wrap: wrap; }
+.tip-date, .tip-service { font-size: .78rem; }
+.tip-date { color: #444; }
+.tip-service { color: var(--blue); font-family: var(--font-d); font-weight: 600; }
+.tip-link { font-size: .78rem; color: var(--orange); text-decoration: none; }
+.tip-link:hover { text-decoration: underline; }
+.tip-del { margin-left: auto; background: none; border: none; color: var(--muted); font-size: .82rem; cursor: pointer; font-family: var(--font-d); padding: 2px 4px; transition: color .15s; }
+.tip-del:hover { color: #e74c3c; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,.8); backdrop-filter: blur(4px); align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--panel); border: 1px solid var(--border); max-width: 520px; width: 100%; padding: 32px; position: relative; max-height: 90vh; overflow-y: auto; }
+.modal-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); font-size: 1.3rem; cursor: pointer; transition: color .15s; }
+.modal-close:hover { color: var(--white); }
+.modal-title { font-family: var(--font-d); font-size: 1.4rem; font-weight: 800; margin-bottom: 22px; }
+.form-row { margin-bottom: 16px; }
+.form-label { font-family: var(--font-d); font-size: .76rem; font-weight: 700; letter-spacing: .18em; color: #8899AA; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.form-input, .form-select, .form-textarea { width: 100%; background: rgba(255,255,255,.05); border: 1px solid var(--border); color: var(--white); font-family: var(--font-b); font-size: 1rem; padding: 11px 13px; border-radius: 3px; outline: none; transition: border-color .2s; appearance: none; -webkit-appearance: none; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--orange); }
+.form-select option { background: #1E1E32; color: var(--white); }
+.form-textarea { resize: vertical; min-height: 90px; }
+.form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 99; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .main { margin-left: 0; }
+  .hamburger { display: block; }
+  .content { padding: 20px 16px; }
+  .topbar { padding: 0 16px; }
+  .form-grid2 { grid-template-columns: 1fr; }
+  .topbar-date { display: none; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .manual-actions { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="sidebar-brand">Valve Electronics <span>ELECTRONICS</span></div>
+  </div>
+  <div class="sidebar-badge">▲ AREA INTERNA</div>
+  <nav class="sidebar-nav" aria-label="Navigazione interna">
+    <div class="sidebar-section">Generale</div>
+    <button class="nav-item active" data-view="dashboard"><span class="nav-icon" aria-hidden="true">⊞</span> Pannello principale</button>
+    <div class="sidebar-section">Strumenti</div>
+    <button class="nav-item" data-view="presupuestador"><span class="nav-icon" aria-hidden="true">📋</span> Preventivatore</button>
+    <button class="nav-item" data-view="calculadora"><span class="nav-icon" aria-hidden="true">🧮</span> Calcolatrice tecnica</button>
+    <button class="nav-item" data-view="instrumentos"><span class="nav-icon" aria-hidden="true">🔬</span> Strumenti di misura</button>
+    <button class="nav-item" data-view="informe"><span class="nav-icon" aria-hidden="true">🗒️</span> Relazione tecnica di visita</button>
+    <button class="nav-item" data-view="checklist"><span class="nav-icon" aria-hidden="true">✅</span> Checklist di manutenzione</button>
+    <button class="nav-item" data-view="planos"><span class="nav-icon" aria-hidden="true">📐</span> Planimetrie e quadri</button>
+    <div class="sidebar-section">Conoscenza</div>
+    <button class="nav-item" data-view="normativa"><span class="nav-icon" aria-hidden="true">📜</span> Scheda di normativa</button>
+    <button class="nav-item" data-view="manuales"><span class="nav-icon" aria-hidden="true">📚</span> Manuali</button>
+    <button class="nav-item" data-view="tips"><span class="nav-icon" aria-hidden="true">💡</span> Consigli e tutorial <span class="nav-new">NUOVO</span></button>
+  </nav>
+  <div class="sidebar-footer"><a href="../index.html">← Sito pubblico</a></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <div class="topbar-title" id="topbar-title">Pannello principale</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="topbar-date"></span>
+      <a href="https://wa.me/5491151736190" class="btn-wpp" target="_blank" rel="noopener" aria-label="WhatsApp">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.526 5.858L0 24l6.296-1.506A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.034-1.386l-.36-.214-3.737.893.927-3.634-.235-.373A9.818 9.818 0 1112 21.818z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="view-dashboard">
+      <div class="dash-greeting">Buongiorno, <span>Valve Electronics</span> ⚡</div>
+      <p class="dash-sub">Pannello interno · Accesso tecnico</p>
+      <div class="section-label">Accessi rapidi</div>
+      <div class="dash-grid">
+        <div class="dash-card" onclick="showView('presupuestador')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">📋</span>
+          <div class="dash-card-title">Preventivatore</div>
+          <p class="dash-card-desc">Crea preventivi e fatture con il catalogo completo di servizi Valve Electronics.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card" onclick="showView('calculadora')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">🧮</span>
+          <div class="dash-card-title">Calcolatrice tecnica</div>
+          <p class="dash-card-desc">Ohm, cadute di tensione, sezioni, AC, gas, solare e convertitore di unità.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card" onclick="showView('instrumentos')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">🔬</span>
+          <div class="dash-card-title">Strumenti di misura</div>
+          <p class="dash-card-desc">Caratteristiche e applicazioni di 26 strumenti, per categoria.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card tag-new" onclick="showView('informe')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">🗒️</span>
+          <div class="dash-card-title">Relazione tecnica di visita</div>
+          <p class="dash-card-desc">Diagnosi, foto e firma digitale del cliente. Esporta PDF professionale.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card tag-new" onclick="showView('checklist')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">✅</span>
+          <div class="dash-card-title">Checklist di manutenzione</div>
+          <p class="dash-card-desc">AC, frigorifero, generatore o quadro. Firma digitale e PDF di conformità.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card tag-new" onclick="showView('normativa')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">📜</span>
+          <div class="dash-card-title">Scheda di normativa</div>
+          <p class="dash-card-desc">CEI 64-8, CEI 64-100, UNI 9039 e tabelle IP/IK a portata di mano in cantiere.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card" onclick="showView('planos')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">📐</span>
+          <div class="dash-card-title">Planimimetrie e quadri</div>
+          <p class="dash-card-desc">Editor di planimetrie elettriche, schemi di quadri e diagrammi d\'impianto.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card" onclick="showView('manuales')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">📚</span>
+          <div class="dash-card-title">Manuali</div>
+          <p class="dash-card-desc">Schede tecniche, manuali apparecchi e schede dati dei produttori.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div class="dash-card tag-new" onclick="showView('tips')" role="button" tabindex="0">
+          <span class="dash-card-icon" aria-hidden="true">💡</span>
+          <div class="dash-card-title">Consigli e tutorial</div>
+          <p class="dash-card-desc">Conoscenza accumulata del team. Trucchi, diagnosi e lezioni dal campo.</p>
+          <span class="dash-card-arrow" aria-hidden="true">→</span>
+        </div>
+      </div>
+      <div class="section-label">Attività recente</div>
+      <div class="recent-list" id="recent-list">
+        <div class="recent-item"><div class="recent-dot"></div><span class="recent-text">Pannello interno inizializzato</span><span class="recent-time" id="recent-init-time"></span></div>
+      </div>
+    </div>
+
+    <!-- PRESUPUESTADOR -->
+    <div class="view" id="view-presupuestador">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Preventivatore Valve Electronics</div>
+          <div class="embed-bar-meta">Catalogo AA · ELE · HEL · PLO</div>
+        </div>
+        <iframe class="embed-frame" src="presupuestador.html" title="Presupuestador Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- CALCULADORA -->
+    <div class="view" id="view-calculadora">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Calcolatrice tecnica Valve Electronics</div>
+          <div class="embed-bar-meta">Elettrico · Refrigerazione · Solare · Gas/Acqua · Convertitore</div>
+        </div>
+        <iframe class="embed-frame" src="calculadora.html" title="Calcolatrice tecnica Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- INSTRUMENTOS DE MEDICIÓN -->
+    <div class="view" id="view-instrumentos">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Strumenti di misura Valve Electronics</div>
+          <div class="embed-bar-meta">26 strumenti · 6 categorie · Caratteristiche e applicazioni</div>
+        </div>
+        <iframe class="embed-frame" src="instrumentos.html" title="Strumenti di misura Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- INFORME TÉCNICO -->
+    <div class="view" id="view-informe">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Relazione tecnica di visita Valve Electronics</div>
+          <div class="embed-bar-meta">Diagnosi · Registro fotografico · Firma digitale · Esporta PDF</div>
+        </div>
+        <iframe class="embed-frame" src="informe.html" title="Relazione tecnica di visita Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- CHECKLIST DE MANTENIMIENTO -->
+    <div class="view" id="view-checklist">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Checklist di manutenzione Valve Electronics</div>
+          <div class="embed-bar-meta">AC · Frigorifero/freezer · Generatore · Quadro · Firma digitale · Esporta PDF</div>
+        </div>
+        <iframe class="embed-frame" src="checklist.html" title="Checklist di manutenzione Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- NORMATIVA -->
+    <div class="view" id="view-normativa">
+      <div class="embed-wrap">
+        <div class="embed-bar">
+          <div class="embed-bar-title">Scheda rapida di normativa Valve Electronics</div>
+          <div class="embed-bar-meta">CEI 64-8 · CEI 64-100 · UNI 9039 · Tabelle IP/IK</div>
+        </div>
+        <iframe class="embed-frame" src="normativa.html" title="Scheda di normativa Valve Electronics™" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- PLANOS -->
+    <div class="view" id="view-planos">
+      <div class="view-eyebrow">Strumenti</div>
+      <div class="view-title" style="margin-bottom:24px;">Planimimetrie e quadri</div>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-header"><span class="tool-icon" aria-hidden="true">⚡</span><div class="tool-name">Editor quadri</div></div>
+          <p class="tool-desc">Quadri elettrici con componenti reali: interruttori, contattori, relè, PLC, strumenti di misura. Esporta in PDF.</p>
+          <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('tablero-designer.html','Editor quadri elettrici');return false;">
+            ▦ Apri editor
+          </label>
+        </div>
+        <div class="tool-card disabled">
+          <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Layout telecamere</div></div>
+          <p class="tool-desc">Schema di posizionamento telecamere IP su planimetria. Angoli di copertura e tipi di lente.</p>
+          <div class="status"><span class="status-dot warn"></span><span class="status-warn">Prossimamente</span></div>
+          <button class="btn btn-blue" disabled>In sviluppo</button>
+        </div>
+        <div class="tool-card disabled">
+          <div class="tool-header"><span class="tool-icon" aria-hidden="true">☀️</span><div class="tool-name">Dimensionamento solare</div></div>
+          <p class="tool-desc">Calcolatrice FV: consumo, irraggiamento, pannelli, inverter, batterie e cablaggio. Esporta calcolo.</p>
+          <div class="status"><span class="status-dot warn"></span><span class="status-warn">Prossimamente</span></div>
+          <button class="btn btn-blue" disabled>In sviluppo</button>
+        </div>
+        <div class="tool-card disabled">
+          <div class="tool-header"><span class="tool-icon" aria-hidden="true">❄️</span><div class="tool-name">Carico termico</div></div>
+          <p class="tool-desc">Dimensionamento apparecchi di climatizzazione per locale: orientamento, superficie, altezza, occupanti e carichi interni.</p>
+          <div class="status"><span class="status-dot off"></span><span class="status-off">Pianificato</span></div>
+          <button class="btn btn-blue" disabled>Pianificato</button>
+        </div>
+        <div class="tool-card disabled">
+          <div class="tool-header"><span class="tool-icon" aria-hidden="true">🛰️</span><div class="tool-name">Checklist Starlink</div></div>
+          <p class="tool-desc">Protocollo di installazione: orientamento ottimale, ostacoli, configurazione rete e consegna al cliente.</p>
+          <div class="status"><span class="status-dot off"></span><span class="status-off">Pianificato</span></div>
+          <button class="btn btn-blue" disabled>Pianificato</button>
+        </div>
+      </div>
+      <div class="tool-iframe-wrap" id="tool-iframe-wrap">
+        <div class="tool-iframe-bar">
+          <div class="tool-iframe-title" id="tool-iframe-title">Strumento</div>
+          <button class="tool-iframe-close" onclick="cerrarHerramienta()">✕ Chiudi</button>
+        </div>
+        <iframe class="tool-iframe" id="tool-iframe" title="Herramienta"></iframe>
+      </div>
+    </div>
+
+    <!-- MANUALES -->
+    <div class="view" id="view-manuales">
+      <div class="view-header">
+        <div><div class="view-eyebrow">Biblioteca tecnica</div><div class="view-title">Manuali e schede</div></div>
+        <label class="btn btn-primary" style="cursor:pointer;">
+          + Aggiungi manuale
+          <input type="file" accept=".pdf,.html" multiple onchange="agregarManuales(event)" style="display:none">
+        </label>
+      </div>
+      <div class="pills" id="pills-manuales">
+        <button class="pill active" data-cat="todos">Tutti</button>
+        <button class="pill" data-cat="AA">Aria cond.</button>
+        <button class="pill" data-cat="ELE">Elettrico</button>
+        <button class="pill" data-cat="SOL">Solare</button>
+        <button class="pill" data-cat="SEC">Sicurezza</button>
+        <button class="pill" data-cat="NET">Reti</button>
+        <button class="pill" data-cat="PLO">Idraulica</button>
+        <button class="pill" data-cat="GEN">Generale</button>
+      </div>
+      <input type="text" class="search-input" id="manual-search" placeholder="Cerca manuale, apparecchio, marca..." oninput="renderManuales()">
+      <div class="manual-list" id="manual-list"></div>
+      <label class="upload-zone">
+        <div class="upload-zone-icon" aria-hidden="true">📂</div>
+        <div class="upload-zone-title">Trascina o tocca per caricare manuali</div>
+        <p class="upload-zone-desc">PDF, HTML · Vengono salvati su questo dispositivo</p>
+        <input type="file" accept=".pdf,.html" multiple onchange="agregarManuales(event)" style="display:none">
+      </label>
+    </div>
+
+    <!-- TIPS -->
+    <div class="view" id="view-tips">
+      <div class="view-header">
+        <div><div class="view-eyebrow">Conoscenza del team</div><div class="view-title">Consigli e tutorial</div></div>
+        <button class="btn btn-primary" onclick="abrirModalTip()">+ Aggiungi</button>
+      </div>
+      <div class="pills" id="pills-tips">
+        <button class="pill active" data-tipo="todos">Tutti</button>
+        <button class="pill" data-tipo="tip">Consigli</button>
+        <button class="pill" data-tipo="tuto">Tutorial</button>
+        <button class="pill" data-tipo="alerta">Allarmi</button>
+      </div>
+      <div class="tip-list" id="tip-list"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL AGREGAR TIP -->
+<div class="modal-overlay" id="modal-tip" role="dialog" aria-modal="true" aria-labelledby="modal-tip-title">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrarModalTip()" aria-label="Chiudi">✕</button>
+    <div class="modal-title" id="modal-tip-title">Aggiungi consiglio / tutorial</div>
+    <div class="form-row"><label class="form-label" for="tip-titulo">Titolo</label><input class="form-input" type="text" id="tip-titulo" placeholder="Es: Come testare un contattore con multimetro"></div>
+    <div class="form-grid2">
+      <div class="form-row"><label class="form-label" for="tip-tipo">Tipo</label>
+        <select class="form-select" id="tip-tipo">
+          <option value="tip">💡 Consiglio</option>
+          <option value="tuto">🎥 Tutorial</option>
+          <option value="alerta">⚠️ Allarme</option>
+        </select>
+      </div>
+      <div class="form-row"><label class="form-label" for="tip-servicio">Servizio</label>
+        <select class="form-select" id="tip-servicio">
+          <option>Elettrico</option><option>Solare</option><option>Aria condizionata</option>
+          <option>Sicurezza</option><option>Starlink</option><option>Automazione</option>
+          <option>Idraulica</option><option>Generale</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-label" for="tip-desc">Descrizione / contenuto</label><textarea class="form-textarea" id="tip-desc" style="min-height:120px" placeholder="Descrivi il consiglio, il problema risolto, la procedura, ecc."></textarea></div>
+    <div class="form-row"><label class="form-label" for="tip-link">Link (opzionale)</label><input class="form-input" type="url" id="tip-link" placeholder="https://..."></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;font-size:1rem;padding:12px;" onclick="guardarTip()">Salva consiglio</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── CONSTANTES ──────────────────────────────────────────────
+const VIEWS = { dashboard:'Pannello principale', presupuestador:'Preventivatore', calculadora:'Calcolatrice tecnica', instrumentos:'Strumenti di misura', informe:'Relazione tecnica di visita', checklist:'Checklist di manutenzione', normativa:'Scheda di normativa', planos:'Planimimetrie e quadri', manuales:'Manuali', tips:'Consigli e tutorial' };
+const CAT_LABELS = { AA:'Aria cond.', ELE:'Elettrico', SOL:'Solare', SEC:'Sicurezza', NET:'Reti', PLO:'Idraulica', GEN:'Generale' };
+const TIPO_LABELS = { tip:'💡 CONSIGLIO', tuto:'🎥 TUTORIAL', alerta:'⚠️ ALLARME' };
+
+// ── FECHA ────────────────────────────────────────────────────
+(function initDate() {
+  const d = new Date();
+  const DIAS = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const MESES = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  document.getElementById('topbar-date').textContent = `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  document.getElementById('recent-init-time').textContent = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+})();
+
+// ── NAVEGACIÓN ───────────────────────────────────────────────
+const recentLog = [];
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + id)?.classList.add('active');
+  document.querySelector(`.nav-item[data-view="${id}"]`)?.classList.add('active');
+  document.getElementById('topbar-title').textContent = VIEWS[id] || id;
+  if (window.innerWidth <= 768) closeSidebar();
+  if (id !== 'dashboard') logRecent(VIEWS[id]);
+}
+
+// delegación única en todos los nav-items
+document.querySelector('.sidebar-nav').addEventListener('click', e => {
+  const btn = e.target.closest('.nav-item[data-view]');
+  if (btn) showView(btn.dataset.view);
+});
+
+// dash-cards con teclado
+document.querySelectorAll('.dash-card[onclick]').forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') el.click(); });
+});
+
+// ── SIDEBAR MOBILE ───────────────────────────────────────────
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('open'); }
+function closeSidebar()  { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('open'); }
+
+// ── RECIENTES ────────────────────────────────────────────────
+function logRecent(name) {
+  const d = new Date();
+  const time = `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+  recentLog.unshift({ text: `Hai aperto: ${name}`, time });
+  if (recentLog.length > 5) recentLog.pop();
+  const list = document.getElementById('recent-list');
+  const init = list.firstElementChild;
+  list.innerHTML = '';
+  list.appendChild(init);
+  recentLog.forEach(r => {
+    const el = document.createElement('div');
+    el.className = 'recent-item';
+    el.innerHTML = `<div class="recent-dot" style="background:var(--blue)"></div><span class="recent-text">${r.text}</span><span class="recent-time">${r.time}</span>`;
+    list.appendChild(el);
+  });
+}
+
+// ── HERRAMIENTAS / PLANOS ────────────────────────────────────
+function abrirHerramientaDirecta(src, nombre) {
+  document.getElementById('tool-iframe-title').textContent = nombre;
+  document.getElementById('tool-iframe').src = src;
+  const wrap = document.getElementById('tool-iframe-wrap');
+  wrap.style.display = 'block';
+  wrap.scrollIntoView({ behavior: 'smooth' });
+}
+function abrirHerramienta(e, nombre) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const url = URL.createObjectURL(new Blob([ev.target.result], { type: 'text/html' }));
+    document.getElementById('tool-iframe-title').textContent = nombre;
+    document.getElementById('tool-iframe').src = url;
+    const wrap = document.getElementById('tool-iframe-wrap');
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior: 'smooth' });
+  };
+  reader.readAsText(file);
+}
+function cerrarHerramienta() {
+  const iframe = document.getElementById('tool-iframe');
+  if(iframe.src.startsWith('blob:')) URL.revokeObjectURL(iframe.src);
+  iframe.src = '';
+  document.getElementById('tool-iframe-wrap').style.display = 'none';
+}
+
+// ── MANUALES ─────────────────────────────────────────────────
+// Guardamos solo metadatos en localStorage; el archivo se re-abre desde memoria de sesión
+const manualBlobs = {}; // id → ObjectURL (solo en sesión)
+let manuales = [];
+let filtroCat = 'todos';
+let debounceTimer;
+
+try { manuales = JSON.parse(localStorage.getItem('apex_manuales_meta') || '[]'); } catch(e) { manuales = []; }
+
+function guardarMetaManuales() {
+  // Solo guardamos metadatos (no el contenido binario)
+  const meta = manuales.map(({ id, nombre, tipo, categoria, fecha }) => ({ id, nombre, tipo, categoria, fecha }));
+  try { localStorage.setItem('apex_manuales_meta', JSON.stringify(meta)); } catch(e) {}
+}
+
+function detectarCategoria(nombre) {
+  const n = nombre.toLowerCase();
+  if (/aire|split|hvac|minisplit/.test(n))           return 'AA';
+  if (/solar|panel|fotovolt|inversor|mppt/.test(n))  return 'SOL';
+  if (/camara|cctv|dvr|nvr|segur/.test(n))           return 'SEC';
+  if (/starlink|router|switch|wifi|red/.test(n))     return 'NET';
+  if (/plom|bomba|agua|sanitari/.test(n))            return 'PLO';
+  if (/electr|tablero|disyuntor|breaker/.test(n))    return 'ELE';
+  return 'GEN';
+}
+
+function agregarManuales(e) {
+  Array.from(e.target.files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const id = `m_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
+      const url = URL.createObjectURL(new Blob([ev.target.result], { type: file.type || 'application/octet-stream' }));
+      manualBlobs[id] = url;
+      manuales.push({ id, nombre: file.name.replace(/\.[^.]+$/, ''), tipo: file.name.split('.').pop().toUpperCase(), categoria: detectarCategoria(file.name), fecha: new Date().toLocaleDateString('es-AR') });
+      guardarMetaManuales();
+      renderManuales();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+  e.target.value = '';
+}
+
+function renderManuales() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(_renderManuales, 80);
+}
+
+function _renderManuales() {
+  const q = document.getElementById('manual-search').value.toLowerCase().trim();
+  const filtrados = manuales.filter(m => {
+    const matchCat = filtroCat === 'todos' || m.categoria === filtroCat;
+    const matchQ   = !q || m.nombre.toLowerCase().includes(q) || CAT_LABELS[m.categoria]?.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  const list = document.getElementById('manual-list');
+  if (!filtrados.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">${q || filtroCat !== 'todos' ? 'Nessun risultato' : 'Nessun manuale caricato'}</div><p>${q || filtroCat !== 'todos' ? 'Prova con un altro filtro o ricerca.' : 'Carica il primo PDF usando il pulsante qui sopra.'}</p></div>`;
+    return;
+  }
+  list.innerHTML = '';
+  filtrados.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'manual-item';
+    const canOpen = !!manualBlobs[m.id];
+    el.innerHTML = `
+      <div class="manual-file-icon" aria-hidden="true">${m.tipo === 'PDF' ? '📄' : '📋'}</div>
+      <div class="manual-info">
+        <div class="manual-title">${escHtml(m.nombre)}</div>
+        <div class="manual-meta"><span class="manual-cat">${CAT_LABELS[m.categoria] || m.categoria}</span><span>${m.tipo}</span><span>${m.fecha}</span>${!canOpen ? '<span style="color:#e74c3c;font-size:.7rem;">⚠ Ricarica per aprire</span>' : ''}</div>
+      </div>
+      <div class="manual-actions">
+        <button class="btn btn-sm-primary" onclick="abrirManual('${m.id}')" ${canOpen ? '' : 'disabled title="Ricarica il file per aprire"'}>Apri</button>
+        <button class="btn btn-sm-ghost" onclick="eliminarManual('${m.id}')">✕</button>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+function abrirManual(id) {
+  const url = manualBlobs[id];
+  if (!url) { alert('Questo manuale non è disponibile in questa sessione. Carica di nuovo il file.'); return; }
+  window.open(url, '_blank');
+}
+function eliminarManual(id) {
+  if (!confirm('Eliminare questo manuale?')) return;
+  if (manualBlobs[id]) { URL.revokeObjectURL(manualBlobs[id]); delete manualBlobs[id]; }
+  manuales = manuales.filter(m => m.id !== id);
+  guardarMetaManuales();
+  renderManuales();
+}
+
+document.getElementById('pills-manuales').addEventListener('click', e => {
+  const pill = e.target.closest('.pill[data-cat]');
+  if (!pill) return;
+  filtroCat = pill.dataset.cat;
+  document.querySelectorAll('#pills-manuales .pill').forEach(p => p.classList.toggle('active', p === pill));
+  renderManuales();
+});
+
+// ── TIPS ─────────────────────────────────────────────────────
+let filtroTipo = 'todos';
+let tips = [];
+
+try { tips = JSON.parse(localStorage.getItem('apex_tips') || '[]'); } catch(e) { tips = []; }
+
+if (!tips.length) {
+  tips = [
+    { id: 1, titulo: 'Verificar tensión ANTES de medir corriente', tipo: 'alerta', servicio: 'Eléctrico', desc: 'Antes de pasar el multímetro a modo amperímetro, confirmá que no haya tensión en el circuito. Un amperímetro en paralelo sobre tensión destruye el instrumento y puede causar un arco eléctrico.', link: '', fecha: '14/06/2025' },
+    { id: 2, titulo: 'Compresor trabado vs capacitor muerto en split', tipo: 'tip', servicio: 'Aire acondicionado', desc: 'Si el equipo no arranca y el compresor zumba: cortá la alimentación, descargá el capacitor con una resistencia de 10 kΩ y medí capacitancia. Por debajo del 10% del valor nominal → capacitor. Valor correcto → compresor trabado o en corte térmico.', link: '', fecha: '10/06/2025' },
+    { id: 3, titulo: 'Orientación óptima de Starlink en Argentina', tipo: 'tuto', servicio: 'Starlink', desc: 'En latitudes AR (-34° a -55°), el dish debe apuntar al norte geográfico con inclinación de 30°–50° según latitud. Usá la app Starlink para verificar obstrucciones antes de definir el punto de montaje definitivo.', link: '', fecha: '05/06/2025' }
+  ];
+  try { localStorage.setItem('apex_tips', JSON.stringify(tips)); } catch(e) {}
+}
+
+function saveTips() { try { localStorage.setItem('apex_tips', JSON.stringify(tips)); } catch(e) {} }
+
+function renderTips() {
+  const filtrados = filtroTipo === 'todos' ? tips : tips.filter(t => t.tipo === filtroTipo);
+  const list = document.getElementById('tip-list');
+  if (!filtrados.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-title">Nessun consiglio in questa categoria</div><p>Aggiungi il primo con il pulsante "Aggiungi".</p></div>`;
+    return;
+  }
+  list.innerHTML = '';
+  filtrados.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'tip-item';
+    el.innerHTML = `
+      <span class="tip-badge ${t.tipo}" aria-label="${TIPO_LABELS[t.tipo]}">${TIPO_LABELS[t.tipo]}</span>
+      <div class="tip-body">
+        <div class="tip-title">${escHtml(t.titulo)}</div>
+        <p class="tip-desc">${escHtml(t.desc)}</p>
+        <div class="tip-footer">
+          <span class="tip-date">${t.fecha}</span>
+          <span class="tip-service">${t.servicio}</span>
+          ${t.link ? `<a href="${escHtml(t.link)}" class="tip-link" target="_blank" rel="noopener">🔗 Ver recurso</a>` : ''}
+          <button class="tip-del" onclick="eliminarTip(${t.id})" aria-label="Eliminar tip">✕ Eliminar</button>
+        </div>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+document.getElementById('pills-tips').addEventListener('click', e => {
+  const pill = e.target.closest('.pill[data-tipo]');
+  if (!pill) return;
+  filtroTipo = pill.dataset.tipo;
+  document.querySelectorAll('#pills-tips .pill').forEach(p => p.classList.toggle('active', p === pill));
+  renderTips();
+});
+
+function abrirModalTip() { document.getElementById('modal-tip').classList.add('open'); }
+function cerrarModalTip() { document.getElementById('modal-tip').classList.remove('open'); }
+
+function guardarTip() {
+  const titulo = document.getElementById('tip-titulo').value.trim();
+  const desc   = document.getElementById('tip-desc').value.trim();
+  if (!titulo || !desc) { alert('Compila almeno il titolo e la descrizione.'); return; }
+  tips.unshift({
+    id:       Date.now(),
+    titulo, desc,
+    tipo:     document.getElementById('tip-tipo').value,
+    servicio: document.getElementById('tip-servicio').value,
+    link:     document.getElementById('tip-link').value.trim(),
+    fecha:    new Date().toLocaleDateString('es-AR')
+  });
+  saveTips();
+  cerrarModalTip();
+  ['tip-titulo','tip-desc','tip-link'].forEach(id => document.getElementById(id).value = '');
+  renderTips();
+}
+
+function eliminarTip(id) {
+  if (!confirm('Eliminare questo consiglio?')) return;
+  tips = tips.filter(t => t.id !== id);
+  saveTips();
+  renderTips();
+}
+
+// ── UTILS ────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── MODAL CLOSE ON ESC / BACKDROP ───────────────────────────
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModalTip(); });
+document.getElementById('modal-tip').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalTip(); });
+
+// ── INIT ─────────────────────────────────────────────────────
+renderManuales();
+renderTips();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

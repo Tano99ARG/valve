@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Calcolatrice Tecnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px;scroll-behavior:smooth}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh}
+
+/* TOPBAR */
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-title{font-family:var(--fd);font-size:.9rem;font-weight:600;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-left:auto}
+
+/* TABS */
+.tabs{position:sticky;top:60px;z-index:40;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;overflow-x:auto;padding:0 5vw;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:14px 18px;font-family:var(--fd);font-size:1rem;font-weight:700;letter-spacing:.04em;color:var(--dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--w)}
+.tab.on{color:var(--ora);border-bottom-color:var(--ora)}
+
+/* CONTENT */
+.wrap{max-width:1100px;margin:0 auto;padding:28px 5vw 80px}
+.view{display:none}
+.view.on{display:block}
+.view-intro{margin-bottom:24px}
+.view-intro h2{font-family:var(--fd);font-size:1.7rem;font-weight:800;margin-bottom:4px}
+.view-intro p{color:var(--dim);font-size:.95rem}
+
+/* CALC GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:18px}
+.calc{background:var(--card);border:1px solid var(--b1);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.calc-hd{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(74,142,194,.06),transparent)}
+.calc-ico{font-size:1.3rem}
+.calc-tt{font-family:var(--fd);font-size:1.15rem;font-weight:700;letter-spacing:.02em}
+.calc-bd{padding:16px 18px;display:flex;flex-direction:column;gap:13px;flex:1}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld-lbl{font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
+.fld-lbl small{font-family:var(--fm);font-size:.68rem;color:var(--mut);text-transform:none;letter-spacing:0}
+.inp-row{display:flex;gap:8px}
+.inp{flex:1;background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fm);font-size:1rem;padding:10px 12px;border-radius:4px;outline:none;transition:border-color .15s;width:100%}
+.inp:focus{border-color:var(--ora)}
+.inp::placeholder{color:var(--mut)}
+.sel{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:10px 12px;border-radius:4px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238089a8' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.sel:focus{border-color:var(--ora)}
+.sel option{background:var(--surf);color:var(--w)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+
+/* RESULT */
+.res{margin-top:auto;background:linear-gradient(135deg,var(--navy),#16223c);border:1px solid var(--b2);border-radius:5px;padding:14px 16px}
+.res-main{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.res-lbl{font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.12em;color:var(--blu2);text-transform:uppercase}
+.res-val{font-family:var(--fm);font-size:1.6rem;font-weight:700;color:var(--ora);text-align:right;line-height:1.1}
+.res-val small{font-size:.9rem;color:var(--w);opacity:.7}
+.res-sub{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:4px}
+.res-line{display:flex;justify-content:space-between;font-family:var(--fm);font-size:.78rem;color:var(--dim)}
+.res-line b{color:var(--w);font-weight:400}
+.res-badge{display:inline-block;margin-top:8px;font-family:var(--fm);font-size:.72rem;padding:3px 8px;border-radius:3px;font-weight:700}
+.badge-ok{background:rgba(46,204,113,.15);color:var(--grn);border:1px solid rgba(46,204,113,.3)}
+.badge-warn{background:rgba(243,156,18,.15);color:var(--yel);border:1px solid rgba(243,156,18,.3)}
+.badge-bad{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.3)}
+
+.note{font-size:.76rem;color:var(--mut);line-height:1.5;border-left:2px solid var(--b2);padding-left:10px;margin-top:2px}
+
+/* CONVERTER */
+.conv-cats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.conv-cat{font-family:var(--fd);font-size:.92rem;font-weight:700;letter-spacing:.04em;padding:8px 16px;border-radius:4px;cursor:pointer;border:1px solid var(--b1);color:var(--dim);background:var(--card);transition:all .15s}
+.conv-cat:hover{color:var(--w);border-color:var(--b2)}
+.conv-cat.on{background:var(--ora);border-color:var(--ora);color:#fff}
+.conv-panel{background:var(--card);border:1px solid var(--b1);border-radius:6px;padding:22px}
+.conv-title{font-family:var(--fd);font-size:1.3rem;font-weight:800;margin-bottom:4px}
+.conv-desc{color:var(--dim);font-size:.9rem;margin-bottom:20px}
+.conv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.conv-fld{display:flex;flex-direction:column;gap:5px}
+.conv-fld label{font-family:var(--fd);font-size:.82rem;font-weight:700;letter-spacing:.06em;color:var(--dim)}
+.conv-fld label b{color:var(--w)}
+.conv-inp{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fm);font-size:1.05rem;padding:11px 13px;border-radius:4px;outline:none;transition:border-color .15s}
+.conv-inp:focus{border-color:var(--ora);background:#0d1018}
+
+/* AWG TABLE */
+.awg-wrap{overflow-x:auto;margin-top:6px}
+.awg-tbl{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.82rem;min-width:380px}
+.awg-tbl th{background:var(--navy);color:var(--blu2);font-family:var(--fd);font-size:.78rem;letter-spacing:.08em;padding:8px 10px;text-align:left;border:1px solid var(--b1)}
+.awg-tbl td{padding:7px 10px;border:1px solid var(--b1);color:var(--dim)}
+.awg-tbl tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .grid{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .res-val{font-size:1.4rem}
+  .top-title{display:none}
+}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="brand">Valve Electronics <b>ELECTRONICS</b><span>CALCOLATRICE TECNICA</span></div>
+  </div>
+  <div class="top-title">Strumento di calcolo professionale</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab on" data-v="elec">⚡ Elettrico</button>
+  <button class="tab" data-v="clima">❄️ Refrigerazione</button>
+  <button class="tab" data-v="solar">☀️ Solare</button>
+  <button class="tab" data-v="gas">🔥 Gas / Acqua</button>
+  <button class="tab" data-v="conv">🔄 Convertitore</button>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════ ELÉCTRICO ══════════ -->
+<div class="view on" id="v-elec">
+  <div class="view-intro"><h2>Calcoli elettrici</h2><p>Legge di Ohm, potenza, caduta di tensione, sezione conduttori e protezioni secondo CEI 64-8.</p></div>
+  <div class="grid">
+
+    <!-- Ley de Ohm -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">Ω</span><span class="calc-tt">Ley de Ohm / Potencia</span></div>
+      <div class="calc-bd">
+        <p class="note">Completá dos valores cualquiera y se calculan los demás.</p>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Tensión <small>V</small></span><input class="inp" id="ohm-v" type="number" placeholder="220" oninput="calcOhm('v')"></div>
+          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="ohm-i" type="number" placeholder="—" oninput="calcOhm('i')"></div>
+          <div class="fld"><span class="fld-lbl">Resistencia <small>Ω</small></span><input class="inp" id="ohm-r" type="number" placeholder="—" oninput="calcOhm('r')"></div>
+          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="ohm-p" type="number" placeholder="—" oninput="calcOhm('p')"></div>
+        </div>
+        <button class="conv-cat" style="width:100%;text-align:center" onclick="clearOhm()">Limpiar</button>
+      </div>
+    </div>
+
+    <!-- Potencia y corriente -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">⚡</span><span class="calc-tt">Potencia ↔ Corriente</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Sistema</span>
+          <select class="sel" id="pc-sys" onchange="calcPC()">
+            <option value="mono">Monofásico (220V)</option>
+            <option value="tri">Trifásico (380V)</option>
+          </select>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="pc-p" type="number" placeholder="2200" oninput="calcPC()"></div>
+          <div class="fld"><span class="fld-lbl">Tensión <small>V</small></span><input class="inp" id="pc-v" type="number" placeholder="220" oninput="calcPC()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Factor de potencia <small>cos φ</small></span><input class="inp" id="pc-fp" type="number" step="0.01" value="0.9" oninput="calcPC()"></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Corriente</span><span class="res-val" id="pc-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Potencia aparente <b id="pc-va">—</b></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Caída de tensión -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">📉</span><span class="calc-tt">Caída de tensión</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Sistema</span>
+            <select class="sel" id="ct-sys" onchange="calcCT()"><option value="mono">Monofásico</option><option value="tri">Trifásico</option></select></div>
+          <div class="fld"><span class="fld-lbl">Material</span>
+            <select class="sel" id="ct-mat" onchange="calcCT()"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="ct-i" type="number" placeholder="20" oninput="calcCT()"></div>
+          <div class="fld"><span class="fld-lbl">Longitud <small>m</small></span><input class="inp" id="ct-l" type="number" placeholder="30" oninput="calcCT()"></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Sección <small>mm²</small></span><input class="inp" id="ct-s" type="number" placeholder="4" oninput="calcCT()"></div>
+          <div class="fld"><span class="fld-lbl">Tensión <small>V</small></span><input class="inp" id="ct-v" type="number" placeholder="220" oninput="calcCT()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Caída ΔV</span><span class="res-val" id="ct-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Caída en volts <b id="ct-volt">—</b></div><div class="res-line">Tensión en carga <b id="ct-end">—</b></div></div>
+          <span id="ct-badge"></span>
+        </div>
+        <p class="note">AEA 90364: máx 3% en iluminación, 5% en fuerza motriz desde el origen.</p>
+      </div>
+    </div>
+
+    <!-- Sección de conductor -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🔌</span><span class="calc-tt">Sección de conductor</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Sistema</span>
+            <select class="sel" id="sc-sys" onchange="calcSC()"><option value="mono">Monofásico</option><option value="tri">Trifásico</option></select></div>
+          <div class="fld"><span class="fld-lbl">Material</span>
+            <select class="sel" id="sc-mat" onchange="calcSC()"><option value="cu">Cobre</option><option value="al">Aluminio</option></select></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Corriente <small>A</small></span><input class="inp" id="sc-i" type="number" placeholder="25" oninput="calcSC()"></div>
+          <div class="fld"><span class="fld-lbl">Longitud <small>m</small></span><input class="inp" id="sc-l" type="number" placeholder="40" oninput="calcSC()"></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Tensión <small>V</small></span><input class="inp" id="sc-v" type="number" placeholder="220" oninput="calcSC()"></div>
+          <div class="fld"><span class="fld-lbl">ΔV máx <small>%</small></span><input class="inp" id="sc-dv" type="number" step="0.5" value="3" oninput="calcSC()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Sección mínima</span><span class="res-val" id="sc-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Por caída de tensión <b id="sc-bydv">—</b></div><div class="res-line">Por ampacidad <b id="sc-byamp">—</b></div></div>
+        </div>
+        <p class="note">Se adopta la mayor sección entre el criterio de caída de tensión y el de capacidad de corriente (AEA).</p>
+      </div>
+    </div>
+
+    <!-- Protección recomendada -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🛡️</span><span class="calc-tt">Protección recomendada</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Modo de cálculo</span>
+          <select class="sel" id="pr-mode" onchange="togglePR();calcPR()"><option value="i">Por corriente conocida</option><option value="p">Por potencia y tensión</option></select></div>
+        <div id="pr-byi"><div class="fld"><span class="fld-lbl">Corriente de carga <small>A</small></span><input class="inp" id="pr-i" type="number" placeholder="18" oninput="calcPR()"></div></div>
+        <div id="pr-byp" style="display:none">
+          <div class="grid2">
+            <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="pr-p" type="number" placeholder="3500" oninput="calcPR()"></div>
+            <div class="fld"><span class="fld-lbl">Sistema</span><select class="sel" id="pr-sys" onchange="calcPR()"><option value="mono">Mono 220V</option><option value="tri">Tri 380V</option></select></div>
+          </div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Termomagnética</span><span class="res-val" id="pr-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Corriente de carga <b id="pr-load">—</b></div><div class="res-line">Sección sugerida <b id="pr-cable">—</b></div></div>
+        </div>
+        <p class="note">Disyuntor ≥ corriente de carga y ≤ ampacidad del cable. Diferencial de 30mA obligatorio en circuitos terminales.</p>
+      </div>
+    </div>
+
+    <!-- Corrección factor de potencia -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">📐</span><span class="calc-tt">Corrección factor potencia</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Potencia activa <small>kW</small></span><input class="inp" id="fp-p" type="number" placeholder="50" oninput="calcFP()"></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">cos φ actual</span><input class="inp" id="fp-1" type="number" step="0.01" placeholder="0.75" oninput="calcFP()"></div>
+          <div class="fld"><span class="fld-lbl">cos φ objetivo</span><input class="inp" id="fp-2" type="number" step="0.01" value="0.95" oninput="calcFP()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Capacitor necesario</span><span class="res-val" id="fp-out">—</span></div>
+        </div>
+        <p class="note">Banco de capacitores para elevar el cos φ y evitar penalización de la distribuidora.</p>
+      </div>
+    </div>
+
+    <!-- Iluminación -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">💡</span><span class="calc-tt">Iluminación de ambientes</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Largo <small>m</small></span><input class="inp" id="lx-largo" type="number" placeholder="4" oninput="calcLux()"></div>
+          <div class="fld"><span class="fld-lbl">Ancho <small>m</small></span><input class="inp" id="lx-ancho" type="number" placeholder="3.5" oninput="calcLux()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Tipo de ambiente</span>
+          <select class="sel" id="lx-tipo" onchange="calcLux()">
+            <option value="100">Dormitorio / pasillo (100 lux)</option>
+            <option value="150">Living / estar (150 lux)</option>
+            <option value="300" selected>Cocina / baño / oficina (300 lux)</option>
+            <option value="500">Taller / trabajo de precisión (500 lux)</option>
+            <option value="750">Local comercial / exhibición (750 lux)</option>
+          </select></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Flujo por luminaria <small>lúmenes</small></span><input class="inp" id="lx-lm" type="number" value="1200" oninput="calcLux()"></div>
+          <div class="fld"><span class="fld-lbl">Factor de utilización</span><input class="inp" id="lx-fu" type="number" step="0.05" value="0.6" oninput="calcLux()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Luminarias necesarias</span><span class="res-val" id="lx-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Flujo total requerido <b id="lx-flujo">—</b></div><div class="res-line">Superficie <b id="lx-sup">—</b></div></div>
+        </div>
+        <p class="note">N = (lux × superficie) ÷ (lúmenes × factor de utilización). El factor de utilización compensa pérdidas por reflexión y disposición.</p>
+      </div>
+    </div>
+
+    <!-- Costo de consumo -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">💲</span><span class="calc-tt">Costo de consumo</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Potencia <small>W</small></span><input class="inp" id="co-p" type="number" placeholder="1500" oninput="calcCO()"></div>
+          <div class="fld"><span class="fld-lbl">Horas / día</span><input class="inp" id="co-h" type="number" placeholder="6" oninput="calcCO()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Precio <small>$/kWh</small></span><input class="inp" id="co-precio" type="number" step="0.01" placeholder="65" oninput="calcCO()"></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Costo mensual</span><span class="res-val" id="co-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Consumo diario <b id="co-dia">—</b></div><div class="res-line">Consumo mensual <b id="co-mes">—</b></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Factor de demanda / carga total -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">📊</span><span class="calc-tt">Carga total de instalación</span></div>
+      <div class="calc-bd">
+        <p class="note">Sumá las cargas instaladas por categoría. Se aplica factor de demanda según AEA para dimensionar la acometida.</p>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Iluminación <small>W</small></span><input class="inp" id="fd-ilum" type="number" placeholder="800" oninput="calcFD()"></div>
+          <div class="fld"><span class="fld-lbl">Tomas uso general <small>W</small></span><input class="inp" id="fd-tug" type="number" placeholder="3300" oninput="calcFD()"></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Termotanque/AA <small>W</small></span><input class="inp" id="fd-tue" type="number" placeholder="2200" oninput="calcFD()"></div>
+          <div class="fld"><span class="fld-lbl">Cocina/horno <small>W</small></span><input class="inp" id="fd-coc" type="number" placeholder="0" oninput="calcFD()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Sistema de acometida</span>
+          <select class="sel" id="fd-sys" onchange="calcFD()"><option value="mono">Monofásico 220V</option><option value="tri">Trifásico 380V</option></select></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Potencia contratada</span><span class="res-val" id="fd-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Carga instalada total <b id="fd-inst">—</b></div><div class="res-line">Corriente de acometida <b id="fd-i">—</b></div><div class="res-line">Disyuntor general sugerido <b id="fd-br">—</b></div></div>
+        </div>
+        <p class="note">Factor de demanda orientativo: 100% iluminación, 100% primeros 3000W de TUG + 35% del resto, 75% en termotanque/AA si coexisten. Verificar con reglamento de la distribuidora local.</p>
+      </div>
+    </div>
+
+    <!-- Puesta a tierra -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">⏚</span><span class="calc-tt">Puesta a tierra (jabalina)</span></div>
+      <div class="calc-bd">
+        <p class="note">Resistencia estimada de electrodo vertical simple (fórmula de Dwight, suelo homogéneo).</p>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Resistividad suelo <small>Ω·m</small></span>
+            <select class="sel" id="pt-rho-sel" onchange="if($('pt-rho-sel').value!=='custom'){$('pt-rho').value=$('pt-rho-sel').value;calcPT();}">
+              <option value="50">Terreno húmedo / arcilloso (50)</option>
+              <option value="100" selected>Tierra de cultivo (100)</option>
+              <option value="300">Arena seca (300)</option>
+              <option value="1000">Terreno rocoso (1000)</option>
+              <option value="custom">Personalizado…</option>
+            </select></div>
+          <div class="fld"><span class="fld-lbl">ρ personalizada <small>Ω·m</small></span><input class="inp" id="pt-rho" type="number" value="100" oninput="calcPT()"></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Longitud jabalina <small>m</small></span><input class="inp" id="pt-l" type="number" value="1.5" step="0.1" oninput="calcPT()"></div>
+          <div class="fld"><span class="fld-lbl">Diámetro <small>mm</small></span><input class="inp" id="pt-d" type="number" value="16" oninput="calcPT()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Jabalinas en paralelo</span><input class="inp" id="pt-n" type="number" value="1" min="1" oninput="calcPT()"></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Resistencia a tierra</span><span class="res-val" id="pt-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Una jabalina <b id="pt-uno">—</b></div></div>
+          <span id="pt-badge"></span>
+        </div>
+        <p class="note">R = (ρ/2πL)·[ln(8L/d)−1]. Múltiples jabalinas: separar ≥2× la longitud para eficiencia real (~85-90% por electrodo extra).</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ REFRIGERACIÓN ══════════ -->
+<div class="view" id="v-clima">
+  <div class="view-intro"><h2>Refrigerazione e climatizzazione</h2><p>Dimensionamento apparecchi, carica gas refrigerante e conversione unità di frigorio.</p></div>
+  <div class="grid">
+
+    <!-- Dimensionado AC -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">❄️</span><span class="calc-tt">Dimensionado de equipo</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Superficie <small>m²</small></span><input class="inp" id="ac-m2" type="number" placeholder="25" oninput="calcAC()"></div>
+          <div class="fld"><span class="fld-lbl">Altura <small>m</small></span><input class="inp" id="ac-h" type="number" value="2.6" oninput="calcAC()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Exposición / orientación</span>
+          <select class="sel" id="ac-exp" onchange="calcAC()">
+            <option value="50">Interior / poca incidencia solar</option>
+            <option value="60" selected>Normal (sur/este)</option>
+            <option value="75">Soleado (norte/oeste, gran ventanal)</option>
+          </select></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Personas</span><input class="inp" id="ac-pers" type="number" placeholder="3" oninput="calcAC()"></div>
+          <div class="fld"><span class="fld-lbl">Equipos calor <small>W</small></span><input class="inp" id="ac-eq" type="number" placeholder="400" oninput="calcAC()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Capacidad requerida</span><span class="res-val" id="ac-out">—</span></div>
+          <div class="res-sub"><div class="res-line">En BTU/h <b id="ac-btu">—</b></div><div class="res-line">En kW frío <b id="ac-kw">—</b></div></div>
+          <span id="ac-badge"></span>
+        </div>
+        <p class="note">Estimación para frío. Para calor (bomba de calor) sumar ~10-15%.</p>
+      </div>
+    </div>
+
+    <!-- Carga de gas -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🧪</span><span class="calc-tt">Carga de gas adicional</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Refrigerante</span>
+            <select class="sel" id="gas-ref" onchange="calcGas()">
+              <option value="r410">R-410A</option><option value="r32">R-32</option><option value="r22">R-22</option><option value="r134">R-134a</option><option value="r404">R-404A</option>
+            </select></div>
+          <div class="fld"><span class="fld-lbl">Línea de líquido</span>
+            <select class="sel" id="gas-dia" onchange="calcGas()">
+              <option value="6.35">1/4" (6.35mm)</option><option value="9.52">3/8" (9.52mm)</option><option value="12.7">1/2" (12.7mm)</option>
+            </select></div>
+        </div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Longitud total <small>m</small></span><input class="inp" id="gas-l" type="number" placeholder="12" oninput="calcGas()"></div>
+          <div class="fld"><span class="fld-lbl">Carga de fábrica <small>m</small></span><input class="inp" id="gas-lf" type="number" value="5" oninput="calcGas()"></div>
+        </div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Carga extra</span><span class="res-val" id="gas-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Metros adicionales <b id="gas-extra">—</b></div><div class="res-line">Factor de carga <b id="gas-factor">—</b></div></div>
+          <span id="gas-badge"></span>
+        </div>
+        <p class="note">Verificar siempre la placa del equipo: la carga de fábrica y el g/m varían según fabricante.</p>
+      </div>
+    </div>
+
+    <!-- Conversor de frío -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🌡️</span><span class="calc-tt">Conversor de frío</span></div>
+      <div class="calc-bd">
+        <p class="note">Editá cualquier campo y se convierten todos.</p>
+        <div class="fld"><span class="fld-lbl">Frigorías/h <small>= kcal/h</small></span><input class="inp" id="fr-frig" type="number" placeholder="3000" oninput="calcFrio('frig')"></div>
+        <div class="fld"><span class="fld-lbl">BTU/h</span><input class="inp" id="fr-btu" type="number" placeholder="—" oninput="calcFrio('btu')"></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">kW frío</span><input class="inp" id="fr-kw" type="number" placeholder="—" oninput="calcFrio('kw')"></div>
+          <div class="fld"><span class="fld-lbl">TR <small>toneladas</small></span><input class="inp" id="fr-tr" type="number" placeholder="—" oninput="calcFrio('tr')"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ SOLAR ══════════ -->
+<div class="view" id="v-solar">
+  <div class="view-intro"><h2>Energia solare fotovoltaica</h2><p>Dimensionamento sistemi FV e banco batterie (Direttiva RED II 2018/2001).</p></div>
+  <div class="grid">
+
+    <!-- Dimensionado FV -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">☀️</span><span class="calc-tt">Dimensionado fotovoltaico</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Consumo diario <small>kWh/día</small></span><input class="inp" id="fv-cons" type="number" placeholder="12" oninput="calcFV()"></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">HSP <small>sol pico h/día</small></span><input class="inp" id="fv-hsp" type="number" step="0.1" value="4.5" oninput="calcFV()"></div>
+          <div class="fld"><span class="fld-lbl">Potencia panel <small>Wp</small></span><input class="inp" id="fv-panel" type="number" value="550" oninput="calcFV()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Rendimiento del sistema <small>%</small></span><input class="inp" id="fv-ef" type="number" value="80" oninput="calcFV()"></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Paneles necesarios</span><span class="res-val" id="fv-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Potencia a instalar <b id="fv-pot">—</b></div><div class="res-line">Generación estimada <b id="fv-gen">—</b></div></div>
+        </div>
+        <p class="note">HSP típico en Argentina: 3.5 (sur) a 5.5 (norte). Rendimiento incluye pérdidas por temperatura, cableado e inversor.</p>
+      </div>
+    </div>
+
+    <!-- Banco de baterías -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🔋</span><span class="calc-tt">Banco de baterías</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Consumo a respaldar <small>kWh/día</small></span><input class="inp" id="bt-cons" type="number" placeholder="6" oninput="calcBat()"></div>
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Autonomía <small>días</small></span><input class="inp" id="bt-aut" type="number" value="1" oninput="calcBat()"></div>
+          <div class="fld"><span class="fld-lbl">Tensión banco <small>V</small></span><select class="sel" id="bt-v" onchange="calcBat()"><option>12</option><option>24</option><option selected>48</option></select></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Tipo / profundidad descarga</span>
+          <select class="sel" id="bt-dod" onchange="calcBat()">
+            <option value="0.9">Litio LiFePO4 (DoD 90%)</option>
+            <option value="0.5">Plomo-ácido / GEL (DoD 50%)</option>
+          </select></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Capacidad banco</span><span class="res-val" id="bt-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Energía a almacenar <b id="bt-wh">—</b></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ GAS / AGUA ══════════ -->
+<div class="view" id="v-gas">
+  <div class="view-intro"><h2>Gas e acqua</h2><p>Portata gas, diametro orientativo tubazioni e conversioni. Verifica finale secondo UNI 9039 / EN 1775.</p></div>
+  <div class="grid">
+
+    <!-- Caudal de gas -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🔥</span><span class="calc-tt">Caudal de gas</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Tipo de gas</span>
+          <select class="sel" id="cg-tipo" onchange="calcCaudal()">
+            <option value="9300">Gas natural (9300 kcal/m³)</option>
+            <option value="22000">GLP / envasado (22000 kcal/m³)</option>
+          </select></div>
+        <div class="fld"><span class="fld-lbl">Potencia del artefacto <small>kcal/h</small></span><input class="inp" id="cg-pot" type="number" placeholder="9000" oninput="calcCaudal()"></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Caudal</span><span class="res-val" id="cg-out">—</span></div>
+          <div class="res-sub"><div class="res-line">En kW <b id="cg-kw">—</b></div></div>
+        </div>
+        <p class="note">Caudal = Potencia ÷ Poder calorífico del gas. Referencia para selección de medidor y cañería.</p>
+      </div>
+    </div>
+
+    <!-- Diámetro de cañería de gas -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">🔧</span><span class="calc-tt">Diámetro de cañería (gas)</span></div>
+      <div class="calc-bd">
+        <div class="grid2">
+          <div class="fld"><span class="fld-lbl">Caudal <small>m³/h</small></span><input class="inp" id="dc-caudal" type="number" step="0.1" placeholder="2.5" oninput="calcDiam()"></div>
+          <div class="fld"><span class="fld-lbl">Longitud tramo <small>m</small></span><input class="inp" id="dc-long" type="number" placeholder="15" oninput="calcDiam()"></div>
+        </div>
+        <div class="fld"><span class="fld-lbl">Material</span>
+          <select class="sel" id="dc-mat" onchange="calcDiam()"><option value="epoxi">Hierro epoxi / acero</option><option value="cobre">Cobre</option></select></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Diámetro sugerido</span><span class="res-val" id="dc-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Pérdida admisible <b id="dc-perd">—</b></div></div>
+        </div>
+        <p class="note">⚠️ Estimación orientativa por caudal y longitud. El cálculo definitivo debe seguir las tablas NAG-200/ENARGAS según presión y simultaneidad.</p>
+      </div>
+    </div>
+
+    <!-- Diámetro de cañería de agua -->
+    <div class="calc">
+      <div class="calc-hd"><span class="calc-ico">💧</span><span class="calc-tt">Cañería de agua</span></div>
+      <div class="calc-bd">
+        <div class="fld"><span class="fld-lbl">Cantidad de bocas / artefactos</span><input class="inp" id="ag-bocas" type="number" placeholder="4" oninput="calcAgua()"></div>
+        <div class="fld"><span class="fld-lbl">Tipo de servicio</span>
+          <select class="sel" id="ag-tipo" onchange="calcAgua()">
+            <option value="0.1">Baño / cocina doméstico</option>
+            <option value="0.15">Comercial / alta demanda</option>
+          </select></div>
+        <div class="res">
+          <div class="res-main"><span class="res-lbl">Diámetro sugerido</span><span class="res-val" id="ag-out">—</span></div>
+          <div class="res-sub"><div class="res-line">Caudal simultáneo <b id="ag-caudal">—</b></div></div>
+        </div>
+        <p class="note">Estimación por método de simultaneidad. Para proyectos sanitarios usar cálculo por unidades de gasto.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════ CONVERSOR ══════════ -->
+<div class="view" id="v-conv">
+  <div class="view-intro"><h2>Convertitore di unità</h2><p>Conversione istantanea tra unità. Modifica qualsiasi campo e il resto si aggiorna.</p></div>
+  <div class="conv-cats" id="conv-cats">
+    <button class="conv-cat on" data-c="pot">Potencia</button>
+    <button class="conv-cat" data-c="temp">Temperatura</button>
+    <button class="conv-cat" data-c="pres">Presión</button>
+    <button class="conv-cat" data-c="ener">Energía</button>
+    <button class="conv-cat" data-c="caud">Caudal</button>
+    <button class="conv-cat" data-c="long">Longitud</button>
+    <button class="conv-cat" data-c="awg">Sección mm² ↔ AWG</button>
+  </div>
+  <div class="conv-panel" id="conv-panel"></div>
+</div>
+
+</div>
+
+<script>
+'use strict';
+// ═══════════ UTILS ═══════════
+const $=id=>document.getElementById(id);
+const num=id=>{const v=parseFloat($(id).value);return isNaN(v)?null:v};
+const fmt=(n,d=2)=>{if(n===null||!isFinite(n))return '—';return n.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:d})};
+const RHO={cu:0.0178,al:0.0282}; // Ω·mm²/m a temperatura de servicio
+const STD_BREAKERS=[6,10,13,16,20,25,32,40,50,63,80,100,125,160];
+// Ampacidad Cu en caño (AEA 90364, PVC, 2-3 cond. cargados) — referencial
+const AMP_CU={1.5:15,2.5:21,4:28,6:36,10:50,16:66,25:88,35:109,50:131,70:167,95:202,120:234};
+const AMP_AL={2.5:16,4:22,6:28,10:39,16:53,25:70,35:86,50:104,70:133,95:161,120:188};
+const SECCIONES=[1.5,2.5,4,6,10,16,25,35,50,70,95,120];
+
+// ═══════════ TABS ═══════════
+$('tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab');if(!t)return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  $('v-'+t.dataset.v).classList.add('on');
+});
+
+// ═══════════ LEY DE OHM ═══════════
+function calcOhm(edited){
+  // Solo recalcula si hay exactamente 2 campos con valor (incluyendo el editado)
+  let v=num('ohm-v'),i=num('ohm-i'),r=num('ohm-r'),p=num('ohm-p');
+  const filled=[['v',v],['i',i],['r',r],['p',p]].filter(x=>x[1]!==null);
+  if(filled.length<2)return;
+  // Resolver a partir de los dos primeros valores presentes (priorizar el editado)
+  // Casos
+  if(v!==null&&i!==null){r=v/i;p=v*i;}
+  else if(v!==null&&r!==null){i=v/r;p=v*v/r;}
+  else if(v!==null&&p!==null){i=p/v;r=v*v/p;}
+  else if(i!==null&&r!==null){v=i*r;p=i*i*r;}
+  else if(i!==null&&p!==null){v=p/i;r=p/(i*i);}
+  else if(r!==null&&p!==null){v=Math.sqrt(p*r);i=Math.sqrt(p/r);}
+  // Escribir los que NO fueron editados
+  if(edited!=='v'&&v!==null)$('ohm-v').value=+v.toFixed(2);
+  if(edited!=='i'&&i!==null)$('ohm-i').value=+i.toFixed(3);
+  if(edited!=='r'&&r!==null)$('ohm-r').value=+r.toFixed(2);
+  if(edited!=='p'&&p!==null)$('ohm-p').value=+p.toFixed(1);
+}
+function clearOhm(){['ohm-v','ohm-i','ohm-r','ohm-p'].forEach(id=>$(id).value='')}
+
+// ═══════════ POTENCIA ↔ CORRIENTE ═══════════
+function calcPC(){
+  const sys=$('pc-sys').value;
+  if(sys==='tri'&&!$('pc-v').value)$('pc-v').placeholder='380';
+  const p=num('pc-p'),fp=num('pc-fp')||0.9;
+  let v=num('pc-v')||(sys==='tri'?380:220);
+  if(p===null){$('pc-out').textContent='—';$('pc-va').textContent='—';return;}
+  const i= sys==='tri' ? p/(Math.sqrt(3)*v*fp) : p/(v*fp);
+  const va= p/fp;
+  $('pc-out').innerHTML=fmt(i,2)+' <small>A</small>';
+  $('pc-va').textContent=fmt(va,0)+' VA';
+}
+
+// ═══════════ CAÍDA DE TENSIÓN ═══════════
+function calcCT(){
+  const sys=$('ct-sys').value,mat=$('ct-mat').value;
+  const i=num('ct-i'),l=num('ct-l'),s=num('ct-s'),v=num('ct-v')||220;
+  if(i===null||l===null||s===null){$('ct-out').textContent='—';$('ct-volt').textContent='—';$('ct-end').textContent='—';$('ct-badge').innerHTML='';return;}
+  const rho=RHO[mat];
+  // ΔV = k · ρ · L · I / S   (k=2 mono, √3 tri)
+  const k= sys==='tri' ? Math.sqrt(3) : 2;
+  const dv= k*rho*l*i/s;
+  const dvPct= dv/v*100;
+  $('ct-out').innerHTML=fmt(dvPct,2)+' <small>%</small>';
+  $('ct-volt').textContent=fmt(dv,2)+' V';
+  $('ct-end').textContent=fmt(v-dv,1)+' V';
+  let b='badge-ok',txt='✓ Dentro de norma';
+  if(dvPct>5){b='badge-bad';txt='✗ Excede 5% — aumentar sección';}
+  else if(dvPct>3){b='badge-warn';txt='⚠ Aceptable solo en fuerza motriz';}
+  $('ct-badge').innerHTML=`<span class="res-badge ${b}">${txt}</span>`;
+}
+
+// ═══════════ SECCIÓN DE CONDUCTOR ═══════════
+function calcSC(){
+  const sys=$('sc-sys').value,mat=$('sc-mat').value;
+  const i=num('sc-i'),l=num('sc-l'),v=num('sc-v')||220,dvMax=num('sc-dv')||3;
+  if(i===null||l===null){$('sc-out').textContent='—';$('sc-bydv').textContent='—';$('sc-byamp').textContent='—';return;}
+  const rho=RHO[mat];
+  const k= sys==='tri' ? Math.sqrt(3) : 2;
+  const dvVolts=v*dvMax/100;
+  // S = k·ρ·L·I / ΔV
+  const sCalc= k*rho*l*i/dvVolts;
+  const sByDv= SECCIONES.find(s=>s>=sCalc)||'>120';
+  // por ampacidad
+  const tbl= mat==='cu'?AMP_CU:AMP_AL;
+  let sByAmp='>120';
+  for(const s of SECCIONES){if(tbl[s]&&tbl[s]>=i){sByAmp=s;break;}}
+  // adoptar mayor
+  const sa= (typeof sByDv==='number')?sByDv:999;
+  const sb= (typeof sByAmp==='number')?sByAmp:999;
+  const adopt= Math.max(sa,sb);
+  const adoptTxt= adopt===999?'>120':adopt;
+  $('sc-out').innerHTML=adoptTxt+' <small>mm²</small>';
+  $('sc-bydv').textContent=(typeof sByDv==='number'?sByDv:sByDv)+' mm²';
+  $('sc-byamp').textContent=(typeof sByAmp==='number'?sByAmp:sByAmp)+' mm²';
+}
+
+// ═══════════ PROTECCIÓN ═══════════
+function togglePR(){
+  const m=$('pr-mode').value;
+  $('pr-byi').style.display=m==='i'?'block':'none';
+  $('pr-byp').style.display=m==='p'?'block':'none';
+}
+function calcPR(){
+  const m=$('pr-mode').value;let i;
+  if(m==='i'){i=num('pr-i');}
+  else{const p=num('pr-p');const sys=$('pr-sys').value;if(p===null){i=null;}else{i= sys==='tri'?p/(Math.sqrt(3)*380*0.9):p/(220*0.9);}}
+  if(i===null){$('pr-out').textContent='—';$('pr-load').textContent='—';$('pr-cable').textContent='—';return;}
+  const br=STD_BREAKERS.find(b=>b>=i*1.0)||'>160';
+  // cable: ampacidad >= breaker
+  let cable='>120';
+  for(const s of SECCIONES){if(AMP_CU[s]&&AMP_CU[s]>=(typeof br==='number'?br:160)){cable=s;break;}}
+  $('pr-out').innerHTML=(typeof br==='number'?br:br)+' <small>A</small>';
+  $('pr-load').textContent=fmt(i,1)+' A';
+  $('pr-cable').textContent=cable+' mm² (Cu)';
+}
+
+// ═══════════ FACTOR DE POTENCIA ═══════════
+function calcFP(){
+  const p=num('fp-p'),c1=num('fp-1'),c2=num('fp-2')||0.95;
+  if(p===null||c1===null){$('fp-out').textContent='—';return;}
+  const tan1=Math.tan(Math.acos(c1)),tan2=Math.tan(Math.acos(c2));
+  const qc=p*(tan1-tan2);
+  $('fp-out').innerHTML=fmt(qc,1)+' <small>kVAr</small>';
+}
+
+// ═══════════ COSTO ═══════════
+function calcCO(){
+  const p=num('co-p'),h=num('co-h'),pr=num('co-precio');
+  if(p===null||h===null||pr===null){$('co-out').textContent='—';$('co-dia').textContent='—';$('co-mes').textContent='—';return;}
+  const kwhDia=p/1000*h;const kwhMes=kwhDia*30;const costo=kwhMes*pr;
+  $('co-out').innerHTML='$ '+fmt(costo,0);
+  $('co-dia').textContent=fmt(kwhDia,2)+' kWh';
+  $('co-mes').textContent=fmt(kwhMes,1)+' kWh';
+}
+
+// ═══════════ ILUMINACIÓN (LUX) ═══════════
+function calcLux(){
+  const largo=num('lx-largo'),ancho=num('lx-ancho'),lux=parseFloat($('lx-tipo').value);
+  const lm=num('lx-lm')||1200,fu=num('lx-fu')||0.6;
+  if(largo===null||ancho===null){$('lx-out').textContent='—';$('lx-flujo').textContent='—';$('lx-sup').textContent='—';return;}
+  const sup=largo*ancho;
+  const flujoReq=lux*sup;
+  const n=Math.ceil(flujoReq/(lm*fu));
+  $('lx-out').innerHTML=n+' <small>luminarias</small>';
+  $('lx-flujo').textContent=fmt(flujoReq,0)+' lm';
+  $('lx-sup').textContent=fmt(sup,1)+' m²';
+}
+
+// ═══════════ FACTOR DE DEMANDA / CARGA TOTAL ═══════════
+function calcFD(){
+  const ilum=num('fd-ilum')||0,tug=num('fd-tug')||0,tue=num('fd-tue')||0,coc=num('fd-coc')||0;
+  const sys=$('fd-sys').value;
+  const inst=ilum+tug+tue+coc;
+  if(inst===0){$('fd-out').textContent='—';$('fd-inst').textContent='—';$('fd-i').textContent='—';$('fd-br').textContent='—';return;}
+  // Factor de demanda orientativo (criterio AEA simplificado)
+  const dIlum=ilum*1.0;
+  const dTug= tug<=3000 ? tug : 3000+(tug-3000)*0.35;
+  const dTue= tue*0.75;
+  const dCoc= coc*0.75;
+  const demanda=dIlum+dTug+dTue+dCoc;
+  const v= sys==='tri'?380:220;
+  const i= sys==='tri' ? demanda/(Math.sqrt(3)*v*0.9) : demanda/(v*0.9);
+  const br=STD_BREAKERS.find(b=>b>=i)||'>160';
+  $('fd-out').innerHTML=fmt(demanda,0)+' <small>W</small>';
+  $('fd-inst').textContent=fmt(inst,0)+' W';
+  $('fd-i').textContent=fmt(i,1)+' A';
+  $('fd-br').textContent=(typeof br==='number'?br+' A':br);
+}
+
+// ═══════════ PUESTA A TIERRA (JABALINA) ═══════════
+function calcPT(){
+  const rho=num('pt-rho'),l=num('pt-l')||1.5,dmm=num('pt-d')||16,n=Math.max(1,num('pt-n')||1);
+  if(rho===null||l<=0){$('pt-out').textContent='—';$('pt-uno').textContent='—';$('pt-badge').innerHTML='';return;}
+  const d=dmm/1000; // a metros
+  // Fórmula de Dwight para electrodo vertical: R = (ρ/(2πL)) × [ln(8L/d) − 1]
+  const rUno= (rho/(2*Math.PI*l)) * (Math.log(8*l/d)-1);
+  // Para n jabalinas en paralelo: eficiencia ~85-90% por electrodo adicional (simplificado)
+  const efic=0.87;
+  let rTotal=rUno;
+  if(n>1){
+    // resistencia equivalente con factor de eficiencia de conjunto
+    rTotal=rUno/(n*efic);
+  }
+  $('pt-out').innerHTML=fmt(rTotal,2)+' <small>Ω</small>';
+  $('pt-uno').textContent=fmt(rUno,2)+' Ω';
+  let b='badge-ok',txt='✓ Apto para PE residencial (<25Ω)';
+  if(rTotal>25&&rTotal<=40){b='badge-warn';txt='⚠ Alto — considerar jabalina adicional';}
+  else if(rTotal>40){b='badge-bad';txt='✗ Excesivo — requiere tratamiento de suelo o más electrodos';}
+  $('pt-badge').innerHTML=`<span class="res-badge ${b}">${txt}</span>`;
+}
+
+// ═══════════ DIMENSIONADO AC ═══════════
+function calcAC(){
+  const m2=num('ac-m2'),h=num('ac-h')||2.6,exp=parseFloat($('ac-exp').value);
+  const pers=num('ac-pers')||0,eq=num('ac-eq')||0;
+  if(m2===null){$('ac-out').textContent='—';$('ac-btu').textContent='—';$('ac-kw').textContent='—';$('ac-badge').innerHTML='';return;}
+  // frig/h = m² × factor (ajustado por altura) + personas×100 + equipos(W)×0.86
+  const factorAltura= h>2.6 ? (h/2.6) : 1;
+  let frig= m2*exp*factorAltura + pers*100 + eq*0.86;
+  const btu= frig*3.968;
+  const kw= frig*0.001163;
+  $('ac-out').innerHTML=fmt(frig,0)+' <small>frig/h</small>';
+  $('ac-btu').textContent=fmt(btu,0)+' BTU/h';
+  $('ac-kw').textContent=fmt(kw,2)+' kW';
+  // equipo comercial estándar
+  const equipos=[{f:2250,n:'2250 frig (9000 BTU)'},{f:3000,n:'3000 frig (12000 BTU)'},{f:4500,n:'4500 frig (18000 BTU)'},{f:5500,n:'5500 frig (24000 BTU)'},{f:8000,n:'8000 frig (32000 BTU)'}];
+  const eqSel=equipos.find(e=>e.f>=frig);
+  $('ac-badge').innerHTML=`<span class="res-badge badge-ok">Equipo sugerido: ${eqSel?eqSel.n:'> 8000 frig (multi/central)'}</span>`;
+}
+
+// ═══════════ CARGA DE GAS ═══════════
+// g/m de línea de líquido adicional, por refrigerante y diámetro
+const GM={
+  r410:{6.35:20,9.52:55,12.7:115},
+  r32: {6.35:16,9.52:44,12.7:92},
+  r22: {6.35:16,9.52:50,12.7:107},
+  r134:{6.35:17,9.52:50,12.7:105},
+  r404:{6.35:20,9.52:55,12.7:115}
+};
+function calcGas(){
+  const ref=$('gas-ref').value,dia=parseFloat($('gas-dia').value);
+  const l=num('gas-l'),lf=num('gas-lf')||5;
+  if(l===null){$('gas-out').textContent='—';$('gas-extra').textContent='—';$('gas-factor').textContent='—';$('gas-badge').innerHTML='';return;}
+  const gm=GM[ref][dia];
+  const extra=Math.max(0,l-lf);
+  const carga=extra*gm;
+  $('gas-out').innerHTML=fmt(carga,0)+' <small>g</small>';
+  $('gas-extra').textContent=fmt(extra,1)+' m';
+  $('gas-factor').textContent=gm+' g/m';
+  let b,txt;
+  if(extra<=0){b='badge-ok';txt='✓ Dentro de carga de fábrica';}
+  else if(carga<500){b='badge-ok';txt='✓ Carga adicional menor';}
+  else{b='badge-warn';txt='⚠ Carga significativa — pesar refrigerante';}
+  $('gas-badge').innerHTML=`<span class="res-badge ${b}">${txt}</span>`;
+}
+
+// ═══════════ CONVERSOR DE FRÍO ═══════════
+// base: frig/h (=kcal/h).  1 BTU/h=0.252 frig ; 1 kW=860 frig ; 1 TR=3024 frig
+function calcFrio(src){
+  let frig;
+  if(src==='frig')frig=num('fr-frig');
+  else if(src==='btu'){const x=num('fr-btu');frig=x===null?null:x*0.251996;}
+  else if(src==='kw'){const x=num('fr-kw');frig=x===null?null:x*859.845;}
+  else if(src==='tr'){const x=num('fr-tr');frig=x===null?null:x*3024;}
+  if(frig===null){return;}
+  if(src!=='frig')$('fr-frig').value=+frig.toFixed(0);
+  if(src!=='btu')$('fr-btu').value=+(frig/0.251996).toFixed(0);
+  if(src!=='kw')$('fr-kw').value=+(frig/859.845).toFixed(3);
+  if(src!=='tr')$('fr-tr').value=+(frig/3024).toFixed(3);
+}
+
+// ═══════════ DIMENSIONADO FV ═══════════
+function calcFV(){
+  const cons=num('fv-cons'),hsp=num('fv-hsp')||4.5,panel=num('fv-panel')||550,ef=(num('fv-ef')||80)/100;
+  if(cons===null){$('fv-out').textContent='—';$('fv-pot').textContent='—';$('fv-gen').textContent='—';return;}
+  const potNec=cons/(hsp*ef); // kWp
+  const n=Math.ceil(potNec*1000/panel);
+  const potInst=n*panel/1000;
+  const gen=potInst*hsp*ef;
+  $('fv-out').innerHTML=n+' <small>paneles</small>';
+  $('fv-pot').textContent=fmt(potInst,2)+' kWp';
+  $('fv-gen').textContent=fmt(gen,1)+' kWh/día';
+}
+
+// ═══════════ BANCO DE BATERÍAS ═══════════
+function calcBat(){
+  const cons=num('bt-cons'),aut=num('bt-aut')||1,v=parseFloat($('bt-v').value),dod=parseFloat($('bt-dod').value);
+  if(cons===null){$('bt-out').textContent='—';$('bt-wh').textContent='—';return;}
+  const wh=cons*1000*aut;
+  const ah=wh/(v*dod);
+  $('bt-out').innerHTML=fmt(ah,0)+' <small>Ah</small> @'+v+'V';
+  $('bt-wh').textContent=fmt(wh,0)+' Wh';
+}
+
+// ═══════════ CAUDAL DE GAS ═══════════
+function calcCaudal(){
+  const pc=parseFloat($('cg-tipo').value),pot=num('cg-pot');
+  if(pot===null){$('cg-out').textContent='—';$('cg-kw').textContent='—';return;}
+  const caudal=pot/pc; // m³/h
+  $('cg-out').innerHTML=fmt(caudal,2)+' <small>m³/h</small>';
+  $('cg-kw').textContent=fmt(pot*0.001163,2)+' kW';
+}
+
+// ═══════════ DIÁMETRO CAÑERÍA GAS (orientativo) ═══════════
+function calcDiam(){
+  const caudal=num('dc-caudal'),long=num('dc-long'),mat=$('dc-mat').value;
+  if(caudal===null||long===null){$('dc-out').textContent='—';$('dc-perd').textContent='—';return;}
+  // Estimación simplificada: índice = caudal × longitud^0.5
+  const idx=caudal*Math.sqrt(long);
+  // tabla orientativa (epoxi/acero, BP)
+  const tabla=[
+    {max:8,d:'1/2" (DN15)'},{max:20,d:'3/4" (DN20)'},{max:45,d:'1" (DN25)'},
+    {max:90,d:'1¼" (DN32)'},{max:160,d:'1½" (DN40)'},{max:320,d:'2" (DN50)'}
+  ];
+  let d=tabla.find(t=>idx<=t.max);
+  let dTxt=d?d.d:'≥ 2½" (consultar tabla)';
+  if(mat==='cobre'&&d){dTxt=dTxt.replace(/DN\d+/,m=>m);} // cobre se especifica igual orientativo
+  $('dc-out').innerHTML=dTxt;
+  $('dc-perd').textContent='índice '+fmt(idx,1);
+}
+
+// ═══════════ CAÑERÍA DE AGUA ═══════════
+function calcAgua(){
+  const bocas=num('ag-bocas'),qBoca=parseFloat($('ag-tipo').value);
+  if(bocas===null){$('ag-out').textContent='—';$('ag-caudal').textContent='—';return;}
+  // simultaneidad: F = 1/√(n-1)
+  const f= bocas>1 ? 1/Math.sqrt(bocas-1) : 1;
+  const caudal=bocas*qBoca*f; // L/s
+  const tabla=[{max:0.2,d:'13mm (1/2")'},{max:0.4,d:'19mm (3/4")'},{max:0.8,d:'25mm (1")'},{max:1.5,d:'32mm (1¼")'},{max:2.5,d:'38mm (1½")'}];
+  const d=tabla.find(t=>caudal<=t.max);
+  $('ag-out').innerHTML=d?d.d:'≥ 50mm (2")';
+  $('ag-caudal').textContent=fmt(caudal,2)+' L/s';
+}
+
+// ═══════════ CONVERSOR DE UNIDADES ═══════════
+const CONV={
+  pot:{title:'Potencia',desc:'Watt, kW, HP, CV, BTU/h, kcal/h y frigorías/h.',base:'W',
+    units:[['W','Watt',1],['kW','Kilowatt',1000],['HP','Caballo de fuerza',745.7],['CV','Caballo vapor',735.5],['BTUh','BTU/hora',0.293071],['kcalh','kcal/hora',1.163],['frig','Frigorías/h',1.163]]},
+  temp:{title:'Temperatura',desc:'Celsius, Fahrenheit y Kelvin.',base:'C',special:true,
+    units:[['C','Celsius °C'],['F','Fahrenheit °F'],['K','Kelvin']]},
+  pres:{title:'Presión',desc:'bar, psi, kPa, atmósfera, kg/cm² y mca.',base:'bar',
+    units:[['bar','Bar',1],['psi','PSI',0.0689476],['kPa','Kilopascal',0.01],['atm','Atmósfera',1.01325],['kgcm2','kg/cm²',0.980665],['mca','Metros col. agua',0.0980665]]},
+  ener:{title:'Energía',desc:'kWh, Joule, caloría y BTU.',base:'kWh',
+    units:[['kWh','Kilowatt-hora',1],['MJ','Megajoule',0.277778],['kcal','Kilocaloría',0.00116222],['BTU','BTU',0.000293071],['Wh','Watt-hora',0.001]]},
+  caud:{title:'Caudal',desc:'L/s, L/min, m³/h y galones por minuto.',base:'Ls',
+    units:[['Ls','Litros/segundo',1],['Lmin','Litros/minuto',0.0166667],['m3h','m³/hora',0.277778],['gpm','Galones/min (US)',0.0630902],['m3s','m³/segundo',1000]]},
+  long:{title:'Longitud',desc:'metros, cm, mm, pulgadas y pies.',base:'m',
+    units:[['m','Metro',1],['cm','Centímetro',0.01],['mm','Milímetro',0.001],['in','Pulgada',0.0254],['ft','Pie',0.3048],['km','Kilómetro',1000]]},
+};
+const AWG_TBL=[
+  ['14',2.08,15],['12',3.31,20],['10',5.26,30],['8',8.37,40],['6',13.3,55],
+  ['4',21.2,70],['2',33.6,95],['1',42.4,110],['1/0',53.5,125],['2/0',67.4,145],
+  ['3/0',85.0,165],['4/0',107.2,195]
+];
+
+let convCat='pot';
+$('conv-cats').addEventListener('click',e=>{
+  const b=e.target.closest('.conv-cat');if(!b)return;
+  document.querySelectorAll('.conv-cat').forEach(x=>x.classList.toggle('on',x===b));
+  convCat=b.dataset.c;
+  renderConv();
+});
+
+function renderConv(){
+  const panel=$('conv-panel');
+  if(convCat==='awg'){
+    panel.innerHTML=`
+      <div class="conv-title">Sección mm² ↔ AWG</div>
+      <div class="conv-desc">Equivalencia de calibre americano (AWG) a sección métrica y ampacidad orientativa en cobre.</div>
+      <div class="conv-grid" style="margin-bottom:18px">
+        <div class="conv-fld"><label>Ingresar <b>mm²</b></label><input class="conv-inp" id="awg-mm" type="number" placeholder="4" oninput="convAWG('mm')"></div>
+        <div class="conv-fld"><label>Equivale a <b>AWG</b></label><input class="conv-inp" id="awg-awg" type="text" placeholder="—" readonly></div>
+        <div class="conv-fld"><label>Ampacidad aprox. <b>A</b></label><input class="conv-inp" id="awg-amp" type="text" placeholder="—" readonly></div>
+      </div>
+      <div class="awg-wrap"><table class="awg-tbl">
+        <tr><th>AWG</th><th>Sección (mm²)</th><th>Ampacidad Cu (A)</th></tr>
+        ${AWG_TBL.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
+      </table></div>`;
+    return;
+  }
+  const c=CONV[convCat];
+  panel.innerHTML=`
+    <div class="conv-title">${c.title}</div>
+    <div class="conv-desc">${c.desc}</div>
+    <div class="conv-grid">
+      ${c.units.map(u=>`<div class="conv-fld"><label><b>${u[1]}</b></label><input class="conv-inp" id="cv-${u[0]}" type="number" placeholder="0" oninput="convCalc('${u[0]}')"></div>`).join('')}
+    </div>`;
+}
+
+function convCalc(src){
+  const c=CONV[convCat];
+  if(c.special){ // temperatura
+    const val=parseFloat($('cv-'+src).value);
+    if(isNaN(val))return;
+    let C;
+    if(src==='C')C=val; else if(src==='F')C=(val-32)*5/9; else C=val-273.15;
+    if(src!=='C')$('cv-C').value=+C.toFixed(2);
+    if(src!=='F')$('cv-F').value=+(C*9/5+32).toFixed(2);
+    if(src!=='K')$('cv-K').value=+(C+273.15).toFixed(2);
+    return;
+  }
+  const u=c.units.find(x=>x[0]===src);
+  const val=parseFloat($('cv-'+src).value);
+  if(isNaN(val))return;
+  const base=val*u[2]; // a unidad base
+  c.units.forEach(x=>{
+    if(x[0]!==src)$('cv-'+x[0]).value=+(base/x[2]).toPrecision(6);
+  });
+}
+
+function convAWG(src){
+  if(src==='mm'){
+    const mm=parseFloat($('awg-mm').value);
+    if(isNaN(mm)){$('awg-awg').value='';$('awg-amp').value='';return;}
+    // buscar AWG con sección >= mm (más cercano hacia arriba)
+    let found=AWG_TBL.find(r=>r[1]>=mm)||AWG_TBL[AWG_TBL.length-1];
+    $('awg-awg').value='AWG '+found[0];
+    $('awg-amp').value=found[2]+' A';
+  }
+}
+
+// ═══════════ INIT ═══════════
+renderConv();
+calcPC();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

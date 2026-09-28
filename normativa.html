@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Scheda Rapida di Normativa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;--cyan:#48c9d8;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px;scroll-behavior:smooth}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh}
+
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-title{font-family:var(--fd);font-size:.9rem;font-weight:600;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-left:auto}
+
+.tabs{position:sticky;top:60px;z-index:40;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;overflow-x:auto;padding:0 5vw;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:14px 16px;font-family:var(--fd);font-size:.95rem;font-weight:700;letter-spacing:.03em;color:var(--dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--w)}
+.tab.on{border-bottom-color:var(--accent)}
+.tab .cnt{font-family:var(--fm);font-size:.7rem;color:var(--mut);background:var(--card);padding:1px 6px;border-radius:8px}
+
+.wrap{max-width:1100px;margin:0 auto;padding:24px 5vw 80px}
+.view{display:none}
+.view.on{display:block}
+.view-intro{margin-bottom:18px}
+.view-intro h2{font-family:var(--fd);font-size:1.7rem;font-weight:800;margin-bottom:4px}
+.view-intro p{color:var(--dim);font-size:.95rem}
+.disclaimer{background:linear-gradient(135deg,var(--navy),#16223c);border:1px solid var(--b2);border-left:3px solid var(--ora);border-radius:5px;padding:11px 16px;font-size:.82rem;color:var(--dim);line-height:1.5;margin-bottom:22px}
+.disclaimer b{color:var(--ora2)}
+
+.searchbar{margin-bottom:20px}
+.searchbar input{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:12px 16px;border-radius:5px;outline:none;transition:border-color .15s}
+.searchbar input:focus{border-color:var(--ora)}
+.searchbar input::placeholder{color:var(--mut)}
+
+.ngrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.ncard{background:var(--card);border:1px solid var(--b1);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;border-top:3px solid var(--accent)}
+.ncard-hd{padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ncard-tt{font-family:var(--fd);font-size:1.1rem;font-weight:700;line-height:1.25}
+.ncard-tag{font-family:var(--fm);font-size:.65rem;font-weight:700;letter-spacing:.05em;color:var(--accent);background:rgba(255,255,255,.04);border:1px solid var(--b1);padding:2px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.ncard-bd{padding:14px 18px;display:flex;flex-direction:column;gap:12px;flex:1}
+.nlist{display:flex;flex-direction:column;gap:6px}
+.nlist li{list-style:none;font-size:.85rem;color:var(--dim);padding-left:15px;position:relative;line-height:1.5}
+.nlist li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:.78rem}
+.nlist li b{color:var(--w);font-weight:600}
+.ntable-wrap{overflow-x:auto}
+.ntable{width:100%;border-collapse:collapse;font-family:var(--fm);font-size:.78rem;min-width:280px}
+.ntable th{background:var(--navy);color:var(--blu2);font-family:var(--fd);font-size:.72rem;letter-spacing:.06em;padding:7px 9px;text-align:left;border:1px solid var(--b1)}
+.ntable td{padding:6px 9px;border:1px solid var(--b1);color:var(--dim)}
+.ntable tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.nwarn{background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.25);border-left:3px solid var(--red);border-radius:4px;padding:9px 12px;font-size:.78rem;color:var(--w);line-height:1.5}
+.nwarn b{color:#ff8a7a}
+.nref{margin-top:auto;font-family:var(--fm);font-size:.68rem;color:var(--mut);padding-top:8px;border-top:1px solid var(--b1)}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .ngrid{grid-template-columns:1fr}
+  .top-title{display:none}
+}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="brand">Valve Electronics <b>ELECTRONICS</b><span>SCHEDA RAPIDA DI NORMATIVA</span></div>
+  </div>
+  <div class="top-title">Riferimento tecnico di cantiere</div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="wrap">
+  <div class="view-intro">
+    <h2 id="cat-title">Normativa</h2>
+    <p id="cat-desc">Punti chiave di riferimento rapido da consultare in cantiere.</p>
+  </div>
+  <div class="disclaimer">⚠️ Questa scheda è una <b>guida rapida di riferimento</b> per la consultazione in cantiere. Non sostituisce la lettura completa della normativa vigente (CEI, UNI, IEC) né il criterio professionale dell'installatore abilitato. In caso di dubbi normativi, consultare il testo ufficiale aggiornato.</div>
+  <div class="searchbar"><input type="text" id="search" placeholder="Cerca per tema…" oninput="render()"></div>
+  <div class="ngrid" id="grid"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+
+const CATS=[
+  {id:'electrico', name:'Elettrico (CEI)', accent:'#008F6E', desc:'Punti chiave della CEI 64-8 (Impianti elettrici a bassa tensione) e CEI 64-100 (Messa a terra).'},
+  {id:'gas', name:'Gas (UNI 9039/EN 1775)', accent:'#e85d4a', desc:'Riferimento rapido di tenuta, ventilazione e materiali secondo UNI 9039 e EN 1775.'},
+  {id:'solar', name:'Solare (Direttiva 2018/2001)', accent:'#f1c40f', desc:'Requisiti di generazione distribuita e connessione alla rete per utenti-generatori (Direttiva RED II).'},
+  {id:'tablas', name:'Tabelle rapide', accent:'#9b59b6', desc:'Tabelle di riferimento di uso trasversale: gradi di protezione, colori normalizzati e distanze.'},
+];
+
+const NORMS=[
+  // ELÉTRICO
+  {id:'caida',cat:'electrico',name:'Caduta di tensione massima',tag:'CEI 64-8',
+   points:['Illuminazione: massimo <b>3%</b> dall\'origine dell\'impianto (CEI 64-8)','Forza motrice / prese di uso generale: massimo <b>5%</b> (CEI 64-8)','Il limite si applica al tratto completo, dal contatore al punto di consumo più lontano','Vedi calcolatrice Valve per il calcolo esatto per sezione e lunghezza']},
+  {id:'differenziale',cat:'elettrico',name:'Protezione differenziale obbligatoria',tag:'CEI 64-8',
+   points:['Sensibilità <b>30mA</b> obbligatoria nei circuiti di prese di uso generale e bagni (interruttore differenziale 30mA CEI 64-8)','Tipo AC per carichi resistivi comuni; tipo A per carichi con componente elettronica; tipo SI (superimmunizzato) consigliato per apparecchi sensibili','Almeno un differenziale generale in testa negli impianti domestici (CEI 64-8)','Verifica periodica mediante il pulsante di TEST integrato'],
+   warn:'Il differenziale protegge le persone, non sostituisce la protezione magnetotermica contro sovraccarico e cortocircuito.'},
+  {id:'secciones',cat:'electrico',name:'Sezioni minime dei conduttori',tag:'CEI 64-8',
+   table:{head:['Circuito','Sezione minima (Cu)'],rows:[['Illuminazione','1.5 mm²'],['Prese di uso generale (PUG)','2.5 mm²'],['Prese di uso speciale / cucina','4 mm² o secondo carico'],['Amontrata monofasica residenziale','secondo domanda — vedi calcolatrice'],['Conduttore di protezione (PE)','uguale alla fase fino a 16mm², poi secondo tabella CEI']]}},
+  {id:'colores',cat:'electrico',name:'Colori normalizzati dei conduttori',tag:'CEI 64-8 / IEC 60446',
+   table:{head:['Funzione','Colore'],rows:[['Fase L1 / L2 / L3','Marrone / Nero / Grigio (ordine non rigoroso, ma distinguibili tra loro)'],['Neutro (N)','Azzurro chiaro'],['Protezione (PE)','Verde-giallo (bicolore, esclusivo)'],['Ritorno di comando','Rosso (uso convenzionale, non normato rigorosamente)']]},
+   warn:'Il verde-giallo è riservato esclusivamente al PE: non deve mai essere usato per fase, neutro o ritorno.'},
+  {id:'rotulado',cat:'electrico',name:'Identificazione ed etichettatura dei quadri',tag:'CEI 64-8',
+   points:['Ogni quadro deve avere diagramma unifilare o schema dei circuiti visibile','Ogni interruttore deve essere etichettato indicando il circuito protetto','Consigliato: includere tensione, data di installazione e dati dell\'installatore nel cartellino','Facilita la manutenzione e la risposta alle emergenze']},
+  {id:'tierra',cat:'electrico',name:'Messa a terra di protezione',tag:'CEI 64-100',
+   points:['Resistenza di terra consigliata: <b>inferiore a 10Ω</b> per impianti domestici (schema TT CEI 64-100)','Nei circuiti con interruttore differenziale 30mA, il prodotto R×I non deve superare 50V per garantire la protezione (CEI 64-8)','Verificare la continuità del PE in tutte le prese (CEI 64-8)','Punto di terra in rame 1.5–3m minimo, vedi calcolatrice per il calcolo della resistenza (CEI 64-100)']},
+  {id:'bocas',cat:'electrico',name:'Quantità orientativa di prese per circuito',tag:'Criterio di progetto',
+   table:{head:['Tipo di circuito','Massimo orientativo'],rows:[['Illuminazione','fino a 15 prese'],['Prese di uso generale (PUG)','fino a 10 prese'],['Prese di uso speciale','1 punto per circuito (dedicato)']]},
+   warn:'Valori orientativi di buona pratica; il progettista può adattare secondo carico reale e criterio tecnico.'},
+  {id:'ip-ik-elec',cat:'electrico',name:'Grado di protezione secondo ubicazione',tag:'CEI 64-8 / IEC 60529',
+   points:['Interno asciutto (soggiorno, camera): <b>IP20</b> minimo','Cucina, lavanderia: <b>IP44</b> consigliato','Bagno (zona di schizzi): <b>IP44–IP55</b> secondo zona','Esterno esposto a pioggia diretta: <b>IP65</b> o superiore','Vedi tabella completa dei codici IP nella scheda "Tabelle rapide"']},
+
+  // GAS
+  {id:'hermeticidad',cat:'gas',name:'Prova di tenuta',tag:'UNI 9039 / EN 1775',
+   points:['Si esegue con aria o gas inerte a pressione superiore a quella di servizio','Tempo di stabilizzazione prima di avviare la lettura di controllo','Perdita di pressione massima ammessa in base al tipo di impianto e normativa vigente','Deve essere documentata sul modulo di abilitazione firmato dal tecnico abilitato'],
+   warn:'Non provare mai la tenuta con la fiamma di un accenditore: utilizzare sempre spuma saponea o rilevatore elettronico certificato.'},
+  {id:'ventilacion',cat:'gas',name:'Ventilazione locali con apparecchi a gas',tag:'UNI 9039',
+   points:['I locali si classificano per categoria (1, 2 o 3) in base alla potenza e tipo di apparecchio installato','Ogni categoria richiede un\'area minima di ventilazione alta e bassa, o ventilazione direta all\'esterno','Gli apparecchi senza alloggiamento esterno (fornelli, cucine) richiedono ventilazione permanente del locale','Vietata l\'installazione di scaldabagni senza alloggiamento in bagni o camere']},
+  {id:'materiales-gas',cat:'gas',name:'Materiali approvati per tubazioni',tag:'EN 1775',
+   table:{head:['Tramo','Materiale abituale'],rows:[['Interno / vista','Acciaio con rivestimento epossidico o zincato'],['Interrato','Polietilene (PE) per gas, con profondità minima normativa'],['Connessione apparecchi','Rame o flessibile metallico approvato'],['Media pressione / industriale','Acciaio secondo calcolo di spessore']]}},
+  {id:'distancias-gas',cat:'gas',name:'Distanze minime da altri impianti',tag:'UNI 9039',
+   points:['Separazione minima da conduttori e scatole elettriche in incrocii e parallelismi','Evitare il passaggio di tubazioni gas per condotti di ventilazione o canalizzazioni elettriche','Distanza minima da fonti di calore e apparecchi che generano fiamma aperta','Segnaletica e protezione meccanica nei tratti esposti a danni']},
+  {id:'habilitacion',cat:'gas',name:'Abilitazione e sigillo normativo',tag:'UNI 9039',
+   points:['Ogni impianto nuovo o modificato richiede Dichiarazione di Installazione Interna (DI) firmata dal tecnico abilitato','Il distributore abilita il servizio dopo l\'approvazione della prova di tenuta','Conservare la documentazione di abilitazione insieme agli impianti della installazione','Le modifiche successive devono essere dichiarate']},
+
+  // SOLAR
+  {id:'usuario-gen',cat:'solar',name:'Utente-generatore e connessione alla rete',tag:'Direttiva RED II',
+   points:['Definisce l\'utente che produce energia mediante fonti rinnovabili per autoconsumo, con possibile immissione degli avanzamenti in rete','La connessione richiede autorizzazione previa del distributore locale','Si applica agli impianti residenziali, commerciali e industriali che rispettano i requisiti tecnici (Direttiva RED II)','La procedura varia per regione (ciascuna regione adotta e regola la normativa)']},
+  {id:'medidor-bi',cat:'solar',name:'Contatore bidirezionale',tag:'Direttiva RED II',
+   points:['Obbligatorio per registrare sia il consumo che l\'immissione di energia in rete','Lo installa o autorizza il distributore locale, generalmente a carico dell\'utente-generatore','Permette la fatturazione netta o per immissione, secondo lo schema regionale','Verificare lo schema di compensazione vigente nella zona prima di dimensionare il sistema']},
+  {id:'limites-pot',cat:'solar',name:'Limiti di potenza installata',tag:'Direttiva RED II',
+   points:['Il limite abituale è correlato alla potenza contrattata o alla domanda dell\'utente','Le categorie residenziali hanno limiti più bassi rispetto a commerciali/industriali','Superare il limite richiede procedure aggiuntive o diversa categorizzazione presso il distributore','Confermare sempre il limite vigente con il distributore prima di dimensionare il sistema FV']},
+  {id:'proteccion-interconexion',cat:'solar',name:'Protezioni obbligatorie di interconnessione',tag:'CEI 64-8',
+   points:['Protezione anti-isola: disconnessione automatica dell\'inversore in caso di guasto o interruzione della rete (CEI 64-8)','Protezione di sovratensione e sottotensione nel punto di connessione (Direttiva LVD 2014/35/UE)','Sezionatore di interruzione visibile e accessibile per il distributore','Messa a terra e SPD sia sul lato DC che AC del sistema'],
+   warn:'Un inversore senza protezione anti-isla certificata può mantenere energizzata la rete durante un'interruzione, rappresentando rischio per il personale del distributore.'},
+  {id:'beneficios-fiscales',cat:'solar',name:'Benefici fiscali associati',tag:'Direttiva RED II',
+   points:['Detrazione IVA sui beni di capitale del sistema (superbonus 110%)','Ammortamento accelerato nel bilancio per il componente commerciale/industriale','Certificato fiscale applicabile secondo la normativa vigente al momento dell\'investimento','Richiede iscrizione e rispetto dei requisiti formali del regime']},
+
+  // TABELLE RAPIDE
+  {id:'tabla-ip',cat:'tablas',name:'Codice di protezione IP (IEC 60529)',tag:'IEC 60529',
+   table:{head:['Cifra','1° (solidi)','2° (liquidi)'],rows:[
+     ['0','Senza protezione','Senza protezione'],
+     ['1','Oggetti > 50mm','Gocciolamento verticale'],
+     ['2','Oggetti > 12.5mm','Gocciolamento 15° inclinazione'],
+     ['3','Oggetti > 2.5mm','Pioggia/aspersione'],
+     ['4','Oggetti > 1mm','Schizzi in tutte le direzioni'],
+     ['5','Protetto contro polvere','Getti d\'acqua'],
+     ['6','Stagno alla polvere','Getti potenti / immersione temporanea'],
+     ['7','—','Immersione fino a 1m'],
+     ['8','—','Immersione prolungata sotto pressione'],
+   ]}},
+  {id:'tabla-ik',cat:'tablas',name:'Codice di protezione IK (impatto meccanico)',tag:'IEC 62262',
+   table:{head:['Codice','Energia d\'impatto'],rows:[['IK00','Senza protezione'],['IK01–IK05','0.15 a 0.7 joule'],['IK06','1 joule'],['IK07','2 joule'],['IK08','5 joule'],['IK09','10 joule'],['IK10','20 joule']]}},
+  {id:'tabla-colores2',cat:'tablas',name:'Riepilogo colori normalizzati',tag:'IEC 60446 / CEI 64-8',
+   table:{head:['Conduttore','Colore'],rows:[['Fase','Marrone / Nero / Grigio'],['Neutro','Azzurro chiaro'],['Terra di protezione (PE)','Verde-giallo bicolore'],['Conduttore di comando/segnale','Secondo criterio del progetto, diverso dai precedenti']]}},
+  {id:'tabla-distancias',cat:'tablas',name:'Distanze di sicurezza orientative',tag:'Buone prassi',
+   table:{head:['Situazione','Distanza minima orientativa'],rows:[['Quadro elettrico ad apparecchio a gas','secondo normativa locale — consultare tecnico abilitato'],['Tubazione gas a cablaggio elettrico (attraversamento)','separazione fisica o guaina isolante'],['Presa elettrica a bordo vasca/bagno','zona 0/1/2 secondo CEI, consultare normativa specifica'],['Punto di terra tra elettrodi multipli','≥ 2× la lunghezza dell\'elettrodo']]},
+   warn:'Queste distanze sono orientative. Le distanze normative esatte variano in base alla normativa locale vigente e devono essere verificate in ogni progetto.'},
+];
+
+let activeCat='electrico';
+
+function buildTabs(){
+  const t=$('tabs');
+  t.innerHTML=CATS.map(c=>{
+    const n=NORMS.filter(i=>i.cat===c.id).length;
+    return `<button class="tab ${c.id===activeCat?'on':''}" style="--accent:${c.accent};${c.id===activeCat?'color:'+c.accent:''}" onclick="setCat('${c.id}')">${c.name} <span class="cnt">${n}</span></button>`;
+  }).join('');
+}
+
+function setCat(id){
+  activeCat=id;
+  const c=CATS.find(c=>c.id===id);
+  $('cat-title').textContent=c.name;
+  $('cat-desc').textContent=c.desc;
+  buildTabs();
+  render();
+}
+
+function renderTable(t){
+  return `<div class="ntable-wrap"><table class="ntable"><tr>${t.head.map(h=>`<th>${h}</th>`).join('')}</tr>${t.rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+}
+
+function render(){
+  const q=$('search').value.toLowerCase().trim();
+  const c=CATS.find(c=>c.id===activeCat);
+  let items=NORMS.filter(i=>i.cat===activeCat);
+  if(q){
+    items=items.filter(i=>
+      i.name.toLowerCase().includes(q)||
+      (i.points&&i.points.some(p=>p.toLowerCase().includes(q)))||
+      (i.table&&i.table.rows.some(r=>r.join(' ').toLowerCase().includes(q)))
+    );
+  }
+  const grid=$('grid');
+  if(!items.length){
+    grid.innerHTML=`<div style="color:var(--mut);padding:30px;text-align:center;grid-column:1/-1">Nessun risultato per questa ricerca in questa categoria.</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(i=>`
+    <div class="ncard" style="--accent:${c.accent}">
+      <div class="ncard-hd">
+        <div class="ncard-tt">${i.name}</div>
+        <div class="ncard-tag">${i.tag}</div>
+      </div>
+      <div class="ncard-bd">
+        ${i.points?`<ul class="nlist">${i.points.map(p=>`<li>${p}</li>`).join('')}</ul>`:''}
+        ${i.table?renderTable(i.table):''}
+        ${i.warn?`<div class="nwarn">⚠️ ${i.warn}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+buildTabs();
+setCat('electrico');
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

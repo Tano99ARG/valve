@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Progettazione Quadri Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0c0e16;--surf:#12151f;--panel:#181b28;--card:#1e2235;--card2:#222640;
+  --b1:#2a2e45;--b2:#353a58;--b3:#454a68;
+  --ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#27ae60;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;
+  --w:#e8eaf4;--dim:#7a82a8;--mut:#3a3f5a;
+  --L1:#c0392b;--L2:#27ae60;--L3:#2980b9;
+  --N:#3498db;--PE:#27ae60;--PH:#c0392b;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;display:flex;flex-direction:column;user-select:none}
+
+/* ── TOPBAR ── */
+.topbar{height:48px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;flex-shrink:0;z-index:60}
+.tb-logo{display:flex;align-items:center;gap:8px;padding:0 16px;border-right:1px solid var(--b1);height:100%;flex-shrink:0}
+.tb-logo svg{width:24px;height:24px}
+.tb-brand{font-family:var(--fd);font-weight:800;font-size:.95rem;letter-spacing:.07em;line-height:1}
+.tb-brand b{color:var(--ora)}
+.tb-sep{width:1px;height:28px;background:var(--b1);margin:0 4px}
+.tb-tabs{display:flex;height:100%;margin-left:4px}
+.tb-tab{display:flex;align-items:center;gap:6px;padding:0 16px;font-family:var(--fd);font-size:.85rem;font-weight:700;letter-spacing:.05em;color:var(--dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tb-tab:hover{color:var(--w)}
+.tb-tab.active{color:var(--ora);border-bottom-color:var(--ora)}
+.tb-spacer{flex:1}
+.tb-right{display:flex;align-items:center;gap:6px;padding:0 12px;border-left:1px solid var(--b1)}
+.btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--fd);font-weight:700;font-size:.78rem;letter-spacing:.05em;padding:6px 12px;border-radius:3px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-ghost{background:none;color:var(--dim);border:1px solid var(--b1)}
+.btn-ghost:hover{color:var(--w);border-color:var(--b2)}
+.btn-ora{background:var(--ora);color:#fff}
+.btn-ora:hover{background:var(--ora2)}
+.btn-blu{background:var(--blu);color:#fff}
+.btn-blu:hover{background:var(--blu2)}
+.btn-grn{background:var(--grn);color:#fff}
+
+/* ── WORKSPACE ── */
+.ws{display:flex;flex:1;overflow:hidden}
+
+/* ── LEFT PANEL ── */
+.lp{width:210px;background:var(--surf);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0}
+.lp-search{padding:8px}
+.lp-search input{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.8rem;padding:6px 9px;border-radius:3px;outline:none}
+.lp-search input:focus{border-color:var(--ora)}
+.lp-cats{display:flex;flex-wrap:wrap;gap:3px;padding:4px 8px 6px;border-bottom:1px solid var(--b1)}
+.lp-cat{font-family:var(--fd);font-size:.68rem;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:2px;cursor:pointer;border:1px solid var(--b1);color:var(--dim);background:none;transition:all .15s}
+.lp-cat:hover{color:var(--w);border-color:var(--b2)}
+.lp-cat.on{background:var(--ora);border-color:var(--ora);color:#fff}
+.lp-list{flex:1;overflow-y:auto;padding:4px 6px}
+.lp-list::-webkit-scrollbar{width:3px}
+.lp-list::-webkit-scrollbar-thumb{background:var(--b2)}
+.comp-row{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:3px;cursor:grab;border:1px solid transparent;transition:all .15s;margin-bottom:2px}
+.comp-row:hover{background:var(--card);border-color:var(--b1)}
+.comp-row:active{cursor:grabbing;opacity:.6}
+.comp-sym{width:34px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.comp-sym svg{width:100%;height:100%;overflow:visible}
+.comp-info .cn{font-family:var(--fd);font-size:.8rem;font-weight:700;line-height:1.2;color:var(--w)}
+.comp-info .cs{font-size:.65rem;color:var(--dim);margin-top:1px}
+
+/* ── CANVAS AREA ── */
+.ca{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.ctb{height:36px;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:4px;padding:0 10px;flex-shrink:0}
+.tb-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:3px;cursor:pointer;color:var(--dim);font-size:.85rem;transition:all .15s}
+.tb-btn:hover{background:var(--card);color:var(--w);border-color:var(--b1)}
+.tb-btn.on{background:rgba(244,121,32,.15);color:var(--ora);border-color:rgba(244,121,32,.3)}
+.tsep{width:1px;height:18px;background:var(--b1);margin:0 3px}
+.zoom-lbl{font-family:var(--fm);font-size:.7rem;color:var(--dim);min-width:38px;text-align:center}
+.wire-row{display:flex;align-items:center;gap:4px;padding-left:4px}
+.wire-btn{padding:3px 9px;font-family:var(--fd);font-size:.72rem;font-weight:700;border-radius:2px;border:1px solid var(--b1);background:none;cursor:pointer;color:var(--dim);transition:all .15s}
+.wire-btn:hover{border-color:var(--b2);color:var(--w)}
+.wire-btn.on{border-color:rgba(244,121,32,.5);color:var(--ora);background:rgba(244,121,32,.08)}
+.wire-L1.on{border-color:var(--L1);color:var(--L1);background:rgba(192,57,43,.1)}
+.wire-L2.on{border-color:var(--L2);color:var(--L2);background:rgba(39,174,96,.1)}
+.wire-L3.on{border-color:var(--L3);color:var(--L3);background:rgba(41,128,185,.1)}
+.wire-N.on{border-color:#6af;color:#6af;background:rgba(52,152,219,.1)}
+.wire-PE.on{border-color:var(--PE);color:var(--PE);background:rgba(39,174,96,.1)}
+.cursor-info{margin-left:auto;font-family:var(--fm);font-size:.68rem;color:var(--mut)}
+
+.cscroll{flex:1;overflow:auto;position:relative;cursor:crosshair}
+.cscroll::-webkit-scrollbar{width:8px;height:8px}
+.cscroll::-webkit-scrollbar-track{background:var(--bg)}
+.cscroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+
+#cvs{
+  position:relative;width:3200px;height:2400px;
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(74,142,194,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,142,194,.06) 1px,transparent 1px),
+    linear-gradient(rgba(74,142,194,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(74,142,194,.025) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px;
+  transform-origin:0 0;
+}
+#cvs.pan-mode{cursor:grab}
+#cvs.pan-mode:active{cursor:grabbing}
+
+/* ── PLACED COMPONENTS ── */
+.placed{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:move}
+.placed-body{background:var(--card);border:1.5px solid var(--b2);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5px 6px;position:relative;transition:border-color .1s}
+.placed.sel .placed-body{border-color:var(--ora);box-shadow:0 0 0 3px rgba(244,121,32,.2)}
+.placed-lbl{font-family:var(--fm);font-size:.6rem;color:var(--dim);margin-top:3px;text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.placed-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--ora);color:#fff;font-family:var(--fm);font-size:.52rem;font-weight:700;padding:1px 5px;border-radius:2px;white-space:nowrap;pointer-events:none}
+.del-btn{position:absolute;top:-8px;right:-8px;width:15px;height:15px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;cursor:pointer;border:none;pointer-events:all;z-index:10}
+.placed.sel .del-btn{display:flex}
+
+/* ── PORTS ── */
+.port{position:absolute;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);cursor:crosshair;transition:transform .1s,background .1s;z-index:5}
+.port:hover,.port.active{transform:scale(1.6);z-index:6}
+.port[data-t="L1"]{background:var(--L1)}
+.port[data-t="L2"]{background:var(--L2)}
+.port[data-t="L3"]{background:var(--L3)}
+.port[data-t="N"]{background:#6af}
+.port[data-t="PE"]{background:var(--PE)}
+.port[data-t="A1"],.port[data-t="A2"]{background:var(--yel)}
+.port[data-t="OUT"]{background:var(--pur)}
+.port[data-t="COM"]{background:var(--dim)}
+.port.top{top:-4px;left:50%;transform:translateX(-50%)}
+.port.bot{bottom:-4px;left:50%;transform:translateX(-50%)}
+.port.lft{left:-4px;top:50%;transform:translateY(-50%)}
+.port.rgt{right:-4px;top:50%;transform:translateY(-50%)}
+/* multi-port horizontal */
+.port.t0{top:-4px;left:16%}
+.port.t1{top:-4px;left:38%}
+.port.t2{top:-4px;left:60%}
+.port.t3{top:-4px;left:82%}
+.port.b0{bottom:-4px;left:16%}
+.port.b1{bottom:-4px;left:38%}
+.port.b2{bottom:-4px;left:60%}
+.port.b3{bottom:-4px;left:82%}
+
+/* Snap highlight */
+.snap-ring{position:absolute;width:14px;height:14px;border-radius:50%;border:2px solid var(--ora);pointer-events:none;transform:translate(-50%,-50%);animation:pulse .6s ease infinite;z-index:20}
+@keyframes pulse{0%,100%{opacity:1;transform:translate(-50%,-50%) scale(1)}50%{opacity:.5;transform:translate(-50%,-50%) scale(1.4)}}
+
+/* ── WIRES SVG ── */
+#wire-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.wire-ph{stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.wire-L1{stroke:var(--L1)}
+.wire-L2{stroke:var(--L2)}
+.wire-L3{stroke:var(--L3)}
+.wire-N{stroke:#6af;stroke-dasharray:8 4}
+.wire-PE{stroke:var(--PE)}
+.wire-sel{stroke:var(--ora)!important}
+.wire-hit{stroke:transparent;stroke-width:12;fill:none;cursor:pointer;pointer-events:stroke}
+
+/* DIN rail */
+.din{position:absolute;height:22px;cursor:move;z-index:1;border-radius:2px;
+  background:
+    repeating-linear-gradient(90deg,transparent 0,transparent 14px,rgba(0,0,0,.35) 14px,rgba(0,0,0,.35) 22px,transparent 22px,transparent 40px),
+    linear-gradient(180deg,#8089a8 0%,#6a7290 18%,#4a5070 45%,#3a4058 55%,#2a2e42 82%,#1e2232 100%);
+  border:1px solid #1a1e2c;box-shadow:0 2px 5px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.18)}
+.din::before{content:'';position:absolute;top:4px;left:0;right:0;height:2px;background:rgba(255,255,255,.22)}
+.din::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:2px;background:rgba(0,0,0,.3)}
+.din.sel{outline:2px solid var(--ora);outline-offset:2px;box-shadow:0 0 0 4px rgba(244,121,32,.2),0 2px 5px rgba(0,0,0,.4)}
+.din-label{position:absolute;top:-16px;left:0;font-family:var(--fm);font-size:.58rem;color:var(--dim);white-space:nowrap;pointer-events:none}
+.din-handle{position:absolute;top:0;bottom:0;width:10px;cursor:ew-resize;z-index:3}
+.din-handle.l{left:-5px}
+.din-handle.r{right:-5px}
+.din-handle::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:3px;height:14px;background:var(--ora);border-radius:2px;opacity:0;transition:opacity .15s}
+.din.sel .din-handle::after{opacity:.8}
+.din-del{position:absolute;top:-8px;right:-8px;width:15px;height:15px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;cursor:pointer;border:none;z-index:5}
+.din.sel .din-del{display:flex}
+
+/* ── RIGHT PANEL ── */
+.rp{width:224px;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.rp::-webkit-scrollbar{width:3px}
+.rp::-webkit-scrollbar-thumb{background:var(--b2)}
+.rp-hdr{padding:10px 12px;border-bottom:1px solid var(--b1);font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.15em;color:var(--dim);text-transform:uppercase}
+.rp-body{padding:10px 12px;display:flex;flex-direction:column;gap:10px}
+.prow{display:flex;flex-direction:column;gap:3px}
+.plbl{font-family:var(--fd);font-size:.65rem;font-weight:700;letter-spacing:.12em;color:var(--mut);text-transform:uppercase}
+.pinp{background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.8rem;padding:6px 8px;border-radius:3px;outline:none;width:100%;transition:border-color .15s}
+.pinp:focus{border-color:var(--ora)}
+.pinp-sel{appearance:none;-webkit-appearance:none}
+.pinp-col{height:30px;padding:2px 3px;cursor:pointer}
+.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.psep{height:1px;background:var(--b1)}
+.pempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;text-align:center;color:var(--mut)}
+.pempty-ico{font-size:1.8rem;opacity:.3}
+.pempty-txt{font-size:.75rem;line-height:1.5}
+.spec-block{background:linear-gradient(180deg,rgba(74,142,194,.08),rgba(74,142,194,.02));border:1px solid var(--b1);border-left:2px solid var(--blu);padding:9px 11px;border-radius:3px}
+.spec-hdr{font-family:var(--fd);font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--blu2);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.spec-hdr .spec-cat{font-size:.58rem;color:var(--dim);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-left:auto}
+.spec-line{font-family:var(--fm);font-size:.66rem;color:var(--dim);line-height:1.65;display:flex;gap:5px}
+.spec-line b{color:var(--w);font-weight:400}
+.spec-tag{display:inline-block;font-family:var(--fm);font-size:.6rem;padding:1px 5px;border-radius:2px;margin-top:5px;background:rgba(244,121,32,.12);color:var(--ora);border:1px solid rgba(244,121,32,.25)}
+
+/* ── STATUS ── */
+.stbar{height:22px;background:var(--surf);border-top:1px solid var(--b1);display:flex;align-items:center;gap:16px;padding:0 12px;flex-shrink:0}
+.sti{font-family:var(--fm);font-size:.62rem;color:var(--mut);display:flex;align-items:center;gap:4px}
+.sti-dot{width:5px;height:5px;border-radius:50%;background:var(--grn)}
+
+/* ── MODAL ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center}
+.mbg.open{display:flex}
+.mbox{background:var(--panel);border:1px solid var(--b1);max-width:480px;width:92%;padding:26px;position:relative;max-height:90vh;overflow-y:auto}
+.mbox::-webkit-scrollbar{width:3px}
+.mbox::-webkit-scrollbar-thumb{background:var(--b2)}
+.tpl-card{background:var(--card);border:1px solid var(--b1);border-radius:6px;padding:14px 16px;margin-bottom:12px;display:flex;gap:13px;align-items:flex-start;cursor:pointer;transition:border-color .15s,background .15s}
+.tpl-card:hover{border-color:var(--ora);background:var(--card2)}
+.tpl-ico{font-size:1.6rem;flex-shrink:0;width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--surf);border-radius:6px}
+.tpl-tt{font-family:var(--fd);font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.tpl-meta{font-family:var(--fm);font-size:.7rem;color:var(--blu2);margin-bottom:5px}
+.tpl-desc{font-size:.8rem;color:var(--dim);line-height:1.45}
+.mtitle{font-family:var(--fd);font-size:1.2rem;font-weight:800;margin-bottom:18px}
+.mclose{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--dim);font-size:1.1rem;cursor:pointer}
+.mclose:hover{color:var(--w)}
+.mrow{margin-bottom:12px}
+.mlbl{font-family:var(--fd);font-size:.67rem;font-weight:700;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;display:block;margin-bottom:4px}
+.minp{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.85rem;padding:8px 10px;border-radius:3px;outline:none}
+.minp:focus{border-color:var(--ora)}
+.mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.macts{display:flex;gap:8px;margin-top:18px}
+.macts .btn{flex:1;justify-content:center;padding:10px;font-size:.85rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(6px);background:var(--card);border:1px solid var(--b2);border-left:3px solid var(--ora);padding:9px 16px;font-size:.8rem;border-radius:3px;box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:999;font-family:var(--fb);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── PUENTE visual ── */
+.bridge{position:absolute;pointer-events:none;z-index:3}
+.bridge-line{stroke:var(--yel);stroke-width:3;fill:none;stroke-linecap:round}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21L19,12L23,21L21,21L23,28L17,28L19,21Z" fill="#00D4AA"/>
+    </svg>
+    <div class="tb-brand">Valve Electronics <b>ELECTRONICS</b></div>
+  </div>
+  <div class="tb-sep"></div>
+  <div class="tb-tabs">
+    <button class="tb-tab active" id="tab-layout" onclick="switchTab('layout')">▦ Vista fisica</button>
+    <button class="tb-tab" id="tab-uni" onclick="switchTab('uni')">⚡ Unifilare</button>
+  </div>
+  <div class="tb-spacer"></div>
+  <div class="tb-right">
+    <button class="btn btn-ghost" onclick="openTplModal()">📋 Modelli</button>
+    <button class="btn btn-ghost" onclick="addDinRail()">+ Guida DIN</button>
+    <button class="btn btn-ghost" onclick="clearAll()">✕ Pulisci</button>
+    <button class="btn btn-ghost" onclick="saveProj()">💾 Salva</button>
+    <label class="btn btn-ghost" style="cursor:pointer">📂 Carica<input type="file" accept=".json" onchange="loadProj(event)" style="display:none"></label>
+    <button class="btn btn-blu" onclick="openPDF()">📄 PDF</button>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="ws">
+
+<!-- LEFT PANEL -->
+<div class="lp">
+  <div class="lp-search"><input id="rail-q" type="text" placeholder="Cerca componente…" oninput="buildRail()"></div>
+  <div class="lp-cats" id="lp-cats"></div>
+  <div class="lp-list" id="lp-list"></div>
+</div>
+
+<!-- CANVAS -->
+<div class="ca">
+  <div class="ctb">
+    <button class="tb-btn on" id="tb-sel" title="Seleziona (S)" onclick="setTool('sel')">↖</button>
+    <button class="tb-btn" id="tb-pan" title="Pan (P)" onclick="setTool('pan')">✋</button>
+    <button class="tb-btn" id="tb-wire" title="Traccia conduttore (W)" onclick="setTool('wire')">✏</button>
+    <div class="tsep"></div>
+    <button class="tb-btn" onclick="doZoom(1.2)" title="Zoom +">+</button>
+    <span class="zoom-lbl" id="zlbl">100%</span>
+    <button class="tb-btn" onclick="doZoom(.83)" title="Zoom -">−</button>
+    <button class="tb-btn" onclick="fitView()" title="Inquadra">⊡</button>
+    <div class="tsep"></div>
+    <!-- Wire type row (visible in uni tab) -->
+    <div class="wire-row" id="wire-row" style="display:none">
+      <button class="wire-btn wire-L1 on" id="wt-L1" onclick="setWT('L1')">L1</button>
+      <button class="wire-btn wire-L2" id="wt-L2" onclick="setWT('L2')">L2</button>
+      <button class="wire-btn wire-L3" id="wt-L3" onclick="setWT('L3')">L3</button>
+      <button class="wire-btn wire-N"  id="wt-N"  onclick="setWT('N')">N</button>
+      <button class="wire-btn wire-PE" id="wt-PE" onclick="setWT('PE')">PE</button>
+      <div class="tsep"></div>
+      <button class="tb-btn" title="Elimina conduttore selezionato" onclick="delWire()">🗑</button>
+    </div>
+    <span class="cursor-info" id="cinfo">x:0 y:0</span>
+  </div>
+  <div class="cscroll" id="cscroll">
+    <div id="cvs">
+      <svg id="wire-svg"></svg>
+      <svg id="bridge-svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:4"></svg>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="rp" id="rp">
+  <div class="rp-hdr">Proprietà</div>
+  <!-- PROYECTO siempre visible -->
+  <div class="rp-body" id="proj-fields">
+    <div class="prow"><div class="plbl">Quadro</div><input class="pinp" id="p-nom" type="text" placeholder="Quadro Generale"></div>
+    <div class="prow"><div class="plbl">Cantiere / Cliente</div><input class="pinp" id="p-obra" type="text" placeholder="Indirizzo o cliente"></div>
+    <div class="pgrid2">
+      <div class="prow"><div class="plbl">Tensión</div>
+        <select class="pinp pinp-sel" id="p-ten"><option>220V</option><option>380V</option><option>220/380V</option><option>110V</option></select>
+      </div>
+      <div class="prow"><div class="plbl">Sistema</div>
+        <select class="pinp pinp-sel" id="p-sis"><option>Monofásico</option><option>Trifásico</option><option>Bifásico</option></select>
+      </div>
+    </div>
+    <div class="prow"><div class="plbl">Tecnico</div><input class="pinp" id="p-tec" type="text" placeholder="Nome"></div>
+  </div>
+  <div class="psep" style="margin:0 12px"></div>
+  <!-- Propiedades del componente seleccionado -->
+  <div id="comp-rp">
+    <div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleziona un componente per vedere le sue proprietà</div></div>
+  </div>
+</div>
+
+</div><!-- /ws -->
+
+<!-- STATUS BAR -->
+<div class="stbar">
+  <div class="sti"><div class="sti-dot"></div>Valve Electronics Quadri v2.0</div>
+  <div class="sti" id="st-comp">Componenti: 0</div>
+  <div class="sti" id="st-wire">Conduttori: 0</div>
+  <div class="sti" id="st-tab">Vista: Fisica</div>
+  <div class="sti" id="st-tool">Strumento: Seleziona</div>
+</div>
+
+<!-- MODAL PDF -->
+<div class="mbg" id="mpdf">
+  <div class="mbox">
+    <button class="mclose" onclick="closePDF()">✕</button>
+    <div class="mtitle">Esporta planimetria PDF</div>
+    <div class="mrow"><label class="mlbl" for="pdf-tit">Titolo della planimetria</label><input class="minp" id="pdf-tit" type="text" placeholder="Planimetria quadro elettrico"></div>
+    <div class="mgrid2">
+      <div class="mrow"><label class="mlbl">N° planimetria</label><input class="minp" id="pdf-num" type="text" placeholder="PE-001"></div>
+      <div class="mrow"><label class="mlbl">Revisione</label><input class="minp" id="pdf-rev" type="text" placeholder="A"></div>
+    </div>
+    <div class="mgrid2">
+      <div class="mrow"><label class="mlbl">Foglio</label>
+        <select class="minp" id="pdf-hoja"><option>A4 Orizzontale</option><option>A4 Verticale</option><option>A3 Orizzontale</option></select>
+      </div>
+      <div class="mrow"><label class="mlbl">Scala</label>
+        <select class="minp" id="pdf-esc"><option>S/E</option><option>1:10</option><option>1:20</option><option>1:50</option></select>
+      </div>
+    </div>
+    <div class="mrow"><label class="mlbl">Osservazioni</label><input class="minp" id="pdf-obs" type="text" placeholder="Note per il cartellino"></div>
+    <div class="macts">
+      <button class="btn btn-ghost" onclick="closePDF()">Annulla</button>
+      <button class="btn btn-ora" onclick="genPDF()">📄 Genera PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="mtpl">
+  <div class="mbox" style="max-width:560px">
+    <button class="mclose" onclick="closeTplModal()">✕</button>
+    <div class="mtitle">Modelli precaricati</div>
+    <p style="color:var(--dim);font-size:.82rem;margin-bottom:16px;line-height:1.5">
+      Caricano componenti corretti, tag e dati tecnici su una guida DIN già posizionata. Il cablaggio tra componenti lo completi tu con lo strumento di cablaggio — il motore di auto-connessione è per prossimità di porte, non conosce la topologia elettrica reale di ogni modello.
+    </p>
+    <div id="tpl-list"></div>
+    <div class="macts">
+      <button class="btn btn-ghost" onclick="closeTplModal()">Chiudi</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════════
+//  CATÁLOGO TÉCNICO — IEC 60617 inspired symbols
+// ═══════════════════════════════════════════════════════════════
+const W_COL = {L1:'#c0392b',L2:'#27ae60',L3:'#2980b9',N:'#6aaff0',PE:'#27ae60',A1:'#f39c12',A2:'#f39c12',COM:'#7a82a8',OUT:'#9b59b6'};
+
+// SVG builders — representación realista con gradientes y volumen
+// Genera un set de <defs> único por símbolo (ids con prefijo) para evitar colisiones
+let _gid=0;
+function gradId(){return 'g'+(_gid++)}
+
+function svgDisj(poles,w,h){
+  const cols=['#c0392b','#27ae60','#2980b9','#6aaff0'];
+  const pw=w/poles;
+  const gB=gradId(),gL=gradId(),gT=gradId();
+  let body='',toggles='',terms='';
+  for(let i=0;i<poles;i++){
+    const cx=pw*i+pw/2;
+    // terminales metálicos arriba y abajo
+    terms+=`<rect x="${cx-pw*.32}" y="3" width="${pw*.64}" height="${h*.12}" rx="1.5" fill="url(#${gT})"/>
+            <rect x="${cx-pw*.32}" y="${h*.85}" width="${pw*.64}" height="${h*.12}" rx="1.5" fill="url(#${gT})"/>
+            <line x1="${cx}" y1="2" x2="${cx}" y2="${h*.1}" stroke="${cols[i]}" stroke-width="2.4"/>
+            <line x1="${cx}" y1="${h*.9}" x2="${cx}" y2="${h-2}" stroke="${cols[i]}" stroke-width="2.4"/>`;
+    // palanca/perilla
+    toggles+=`<rect x="${cx-pw*.22}" y="${h*.38}" width="${pw*.44}" height="${h*.2}" rx="2.5" fill="url(#${gL})" stroke="#1a1d28" stroke-width=".6"/>
+              <rect x="${cx-pw*.1}" y="${h*.41}" width="${pw*.2}" height="${h*.06}" rx="1" fill="#0d0f16"/>`;
+    if(i<poles-1) body+=`<line x1="${cx+pw/2}" y1="4" x2="${cx+pw/2}" y2="${h-4}" stroke="#0d0f16" stroke-width=".8"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+    <defs>
+      <linearGradient id="${gB}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e8e4d8"/><stop offset=".5" stop-color="#f5f2ea"/><stop offset="1" stop-color="#d8d4c8"/></linearGradient>
+      <linearGradient id="${gL}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4255"/><stop offset="1" stop-color="#20242e"/></linearGradient>
+      <linearGradient id="${gT}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8bcc8"/><stop offset=".5" stop-color="#888e9e"/><stop offset="1" stop-color="#5a6070"/></linearGradient>
+    </defs>
+    <rect x="1" y="2" width="${w-2}" height="${h-4}" rx="2.5" fill="url(#${gB})" stroke="#9a968a" stroke-width=".8"/>
+    <rect x="1" y="2" width="2.5" height="${h-4}" fill="#00000022"/>
+    ${body}${terms}
+    <rect x="${w*.12}" y="${h*.3}" width="${w*.76}" height="${h*.36}" rx="2" fill="#23262f"/>
+    ${toggles}
+    <rect x="${w*.18}" y="${h*.68}" width="${w*.64}" height="${h*.1}" rx="1.5" fill="#f47920" opacity=".9"/>
+    <text x="${w/2}" y="${h*.755}" text-anchor="middle" font-family="Share Tech Mono" font-size="${Math.min(7,w*.3)}" font-weight="700" fill="#1a1208">${poles}P</text>
+  </svg>`;
+}
+
+function svgDifer(poles){
+  const w=poles*18+8, h=72;
+  const cols=['#c0392b','#27ae60','#2980b9','#6aaff0'];
+  const gB=gradId(),gL=gradId(),gT=gradId(),gBtn=gradId();
+  let terms='';
+  for(let i=0;i<poles;i++){
+    const cx=9+i*18;
+    terms+=`<rect x="${cx-6}" y="3" width="12" height="9" rx="1.5" fill="url(#${gT})"/>
+            <rect x="${cx-6}" y="${h-12}" width="12" height="9" rx="1.5" fill="url(#${gT})"/>
+            <line x1="${cx}" y1="2" x2="${cx}" y2="9" stroke="${cols[i]||cols[0]}" stroke-width="2.2"/>
+            <line x1="${cx}" y1="${h-9}" x2="${cx}" y2="${h-2}" stroke="${cols[i]||cols[0]}" stroke-width="2.2"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+    <defs>
+      <linearGradient id="${gB}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dfe8f0"/><stop offset=".5" stop-color="#eef4fa"/><stop offset="1" stop-color="#cdd8e4"/></linearGradient>
+      <linearGradient id="${gL}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4255"/><stop offset="1" stop-color="#20242e"/></linearGradient>
+      <linearGradient id="${gT}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8bcc8"/><stop offset="1" stop-color="#5a6070"/></linearGradient>
+      <radialGradient id="${gBtn}" cx=".4" cy=".4"><stop offset="0" stop-color="#5aa0d8"/><stop offset="1" stop-color="#2e6a9e"/></radialGradient>
+    </defs>
+    <rect x="1" y="2" width="${w-2}" height="${h-4}" rx="2.5" fill="url(#${gB})" stroke="#8a96a8" stroke-width=".8"/>
+    ${terms}
+    <rect x="${w*.14}" y="${h*.26}" width="${w*.72}" height="${h*.26}" rx="2" fill="#23262f"/>
+    <rect x="${w*.28}" y="${h*.3}" width="${w*.44}" height="${h*.18}" rx="2.5" fill="url(#${gL})" stroke="#1a1d28" stroke-width=".6"/>
+    <circle cx="${w*.78}" cy="${h*.6}" r="4.5" fill="url(#${gBtn})" stroke="#1a3050" stroke-width=".8"/>
+    <text x="${w*.78}" y="${h*.63}" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">T</text>
+    <text x="${w*.4}" y="${h*.64}" text-anchor="middle" font-family="Share Tech Mono" font-size="6" font-weight="700" fill="#2e6a9e">Δn</text>
+    <rect x="${w*.14}" y="${h*.78}" width="${w*.72}" height="${h*.1}" rx="1.5" fill="#2980b9" opacity=".9"/>
+    <text x="${w/2}" y="${h*.855}" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" font-weight="700" fill="#fff">ID ${poles}P</text>
+  </svg>`;
+}
+
+function svgContactor(poles){
+  const w=poles*20+10, h=88;
+  const cols=['#c0392b','#27ae60','#2980b9','#6aaff0'];
+  const gB=gradId(),gT=gradId(),gC=gradId();
+  let terms='';
+  for(let i=0;i<poles;i++){
+    const cx=10+i*20;
+    terms+=`<rect x="${cx-7}" y="3" width="14" height="11" rx="1.5" fill="url(#${gT})"/>
+            <rect x="${cx-7}" y="${h-14}" width="14" height="11" rx="1.5" fill="url(#${gT})"/>
+            <line x1="${cx}" y1="2" x2="${cx}" y2="10" stroke="${cols[i]}" stroke-width="2.6"/>
+            <line x1="${cx}" y1="${h-10}" x2="${cx}" y2="${h-2}" stroke="${cols[i]}" stroke-width="2.6"/>
+            <circle cx="${cx}" cy="8" r="1.6" fill="#3a3f50"/><circle cx="${cx}" cy="${h-8}" r="1.6" fill="#3a3f50"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}">
+    <defs>
+      <linearGradient id="${gB}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2a2e3a"/><stop offset=".5" stop-color="#363b48"/><stop offset="1" stop-color="#22262f"/></linearGradient>
+      <linearGradient id="${gT}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8bcc8"/><stop offset="1" stop-color="#5a6070"/></linearGradient>
+      <linearGradient id="${gC}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454b5a"/><stop offset="1" stop-color="#2a2e3a"/></linearGradient>
+    </defs>
+    <rect x="1" y="2" width="${w-2}" height="${h-4}" rx="3" fill="url(#${gB})" stroke="#1a1d28" stroke-width="1"/>
+    <rect x="3" y="4" width="${w-6}" height="2" fill="#ffffff14"/>
+    ${terms}
+    <rect x="${w*.12}" y="${h*.16}" width="${w*.76}" height="${h*.2}" rx="2" fill="#181b24"/>
+    <rect x="${w*.1}" y="${h*.4}" width="${w*.8}" height="${h*.26}" rx="3" fill="url(#${gC})" stroke="#1a1d28" stroke-width=".8"/>
+    <rect x="${w*.2}" y="${h*.45}" width="${w*.6}" height="${h*.16}" rx="2" fill="#f47920" opacity=".18" stroke="#f47920" stroke-width=".7"/>
+    <text x="${w/2}" y="${h*.55}" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#f9a04a">A1 · A2</text>
+    <rect x="${w*.12}" y="${h*.7}" width="${w*.76}" height="${h*.12}" rx="1.5" fill="#2a2e3a"/>
+    <text x="${w/2}" y="${h*.79}" text-anchor="middle" font-family="Share Tech Mono" font-size="6" font-weight="700" fill="#9aa0b0">KM ${poles}P</text>
+  </svg>`;
+}
+
+function svgThermal(){
+  const gB=gradId(),gT=gradId(),gD=gradId();
+  return `<svg viewBox="0 0 72 80" width="72" height="80">
+    <defs>
+      <linearGradient id="${gB}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d8d0b8"/><stop offset=".5" stop-color="#e8e2cc"/><stop offset="1" stop-color="#c8c0a8"/></linearGradient>
+      <linearGradient id="${gT}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b8bcc8"/><stop offset="1" stop-color="#5a6070"/></linearGradient>
+      <radialGradient id="${gD}" cx=".4" cy=".4"><stop offset="0" stop-color="#3a4150"/><stop offset="1" stop-color="#1a1d28"/></radialGradient>
+    </defs>
+    <rect x="1" y="2" width="70" height="76" rx="3" fill="url(#${gB})" stroke="#9a9078" stroke-width=".8"/>
+    <rect x="9" y="3" width="14" height="10" rx="1.5" fill="url(#${gT})"/><rect x="29" y="3" width="14" height="10" rx="1.5" fill="url(#${gT})"/><rect x="49" y="3" width="14" height="10" rx="1.5" fill="url(#${gT})"/>
+    <line x1="16" y1="2" x2="16" y2="9" stroke="#c0392b" stroke-width="2.4"/><line x1="36" y1="2" x2="36" y2="9" stroke="#27ae60" stroke-width="2.4"/><line x1="56" y1="2" x2="56" y2="9" stroke="#2980b9" stroke-width="2.4"/>
+    <rect x="6" y="16" width="60" height="20" rx="2" fill="#23262f"/>
+    <path d="M14,30 Q16,20 18,30" fill="none" stroke="#f9a04a" stroke-width="2.2"/>
+    <path d="M34,30 Q36,20 38,30" fill="none" stroke="#f9a04a" stroke-width="2.2"/>
+    <path d="M54,30 Q56,20 58,30" fill="none" stroke="#f9a04a" stroke-width="2.2"/>
+    <circle cx="24" cy="50" r="7" fill="url(#${gD})" stroke="#0d0f16"/><text x="24" y="52.5" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#9aa0b0">A▲▼</text>
+    <rect x="38" y="45" width="26" height="10" rx="2" fill="#c0392b"/><rect x="40" y="46.5" width="22" height="2" fill="#ffffff33"/>
+    <text x="51" y="52" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">RESET</text>
+    <rect x="9" y="67" width="14" height="10" rx="1.5" fill="url(#${gT})"/><rect x="29" y="67" width="14" height="10" rx="1.5" fill="url(#${gT})"/><rect x="49" y="67" width="14" height="10" rx="1.5" fill="url(#${gT})"/>
+    <line x1="16" y1="71" x2="16" y2="78" stroke="#c0392b" stroke-width="2.4"/><line x1="36" y1="71" x2="36" y2="78" stroke="#27ae60" stroke-width="2.4"/><line x1="56" y1="71" x2="56" y2="78" stroke="#2980b9" stroke-width="2.4"/>
+  </svg>`;
+}
+
+const CATALOG=[
+  // ── PROTEZIONE
+  {id:'qf1',cat:'Protezione',name:'Interruttore 1P',sub:'Magnetotermico',w:22,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T2',t:'L1',pos:'b0'}],
+   svg:svgDisj(1,22,64)},
+  {id:'qf2',cat:'Protezione',name:'Interruttore 2P',sub:'Magnetotermico 2P',w:40,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'N',pos:'t1'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'N',pos:'b1'}],
+   svg:svgDisj(2,40,64)},
+  {id:'qf3',cat:'Protezione',name:'Interruttore 3P',sub:'Magnetotermico trifase',w:58,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'}],
+   svg:svgDisj(3,58,64)},
+  {id:'qf4',cat:'Protezione',name:'Interruttore 4P',sub:'3P+N trifase',w:76,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
+   svg:svgDisj(4,76,64)},
+  {id:'id2',cat:'Protezione',name:'Differenziale 2P',sub:'ID — 2P 30mA',w:46,h:72,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'N',pos:'t1'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'N',pos:'b1'}],
+   svg:svgDifer(2)},
+  {id:'id4',cat:'Protezione',name:'Differenziale 4P',sub:'ID — 4P 30mA',w:82,h:72,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
+   svg:svgDifer(4)},
+  {id:'fus',cat:'Protezione',name:'Portafusibile',sub:'Cilindrico / NH',w:20,h:52,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T2',t:'L1',pos:'b0'}],
+   svg:`<svg viewBox="0 0 20 52" width="20" height="52">
+     <rect x="1" y="1" width="18" height="50" rx="2" fill="#2a2e40" stroke="#4a5068" stroke-width="1.2"/>
+     <rect x="5" y="8" width="10" height="4" rx="1" fill="#141825"/>
+     <rect x="4" y="12" width="12" height="20" rx="3" fill="#f39c12" opacity=".9"/>
+     <line x1="10" y1="15" x2="10" y2="29" stroke="#fff8" stroke-width="1.5"/>
+     <rect x="5" y="32" width="10" height="4" rx="1" fill="#141825"/>
+     <text x="10" y="47" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f39c12">FUS</text>
+   </svg>`},
+  // ── COMANDO
+  {id:'km3',cat:'Comando',name:'Contattore 3P',sub:'Bobina 220V / 380V',w:70,h:88,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},
+          {id:'A1',t:'A1',pos:'lft'},{id:'A2',t:'A2',pos:'rgt'}],
+   svg:svgContactor(3)},
+  {id:'km4',cat:'Comando',name:'Contattore 4P',sub:'4P — avviamento DOL',w:90,h:88,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'},
+          {id:'A1',t:'A1',pos:'lft'},{id:'A2',t:'A2',pos:'rgt'}],
+   svg:svgContactor(4)},
+  {id:'rt',cat:'Comando',name:'Relè termico',sub:'Protezione motore 3P',w:72,h:80,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'}],
+   svg:svgThermal()},
+  {id:'sb-na',cat:'Comando',name:'Pulsante NA',sub:'Normalmente aperto',w:40,h:32,
+   ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 40 32" width="40" height="32">
+     <line x1="2" y1="16" x2="10" y2="16" stroke="#6af" stroke-width="2"/>
+     <circle cx="10" cy="16" r="3" fill="#6af"/>
+     <rect x="12" y="9" width="16" height="14" rx="7" fill="#27ae60" stroke="#1e8040" stroke-width="1.2"/>
+     <circle cx="20" cy="16" r="4" fill="#2ecc71"/>
+     <circle cx="30" cy="16" r="3" fill="#6af"/>
+     <line x1="30" y1="16" x2="38" y2="16" stroke="#6af" stroke-width="2"/>
+     <text x="20" y="29" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#27ae60">START</text>
+   </svg>`},
+  {id:'sb-nc',cat:'Comando',name:'Pulsante NC',sub:'Normalmente chiuso',w:40,h:32,
+   ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 40 32" width="40" height="32">
+     <line x1="2" y1="16" x2="10" y2="16" stroke="#6af" stroke-width="2"/>
+     <circle cx="10" cy="16" r="3" fill="#6af"/>
+     <rect x="12" y="9" width="16" height="14" rx="7" fill="#e74c3c" stroke="#c0392b" stroke-width="1.2"/>
+     <circle cx="20" cy="16" r="4" fill="#ff6b6b"/>
+     <circle cx="30" cy="16" r="3" fill="#6af"/>
+     <line x1="30" y1="16" x2="38" y2="16" stroke="#6af" stroke-width="2"/>
+     <text x="20" y="29" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#e74c3c">STOP</text>
+   </svg>`},
+  {id:'sel2',cat:'Comando',name:'Selettore 2 pos.',sub:'MAN / AUT',w:40,h:28,
+   ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 40 28" width="40" height="28">
+     <line x1="2" y1="14" x2="10" y2="14" stroke="#6af" stroke-width="2"/>
+     <rect x="10" y="7" width="20" height="14" rx="7" fill="#2a2e40" stroke="#4a5068" stroke-width="1.2"/>
+     <circle cx="18" cy="14" r="5" fill="#008F6E"/>
+     <line x1="30" y1="14" x2="38" y2="14" stroke="#6af" stroke-width="2"/>
+     <text x="13" y="25" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">0</text>
+     <text x="24" y="25" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">I</text>
+   </svg>`},
+  // ── MISURA
+  {id:'amp',cat:'Misura',name:'Amperometro',sub:'Analogico / digitale',w:56,h:56,
+   ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 56 56" width="56" height="56">
+     <circle cx="28" cy="28" r="26" fill="#1a2030" stroke="#3050a0" stroke-width="1.5"/>
+     <circle cx="28" cy="28" r="20" fill="#111820"/>
+     <path d="M10,40 A20,20 0 0,1 46,40" fill="none" stroke="#2a3a50" stroke-width="3.5"/>
+     <path d="M10,40 A20,20 0 0,1 28,12" fill="none" stroke="#008F6E" stroke-width="3.5" stroke-linecap="round"/>
+     <line x1="28" y1="28" x2="18" y2="18" stroke="#00D4AA" stroke-width="1.8" stroke-linecap="round"/>
+     <circle cx="28" cy="28" r="2.5" fill="#00D4AA"/>
+     <text x="28" y="48" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#008F6E">A</text>
+   </svg>`},
+  {id:'vol',cat:'Misura',name:'Voltmetro',sub:'Analogico / digitale',w:56,h:56,
+   ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 56 56" width="56" height="56">
+     <circle cx="28" cy="28" r="26" fill="#1a2030" stroke="#306030" stroke-width="1.5"/>
+     <circle cx="28" cy="28" r="20" fill="#111820"/>
+     <path d="M10,40 A20,20 0 0,1 46,40" fill="none" stroke="#2a3a50" stroke-width="3.5"/>
+     <path d="M10,40 A20,20 0 0,1 40,16" fill="none" stroke="#27ae60" stroke-width="3.5" stroke-linecap="round"/>
+     <line x1="28" y1="28" x2="38" y2="18" stroke="#00D4AA" stroke-width="1.8" stroke-linecap="round"/>
+     <circle cx="28" cy="28" r="2.5" fill="#00D4AA"/>
+     <text x="28" y="48" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#27ae60">V</text>
+   </svg>`},
+  {id:'kwh',cat:'Misura',name:'Contatore di energia',sub:'kWh multifunzione',w:80,h:60,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
+   svg:`<svg viewBox="0 0 80 60" width="80" height="60">
+     <rect x="1" y="1" width="78" height="58" rx="3" fill="#101520" stroke="#2050a0" stroke-width="1.2"/>
+     <rect x="6" y="6" width="68" height="26" rx="2" fill="#0a1018"/>
+     <text x="40" y="16" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#008F6E">00000</text>
+     <text x="40" y="27" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#27ae60">kWh</text>
+     <text x="40" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">MEDIDOR</text>
+   </svg>`},
+  // ── DISTRIBUZIONE
+  {id:'bus3',cat:'Distribuzione',name:'Barra trifase',sub:'Barra collettora 3P+N+PE',w:120,h:28,
+   ports:[{id:'L1',t:'L1',pos:'t0'},{id:'L2',t:'L2',pos:'t1'},{id:'L3',t:'L3',pos:'t2'},{id:'NN',t:'N',pos:'t3'}],
+   svg:`<svg viewBox="0 0 120 28" width="120" height="28">
+     <rect x="1" y="4" width="118" height="7" rx="2" fill="#c0392b" opacity=".8"/>
+     <rect x="1" y="12" width="118" height="5" rx="1" fill="#27ae60" opacity=".75"/>
+     <rect x="1" y="18" width="118" height="5" rx="1" fill="#2980b9" opacity=".75"/>
+     <rect x="1" y="24" width="76" height="3" rx="1" fill="#6aaff0" opacity=".7"/>
+     <text x="60" y="3" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#c0392b">L1</text>
+     <text x="85" y="3" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#27ae60">L2</text>
+     <text x="110" y="3" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#2980b9">L3</text>
+   </svg>`},
+  {id:'bpe',cat:'Distribuzione',name:'Barra PE',sub:'Terra / equipotenziale',w:100,h:16,
+   ports:[{id:'PE1',t:'PE',pos:'t0'},{id:'PE2',t:'PE',pos:'t1'},{id:'PE3',t:'PE',pos:'t2'},{id:'PE4',t:'PE',pos:'t3'}],
+   svg:`<svg viewBox="0 0 100 16" width="100" height="16">
+     <rect x="1" y="3" width="98" height="10" rx="2" fill="#27ae60" opacity=".85" stroke="#1e8040" stroke-width="1"/>
+     <text x="50" y="11" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#fff">PE / TIERRA</text>
+   </svg>`},
+  {id:'borne',cat:'Distribuzione',name:'Morsa di passo',sub:'Morsettiera terminale',w:22,h:34,
+   ports:[{id:'T1',t:'COM',pos:'top'},{id:'T2',t:'COM',pos:'bot'}],
+   svg:`<svg viewBox="0 0 22 34" width="22" height="34">
+     <rect x="1" y="1" width="20" height="32" rx="2" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+     <rect x="4" y="7" width="14" height="8" rx="2" fill="#0f1820"/>
+     <rect x="4" y="19" width="14" height="8" rx="2" fill="#0f1820"/>
+     <line x1="11" y1="1" x2="11" y2="7" stroke="#6af" stroke-width="2"/>
+     <line x1="11" y1="27" x2="11" y2="33" stroke="#6af" stroke-width="2"/>
+     <circle cx="11" cy="11" r="3" fill="#008F6E"/>
+     <circle cx="11" cy="23" r="3" fill="#008F6E"/>
+   </svg>`},
+  {id:'sec3',cat:'Distribuzione',name:'Sezionatore 3P',sub:'Interruttore in carico',w:60,h:60,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},
+          {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'}],
+   svg:`<svg viewBox="0 0 60 60" width="60" height="60">
+     <rect x="1" y="1" width="58" height="58" rx="3" fill="#1a2030" stroke="#3a4560" stroke-width="1.2"/>
+     <line x1="12" y1="2" x2="12" y2="18" stroke="#c0392b" stroke-width="2"/>
+     <line x1="30" y1="2" x2="30" y2="18" stroke="#27ae60" stroke-width="2"/>
+     <line x1="48" y1="2" x2="48" y2="18" stroke="#2980b9" stroke-width="2"/>
+     <rect x="4" y="18" width="52" height="24" rx="2" fill="#141820"/>
+     <line x1="12" y1="20" x2="16" y2="36" stroke="#27ae60" stroke-width="2.5" stroke-linecap="round"/>
+     <line x1="30" y1="20" x2="34" y2="36" stroke="#27ae60" stroke-width="2.5" stroke-linecap="round"/>
+     <line x1="48" y1="20" x2="52" y2="36" stroke="#27ae60" stroke-width="2.5" stroke-linecap="round"/>
+     <line x1="12" y1="42" x2="12" y2="58" stroke="#c0392b" stroke-width="2"/>
+     <line x1="30" y1="42" x2="30" y2="58" stroke="#27ae60" stroke-width="2"/>
+     <line x1="48" y1="42" x2="48" y2="58" stroke="#2980b9" stroke-width="2"/>
+     <text x="30" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">SEC</text>
+   </svg>`},
+  // ── VARIATORI / PLC
+  {id:'vfd3',cat:'Variatori/PLC',name:'Inverter 3P',sub:'VFD — 0.4 a 315kW',w:90,h:96,
+   ports:[{id:'R',t:'L1',pos:'t0'},{id:'S',t:'L2',pos:'t1'},{id:'T',t:'L3',pos:'t2'},
+          {id:'U',t:'L1',pos:'b0'},{id:'V',t:'L2',pos:'b1'},{id:'W',t:'L3',pos:'b2'},
+          {id:'A1',t:'A1',pos:'lft'}],
+   svg:`<svg viewBox="0 0 90 96" width="90" height="96">
+     <rect x="1" y="1" width="88" height="94" rx="4" fill="#101828" stroke="#1e3060" stroke-width="1.5"/>
+     <rect x="6" y="6" width="78" height="28" rx="2" fill="#080f18"/>
+     <text x="45" y="17" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#008F6E">0.0 Hz</text>
+     <text x="45" y="28" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#27ae60">0.00 A</text>
+     <rect x="6" y="38" width="36" height="12" rx="2" fill="#27ae60" opacity=".7"/>
+     <text x="24" y="47" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#fff">FWD</text>
+     <rect x="48" y="38" width="36" height="12" rx="2" fill="#e74c3c" opacity=".7"/>
+     <text x="66" y="47" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#fff">REV</text>
+     <rect x="6" y="55" width="78" height="26" rx="2" fill="#080f18"/>
+     <text x="45" y="66" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#c0392b">R  S  T</text>
+     <text x="45" y="76" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#27ae60">U  V  W</text>
+     <text x="45" y="91" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">VFD</text>
+   </svg>`},
+  {id:'plc',cat:'Variatori/PLC',name:'PLC',sub:'Controllore logico programmabile',w:90,h:76,
+   ports:[{id:'L1',t:'L1',pos:'t0'},{id:'N1',t:'N',pos:'t1'},{id:'PE1',t:'PE',pos:'t2'},
+          {id:'O1',t:'OUT',pos:'b0'},{id:'O2',t:'OUT',pos:'b1'},{id:'O3',t:'OUT',pos:'b2'}],
+   svg:`<svg viewBox="0 0 90 76" width="90" height="76">
+     <rect x="1" y="1" width="88" height="74" rx="4" fill="#0f1525" stroke="#1e3060" stroke-width="1.5"/>
+     <rect x="6" y="6" width="40" height="22" rx="2" fill="#080e18"/>
+     <text x="26" y="15" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#008F6E">PLC</text>
+     <text x="26" y="24" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">■ RUN</text>
+     <circle cx="56" cy="14" r="4" fill="#27ae60"/>
+     <circle cx="68" cy="14" r="4" fill="#27ae60"/>
+     <circle cx="80" cy="14" r="4" fill="#e74c3c"/>
+     <text x="56" y="23" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">RUN</text>
+     <text x="68" y="23" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">ERR</text>
+     <text x="80" y="23" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">PWR</text>
+     <rect x="6" y="32" width="78" height="30" rx="2" fill="#080e18"/>
+     <text x="45" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">I: 8DI / 4AI</text>
+     <text x="45" y="55" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">O: 6DO / 2AO</text>
+     <text x="45" y="70" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">CPU</text>
+   </svg>`},
+  {id:'raux',cat:'Variatori/PLC',name:'Relè ausiliario',sub:'8/11 pin — 220V AC',w:40,h:52,
+   ports:[{id:'A1',t:'A1',pos:'top'},{id:'A2',t:'A2',pos:'bot'},{id:'C1',t:'COM',pos:'lft'},{id:'NO',t:'OUT',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 40 52" width="40" height="52">
+     <rect x="1" y="1" width="38" height="50" rx="3" fill="#1e1a30" stroke="#5040a0" stroke-width="1.2"/>
+     <rect x="4" y="4" width="32" height="14" rx="2" fill="#100e20"/>
+     <text x="20" y="13" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#9b59b6">RELÉ AUX</text>
+     <rect x="4" y="20" width="32" height="14" rx="2" fill="#00D4AA" opacity=".12" stroke="#00D4AA" stroke-width=".8"/>
+     <text x="20" y="30" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00D4AA">220V</text>
+     <rect x="4" y="36" width="14" height="8" rx="2" fill="#100e20"/>
+     <rect x="22" y="36" width="14" height="8" rx="2" fill="#100e20"/>
+     <text x="20" y="48" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">RLA</text>
+   </svg>`},
+  // ── MOTORI
+  {id:'mtr3',cat:'Motori',name:'Motore trifase',sub:'Asincrono gabbia 3~',w:72,h:80,
+   ports:[{id:'U',t:'L1',pos:'t0'},{id:'V',t:'L2',pos:'t1'},{id:'W',t:'L3',pos:'t2'},{id:'PE',t:'PE',pos:'t3'}],
+   svg:`<svg viewBox="0 0 72 80" width="72" height="80">
+     <circle cx="36" cy="44" r="32" fill="#1a1830" stroke="#3a3060" stroke-width="1.5"/>
+     <circle cx="36" cy="44" r="23" fill="#100e20" stroke="#2a2050" stroke-width="1.2"/>
+     <text x="36" y="40" text-anchor="middle" font-family="Share Tech Mono" font-size="10" fill="#008F6E">M</text>
+     <text x="36" y="52" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">3~</text>
+     <line x1="10" y1="12" x2="10" y2="2" stroke="#c0392b" stroke-width="2"/>
+     <line x1="28" y1="12" x2="28" y2="2" stroke="#27ae60" stroke-width="2"/>
+     <line x1="46" y1="12" x2="46" y2="2" stroke="#2980b9" stroke-width="2"/>
+     <line x1="64" y1="12" x2="64" y2="2" stroke="#27ae60" stroke-width="2"/>
+     <rect x="30" y="72" width="12" height="7" rx="2" fill="#3a3060"/>
+     <line x1="36" y1="76" x2="72" y2="76" stroke="#3a3060" stroke-width="4" stroke-linecap="round"/>
+   </svg>`},
+  {id:'mtr1',cat:'Motori',name:'Motore monofase',sub:'Con cap. avviamento 1~',w:56,h:68,
+   ports:[{id:'L',t:'L1',pos:'t0'},{id:'N1',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'t2'}],
+   svg:`<svg viewBox="0 0 56 68" width="56" height="68">
+     <circle cx="28" cy="40" r="26" fill="#1a1830" stroke="#3a3060" stroke-width="1.5"/>
+     <circle cx="28" cy="40" r="18" fill="#100e20" stroke="#2a2050" stroke-width="1.2"/>
+     <text x="28" y="37" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#008F6E">M</text>
+     <text x="28" y="48" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#7a82a8">1~</text>
+     <line x1="10" y1="14" x2="10" y2="2" stroke="#c0392b" stroke-width="2"/>
+     <line x1="28" y1="14" x2="28" y2="2" stroke="#6aaff0" stroke-width="2"/>
+     <line x1="46" y1="14" x2="46" y2="2" stroke="#27ae60" stroke-width="2"/>
+   </svg>`},
+  // ── SEGNALAZIONE
+  {id:'pl-g',cat:'Segnalazione',name:'Spia LED verde',sub:'Segnale di marcia',w:28,h:28,
+   ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 28 28" width="28" height="28">
+     <circle cx="14" cy="14" r="12" fill="#1a3020" stroke="#27ae60" stroke-width="1.5"/>
+     <circle cx="14" cy="14" r="7" fill="#27ae60" opacity=".9"/>
+     <circle cx="11" cy="11" r="3" fill="#7dff9e" opacity=".5"/>
+   </svg>`},
+  {id:'pl-r',cat:'Señalización',name:'Piloto LED rojo',sub:'Señal paro / falla',w:28,h:28,
+   ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 28 28" width="28" height="28">
+     <circle cx="14" cy="14" r="12" fill="#301a1a" stroke="#e74c3c" stroke-width="1.5"/>
+     <circle cx="14" cy="14" r="7" fill="#e74c3c" opacity=".9"/>
+     <circle cx="11" cy="11" r="3" fill="#ff9f9f" opacity=".5"/>
+   </svg>`},
+  {id:'pl-o',cat:'Segnalazione',name:'Spia LED arancione',sub:'Standby / avviso',w:28,h:28,
+   ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
+   svg:`<svg viewBox="0 0 28 28" width="28" height="28">
+     <circle cx="14" cy="14" r="12" fill="#302010" stroke="#00D4AA" stroke-width="1.5"/>
+     <circle cx="14" cy="14" r="7" fill="#00D4AA" opacity=".9"/>
+     <circle cx="11" cy="11" r="3" fill="#ffd090" opacity=".5"/>
+   </svg>`},
+  // ── PONTI
+  {id:'pte1',cat:'Ponti',name:'Ponte 2P',sub:'Interconnessione bipolare',w:44,h:14,
+   ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L2',pos:'t1'}],
+   svg:`<svg viewBox="0 0 44 14" width="44" height="14">
+     <rect x="1" y="4" width="42" height="6" rx="3" fill="#f39c12" stroke="#c87f10" stroke-width="1"/>
+     <circle cx="11" cy="7" r="4" fill="#f39c12" stroke="#c87f10" stroke-width="1"/>
+     <circle cx="33" cy="7" r="4" fill="#f39c12" stroke="#c87f10" stroke-width="1"/>
+     <text x="22" y="10" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">PTE</text>
+   </svg>`},
+  {id:'pte3',cat:'Ponti',name:'Ponte 3P',sub:'Interconnessione trifase',w:62,h:14,
+   ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L2',pos:'t1'},{id:'P3',t:'L3',pos:'t2'}],
+   svg:`<svg viewBox="0 0 62 14" width="62" height="14">
+     <rect x="1" y="4" width="60" height="6" rx="3" fill="#f39c12" stroke="#c87f10" stroke-width="1"/>
+     <circle cx="11" cy="7" r="4" fill="#c0392b" stroke="#a03020" stroke-width="1"/>
+     <circle cx="31" cy="7" r="4" fill="#27ae60" stroke="#1e8040" stroke-width="1"/>
+     <circle cx="51" cy="7" r="4" fill="#2980b9" stroke="#1e6090" stroke-width="1"/>
+   </svg>`},
+  {id:'pte4',cat:'Ponti',name:'Ponte 4P',sub:'3P+N — trifase+neutro',w:80,h:14,
+   ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L2',pos:'t1'},{id:'P3',t:'L3',pos:'t2'},{id:'P4',t:'N',pos:'t3'}],
+   svg:`<svg viewBox="0 0 80 14" width="80" height="14">
+     <rect x="1" y="4" width="78" height="6" rx="3" fill="#f39c12" stroke="#c87f10" stroke-width="1"/>
+     <circle cx="11" cy="7" r="4" fill="#c0392b" stroke="#a03020" stroke-width="1"/>
+     <circle cx="31" cy="7" r="4" fill="#27ae60" stroke="#1e8040" stroke-width="1"/>
+     <circle cx="51" cy="7" r="4" fill="#2980b9" stroke="#1e6090" stroke-width="1"/>
+     <circle cx="69" cy="7" r="4" fill="#6aaff0" stroke="#4a8fd0" stroke-width="1"/>
+   </svg>`},
+  // ════ PROTEZIONE AVANZATA ════
+  {id:'mpcb',cat:'Protezione',name:'Guardamotore',sub:'MPCB regolabile termico+magnetico',w:58,h:72,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'}],
+   specs:['Rango: 0.16 – 80A regulable','Disparo térmico clase 10A','Poder corte: 50–100kA','Norma IEC 60947-2'],
+   svg:`<svg viewBox="0 0 58 72" width="58" height="72">
+     <rect x="1" y="1" width="56" height="70" rx="3" fill="#1e2235" stroke="#353a58" stroke-width="1.2"/>
+     <line x1="11" y1="2" x2="11" y2="16" stroke="#c0392b" stroke-width="2"/><line x1="29" y1="2" x2="29" y2="16" stroke="#27ae60" stroke-width="2"/><line x1="47" y1="2" x2="47" y2="16" stroke="#2980b9" stroke-width="2"/>
+     <circle cx="29" cy="30" r="11" fill="#141825" stroke="#008F6E" stroke-width="1"/>
+     <path d="M29,30 L29,21" stroke="#f47920" stroke-width="2"/><circle cx="29" cy="30" r="2.5" fill="#f47920"/>
+     <text x="29" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">A▲▼</text>
+     <rect x="8" y="48" width="18" height="8" rx="2" fill="#c0392b" opacity=".8"/><text x="17" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">0</text>
+     <rect x="32" y="48" width="18" height="8" rx="2" fill="#27ae60" opacity=".8"/><text x="41" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">I</text>
+     <line x1="11" y1="56" x2="11" y2="70" stroke="#c0392b" stroke-width="2"/><line x1="29" y1="56" x2="29" y2="70" stroke="#27ae60" stroke-width="2"/><line x1="47" y1="56" x2="47" y2="70" stroke="#2980b9" stroke-width="2"/>
+     <text x="29" y="68" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">MPCB</text>
+   </svg>`},
+  {id:'spd',cat:'Protezione',name:'Scaricatore AC',sub:'SPD protezione sovratensione Tipo 2',w:58,h:64,
+   ports:[{id:'L1',t:'L1',pos:'t0'},{id:'L2',t:'L2',pos:'t1'},{id:'L3',t:'L3',pos:'t2'},{id:'PE',t:'PE',pos:'b1'}],
+   specs:['Uc: 275V / 385V AC','Imax: 40kA (8/20µs)','Up: ≤1.5kV','Cartuchos extraíbles'],
+   svg:`<svg viewBox="0 0 58 64" width="58" height="64">
+     <rect x="1" y="1" width="56" height="62" rx="3" fill="#2a1e10" stroke="#a05020" stroke-width="1.2"/>
+     <line x1="11" y1="2" x2="11" y2="14" stroke="#c0392b" stroke-width="2"/><line x1="29" y1="2" x2="29" y2="14" stroke="#27ae60" stroke-width="2"/><line x1="47" y1="2" x2="47" y2="14" stroke="#2980b9" stroke-width="2"/>
+     <rect x="6" y="16" width="14" height="26" rx="2" fill="#1a1410" stroke="#f39c12" stroke-width="1"/>
+     <rect x="22" y="16" width="14" height="26" rx="2" fill="#1a1410" stroke="#f39c12" stroke-width="1"/>
+     <rect x="38" y="16" width="14" height="26" rx="2" fill="#1a1410" stroke="#f39c12" stroke-width="1"/>
+     <rect x="8" y="19" width="10" height="4" fill="#27ae60"/><rect x="24" y="19" width="10" height="4" fill="#27ae60"/><rect x="40" y="19" width="10" height="4" fill="#27ae60"/>
+     <path d="M11,28 L9,33 L13,33 L11,38" stroke="#f47920" stroke-width="1.2" fill="none"/>
+     <path d="M27,28 L25,33 L29,33 L27,38" stroke="#f47920" stroke-width="1.2" fill="none"/>
+     <path d="M43,28 L41,33 L45,33 L43,38" stroke="#f47920" stroke-width="1.2" fill="none"/>
+     <line x1="29" y1="42" x2="29" y2="58" stroke="#27ae60" stroke-width="2"/>
+     <text x="29" y="62" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#a05020">SPD T2</text>
+   </svg>`},
+  {id:'soft',cat:'Comando',name:'Avviatore morbido',sub:'Soft starter — rampa di avviamento',w:90,h:92,
+   ports:[{id:'L1',t:'L1',pos:'t0'},{id:'L2',t:'L2',pos:'t1'},{id:'L3',t:'L3',pos:'t2'},{id:'T1',t:'L1',pos:'b0'},{id:'T2',t:'L2',pos:'b1'},{id:'T3',t:'L3',pos:'b2'},{id:'A1',t:'A1',pos:'lft'}],
+   specs:['Potencia: 4 – 250kW','Rampa: 1 – 60s ajustable','Limitación corriente arranque','Bypass interno integrado'],
+   svg:`<svg viewBox="0 0 90 92" width="90" height="92">
+     <rect x="1" y="1" width="88" height="90" rx="4" fill="#101828" stroke="#1e3060" stroke-width="1.5"/>
+     <line x1="14" y1="2" x2="14" y2="14" stroke="#c0392b" stroke-width="2"/><line x1="32" y1="2" x2="32" y2="14" stroke="#27ae60" stroke-width="2"/><line x1="50" y1="2" x2="50" y2="14" stroke="#2980b9" stroke-width="2"/>
+     <rect x="6" y="16" width="78" height="24" rx="2" fill="#080f18"/>
+     <path d="M10,36 Q20,36 26,24 L40,24" stroke="#27ae60" stroke-width="1.5" fill="none"/>
+     <text x="60" y="26" font-family="Share Tech Mono" font-size="6" fill="#008F6E">RAMP</text>
+     <text x="60" y="35" font-family="Share Tech Mono" font-size="6" fill="#27ae60">RUN</text>
+     <rect x="6" y="44" width="78" height="20" rx="2" fill="#080f18"/>
+     <text x="45" y="57" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#7a82a8">SOFT START</text>
+     <text x="45" y="74" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#c0392b">L1 L2 L3</text>
+     <line x1="14" y1="78" x2="14" y2="90" stroke="#c0392b" stroke-width="2"/><line x1="32" y1="78" x2="32" y2="90" stroke="#27ae60" stroke-width="2"/><line x1="50" y1="78" x2="50" y2="90" stroke="#2980b9" stroke-width="2"/>
+     <text x="70" y="88" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">U V W</text>
+   </svg>`},
+  {id:'id3',cat:'Protezione',name:'Differenziale 3P',sub:'ID — 3P trifase 30/300mA',w:62,h:72,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'}],
+   specs:['Sensibilidad: 30 / 100 / 300mA','Clase AC / A / SI','In: 25 – 63A','3 polos trifásico'],
+   svg:svgDifer(3)},
+  {id:'dpn',cat:'Protezione',name:'Interruttore DPN',sub:'Fase+Neutro compatto 1 modulo',w:20,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T2',t:'L1',pos:'b0'}],
+   specs:['Fase + Neutro en 1 módulo','In: 6 – 40A','Curva C','Poder corte: 4.5 – 6kA'],
+   svg:`<svg viewBox="0 0 20 64" width="20" height="64">
+     <rect x="1" y="1" width="18" height="62" rx="3" fill="#1e2235" stroke="#353a58" stroke-width="1.2"/>
+     <line x1="7" y1="2" x2="7" y2="18" stroke="#c0392b" stroke-width="2"/><line x1="13" y1="2" x2="13" y2="18" stroke="#6aaff0" stroke-width="1.5"/>
+     <rect x="4" y="22" width="12" height="14" rx="2" fill="#f47920" opacity=".15" stroke="#f47920" stroke-width=".7"/>
+     <line x1="7" y1="38" x2="11" y2="46" stroke="#c0392b" stroke-width="2"/><circle cx="7" cy="38" r="2" fill="#c0392b"/>
+     <text x="10" y="33" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#f47920">C</text>
+     <line x1="7" y1="48" x2="7" y2="62" stroke="#c0392b" stroke-width="2"/><line x1="13" y1="48" x2="13" y2="62" stroke="#6aaff0" stroke-width="1.5"/>
+   </svg>`},
+  {id:'idr',cat:'Protezione',name:'Interruttore differenziale',sub:'Combinato magnetotermico+differenziale',w:40,h:72,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'N',pos:'t1'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'N',pos:'b1'}],
+   specs:['Protección sobrecarga + corto','+ Diferencial 30mA integrado','In: 6 – 40A','2P en 2 módulos'],
+   svg:`<svg viewBox="0 0 40 72" width="40" height="72">
+     <rect x="1" y="1" width="38" height="70" rx="3" fill="#1a2840" stroke="#2e5090" stroke-width="1.2"/>
+     <line x1="12" y1="2" x2="12" y2="14" stroke="#c0392b" stroke-width="2"/><line x1="28" y1="2" x2="28" y2="14" stroke="#6aaff0" stroke-width="2"/>
+     <rect x="6" y="16" width="28" height="12" rx="2" fill="#f47920" opacity=".15" stroke="#f47920" stroke-width=".7"/>
+     <text x="20" y="25" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">MAG+TÉRM</text>
+     <ellipse cx="20" cy="40" rx="11" ry="6" fill="none" stroke="#008F6E" stroke-width="1.2"/>
+     <text x="20" y="42" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#008F6E">Δ 30mA</text>
+     <rect x="8" y="50" width="10" height="6" rx="1" fill="#e74c3c" opacity=".8"/><text x="13" y="55" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#fff">T</text>
+     <line x1="12" y1="58" x2="12" y2="70" stroke="#c0392b" stroke-width="2"/><line x1="28" y1="58" x2="28" y2="70" stroke="#6aaff0" stroke-width="2"/>
+   </svg>`},
+  {id:'ica',cat:'Protezione',name:'Interruttore di sezione',sub:'Sezionatore onnipolare di testa',w:62,h:60,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
+   specs:['Corte omnipolar visible','In: 40 – 125A','4P (3F+N)','Maniobra bajo carga'],
+   svg:`<svg viewBox="0 0 62 60" width="62" height="60">
+     <rect x="1" y="1" width="60" height="58" rx="3" fill="#1a2030" stroke="#3a4560" stroke-width="1.2"/>
+     <line x1="10" y1="2" x2="10" y2="16" stroke="#c0392b" stroke-width="2"/><line x1="24" y1="2" x2="24" y2="16" stroke="#27ae60" stroke-width="2"/><line x1="38" y1="2" x2="38" y2="16" stroke="#2980b9" stroke-width="2"/><line x1="52" y1="2" x2="52" y2="16" stroke="#6aaff0" stroke-width="2"/>
+     <rect x="5" y="18" width="52" height="22" rx="2" fill="#141820"/>
+     <line x1="10" y1="20" x2="14" y2="36" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+     <line x1="24" y1="20" x2="28" y2="36" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+     <line x1="38" y1="20" x2="42" y2="36" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+     <line x1="52" y1="20" x2="56" y2="36" stroke="#f39c12" stroke-width="2" stroke-linecap="round"/>
+     <line x1="10" y1="42" x2="10" y2="58" stroke="#c0392b" stroke-width="2"/><line x1="24" y1="42" x2="24" y2="58" stroke="#27ae60" stroke-width="2"/><line x1="38" y1="42" x2="38" y2="58" stroke="#2980b9" stroke-width="2"/><line x1="52" y1="42" x2="52" y2="58" stroke="#6aaff0" stroke-width="2"/>
+     <text x="31" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">CORTE 4P</text>
+   </svg>`},
+  {id:'telerr',cat:'Comando',name:'Teleinterruttore',sub:'Relè di impulso modulare',w:20,h:64,
+   ports:[{id:'A1',t:'A1',pos:'t0'},{id:'T1',t:'L1',pos:'b0'}],
+   specs:['Mando por pulsadores','Bobina de impulso 220V','In: 16A','Para iluminación de escaleras'],
+   svg:`<svg viewBox="0 0 20 64" width="20" height="64">
+     <rect x="1" y="1" width="18" height="62" rx="3" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+     <line x1="10" y1="2" x2="10" y2="16" stroke="#f39c12" stroke-width="2"/>
+     <rect x="4" y="18" width="12" height="14" rx="2" fill="#f47920" opacity=".15" stroke="#f47920" stroke-width=".7"/>
+     <text x="10" y="28" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">imp</text>
+     <circle cx="10" cy="40" r="4" fill="none" stroke="#008F6E" stroke-width="1.2"/><line x1="10" y1="36" x2="13" y2="33" stroke="#008F6E"/>
+     <line x1="10" y1="48" x2="10" y2="62" stroke="#c0392b" stroke-width="2"/>
+     <text x="10" y="58" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">TL</text>
+   </svg>`},
+  {id:'km-mod',cat:'Comando',name:'Contattore modulare',sub:'Contattore a guida per carichi resistivi',w:40,h:64,
+   ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'N',pos:'t1'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'N',pos:'b1'}],
+   specs:['In: 16 – 63A AC-1','Bobina 220V silenciosa','2P / 4P','Cargas resistivas (termotanque, AC)'],
+   svg:`<svg viewBox="0 0 40 64" width="40" height="64">
+     <rect x="1" y="1" width="38" height="62" rx="3" fill="#1e2840" stroke="#305090" stroke-width="1.2"/>
+     <line x1="12" y1="2" x2="12" y2="16" stroke="#c0392b" stroke-width="2"/><line x1="28" y1="2" x2="28" y2="16" stroke="#6aaff0" stroke-width="2"/>
+     <line x1="12" y1="18" x2="16" y2="30" stroke="#008F6E" stroke-width="2"/><circle cx="12" cy="18" r="2" fill="#008F6E"/>
+     <line x1="28" y1="18" x2="32" y2="30" stroke="#008F6E" stroke-width="2"/><circle cx="28" cy="18" r="2" fill="#008F6E"/>
+     <rect x="6" y="34" width="28" height="14" rx="2" fill="#f47920" opacity=".12" stroke="#f47920" stroke-width=".7"/>
+     <text x="20" y="43" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">BOB 220V</text>
+     <line x1="12" y1="50" x2="12" y2="62" stroke="#c0392b" stroke-width="2"/><line x1="28" y1="50" x2="28" y2="62" stroke="#6aaff0" stroke-width="2"/>
+   </svg>`},
+  {id:'trafo',cat:'Trasformatori',name:'Trasformatore monofase',sub:'Isolamento / riduttore 1~',w:60,h:72,
+   ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'N',pos:'t1'},{id:'S1',t:'L1',pos:'b0'},{id:'S2',t:'N',pos:'b1'}],
+   specs:['Potencia: 50VA – 25kVA','Primario: 220/380V','Secundario: 12/24/110V','Aislación galvánica'],
+   svg:`<svg viewBox="0 0 60 72" width="60" height="72">
+     <rect x="1" y="1" width="58" height="70" rx="3" fill="#1a1830" stroke="#3a3060" stroke-width="1.2"/>
+     <line x1="18" y1="2" x2="18" y2="12" stroke="#c0392b" stroke-width="2"/><line x1="42" y1="2" x2="42" y2="12" stroke="#6aaff0" stroke-width="2"/>
+     <path d="M22,16 Q14,20 22,24 Q14,28 22,32 Q14,36 22,40" stroke="#008F6E" stroke-width="2" fill="none"/>
+     <path d="M38,16 Q46,20 38,24 Q46,28 38,32 Q46,36 38,40" stroke="#f47920" stroke-width="2" fill="none"/>
+     <line x1="30" y1="14" x2="30" y2="42" stroke="#7a82a8" stroke-width="1.5"/>
+     <line x1="28" y1="20" x2="32" y2="20" stroke="#7a82a8" stroke-width="1"/><line x1="28" y1="36" x2="32" y2="36" stroke="#7a82a8" stroke-width="1"/>
+     <text x="30" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">TRAFO</text>
+     <line x1="18" y1="60" x2="18" y2="70" stroke="#c0392b" stroke-width="2"/><line x1="42" y1="60" x2="42" y2="70" stroke="#6aaff0" stroke-width="2"/>
+   </svg>`},
+  {id:'psu',cat:'Trasformatori',name:'Alimentatore DC',sub:'Power supply commutato 24V',w:72,h:80,
+   ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'t2'},{id:'V+',t:'OUT',pos:'b0'},{id:'V-',t:'OUT',pos:'b1'}],
+   specs:['Entrada: 85–264V AC','Salida: 24V DC / 5–20A','Rendimiento: >90%','Protección cortocircuito'],
+   svg:`<svg viewBox="0 0 72 80" width="72" height="80">
+     <rect x="1" y="1" width="70" height="78" rx="3" fill="#141a28" stroke="#2050a0" stroke-width="1.2"/>
+     <line x1="14" y1="2" x2="14" y2="14" stroke="#c0392b" stroke-width="2"/><line x1="30" y1="2" x2="30" y2="14" stroke="#6aaff0" stroke-width="2"/><line x1="46" y1="2" x2="46" y2="14" stroke="#27ae60" stroke-width="2"/>
+     <text x="18" y="11" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">AC IN</text>
+     <rect x="6" y="18" width="60" height="22" rx="2" fill="#0a0f18"/>
+     <text x="36" y="28" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#27ae60">24V ⎓</text>
+     <text x="36" y="37" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">DC OUT</text>
+     <circle cx="60" cy="46" r="3" fill="#27ae60"/><text x="52" y="48" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">DC OK</text>
+     <rect x="6" y="52" width="60" height="14" rx="2" fill="#0a0f18"/>
+     <text x="36" y="61" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">SMPS 24V</text>
+     <line x1="20" y1="66" x2="20" y2="78" stroke="#c0392b" stroke-width="2"/><text x="20" y="76" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">+</text>
+     <line x1="46" y1="66" x2="46" y2="78" stroke="#222" stroke-width="2"/><text x="46" y="76" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">−</text>
+   </svg>`},
+
+  // ════ REFRIGERAZIONE ════
+  {id:'compr',cat:'Refrigerazione',name:'Compressore ermetico',sub:'Scroll / pistone R410A',w:76,h:76,
+   ports:[{id:'C',t:'COM',pos:'t0'},{id:'R',t:'L1',pos:'t1'},{id:'S',t:'N',pos:'t2'},{id:'PE',t:'PE',pos:'b1'}],
+   specs:['Refrigerante: R410A / R32 / R134a','Tensión: 220V 1~ o 380V 3~','Protección térmica interna','Capacidad: 1 – 25 HP'],
+   svg:`<svg viewBox="0 0 76 76" width="76" height="76">
+     <ellipse cx="38" cy="44" rx="32" ry="28" fill="#1a1d28" stroke="#454a68" stroke-width="1.5"/>
+     <ellipse cx="38" cy="40" rx="32" ry="28" fill="#22262f" stroke="#555a78" stroke-width="1.5"/>
+     <ellipse cx="38" cy="34" rx="20" ry="9" fill="#2a2e3a" stroke="#454a68" stroke-width="1"/>
+     <rect x="30" y="20" width="16" height="10" rx="2" fill="#141825" stroke="#353a58"/>
+     <circle cx="34" cy="25" r="1.8" fill="#c0392b"/><circle cx="38" cy="25" r="1.8" fill="#f39c12"/><circle cx="42" cy="25" r="1.8" fill="#6aaff0"/>
+     <text x="34" y="18" font-family="Share Tech Mono" font-size="4" fill="#c0392b">C</text><text x="38" y="18" font-family="Share Tech Mono" font-size="4" fill="#f39c12">R</text><text x="42" y="18" font-family="Share Tech Mono" font-size="4" fill="#6aaff0">S</text>
+     <path d="M14,48 Q38,58 62,48" stroke="#353a58" stroke-width="1" fill="none"/>
+     <text x="38" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#7a82a8">COMP</text>
+     <text x="38" y="64" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#008F6E">M 1~/3~</text>
+   </svg>`},
+  {id:'cond',cat:'Refrigerazione',name:'Condensatore',sub:'Unità condensatrice + ventilatore',w:84,h:72,
+   ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'}],
+   specs:['Intercambiador Cu/Al','Ventilador axial 220V','Disipación: alta presión','Incluye motor ventilador'],
+   svg:`<svg viewBox="0 0 84 72" width="84" height="72">
+     <rect x="1" y="1" width="82" height="70" rx="3" fill="#161a24" stroke="#3a4560" stroke-width="1.2"/>
+     <g stroke="#008F6E" stroke-width="1" opacity=".5">
+       <line x1="8" y1="10" x2="76" y2="10"/><line x1="8" y1="16" x2="76" y2="16"/><line x1="8" y1="22" x2="76" y2="22"/><line x1="8" y1="28" x2="76" y2="28"/>
+     </g>
+     <circle cx="42" cy="48" r="18" fill="#0f131c" stroke="#454a68" stroke-width="1.2"/>
+     <path d="M42,48 Q52,40 50,52 Q42,48 42,48" fill="#008F6E" opacity=".6"/>
+     <path d="M42,48 Q34,56 32,44 Q42,48 42,48" fill="#008F6E" opacity=".6"/>
+     <path d="M42,48 Q50,58 36,58 Q42,48 42,48" fill="#008F6E" opacity=".4"/>
+     <circle cx="42" cy="48" r="3" fill="#7a82a8"/>
+     <text x="42" y="69" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">CONDENSADORA</text>
+   </svg>`},
+  {id:'evap',cat:'Refrigerazione',name:'Evaporatore',sub:'Serpentina alettata + ventilatore',w:84,h:56,
+   ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'}],
+   specs:['Serpentina Cu aletas Al','Forzador axial / centrífugo','Bandeja de condensado','Termostato deshielo opcional'],
+   svg:`<svg viewBox="0 0 84 56" width="84" height="56">
+     <rect x="1" y="1" width="82" height="54" rx="3" fill="#141822" stroke="#3a4560" stroke-width="1.2"/>
+     <path d="M10,12 Q14,8 18,12 Q22,16 26,12 Q30,8 34,12 Q38,16 42,12 Q46,8 50,12 Q54,16 58,12 Q62,8 66,12 Q70,16 74,12" stroke="#6aaff0" stroke-width="2" fill="none"/>
+     <path d="M10,22 Q14,18 18,22 Q22,26 26,22 Q30,18 34,22 Q38,26 42,22 Q46,18 50,22 Q54,26 58,22 Q62,18 66,22 Q70,26 74,22" stroke="#6aaff0" stroke-width="2" fill="none"/>
+     <g stroke="#454a68" stroke-width=".6">
+       <line x1="14" y1="8" x2="14" y2="30"/><line x1="26" y1="8" x2="26" y2="30"/><line x1="38" y1="8" x2="38" y2="30"/><line x1="50" y1="8" x2="50" y2="30"/><line x1="62" y1="8" x2="62" y2="30"/><line x1="74" y1="8" x2="74" y2="30"/>
+     </g>
+     <rect x="8" y="34" width="68" height="6" rx="2" fill="#1a2030" stroke="#2a3550"/>
+     <text x="42" y="50" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">EVAPORADOR</text>
+   </svg>`},
+  {id:'valv-exp',cat:'Refrigerazione',name:'Valvola di espansione',sub:'TXV termostatica con bulbo',w:48,h:56,ports:[],
+   specs:['Tipo: termostática (TXV)','Bulbo sensor de recalentamiento','Igualador externo','R410A / R134a / R404A'],
+   svg:`<svg viewBox="0 0 48 56" width="48" height="56">
+     <rect x="1" y="1" width="46" height="54" rx="3" fill="#161a24" stroke="#3a4560" stroke-width="1.2"/>
+     <circle cx="24" cy="20" r="12" fill="#1a1d28" stroke="#454a68" stroke-width="1.2"/>
+     <path d="M16,20 L24,12 L32,20 L24,28 Z" fill="#008F6E" opacity=".3" stroke="#008F6E"/>
+     <line x1="24" y1="32" x2="24" y2="40" stroke="#7a82a8" stroke-width="2"/>
+     <path d="M14,44 Q24,40 34,44" stroke="#f39c12" stroke-width="2" fill="none"/>
+     <ellipse cx="38" cy="46" rx="5" ry="3" fill="#c0392b" opacity=".6"/>
+     <text x="24" y="52" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">TXV</text>
+   </svg>`},
+  {id:'preso-hp',cat:'Refrigerazione',name:'Pressostato HP/LP',sub:'Controllo pressione alta/bassa',w:48,h:60,
+   ports:[{id:'C',t:'COM',pos:'b0'},{id:'NO',t:'OUT',pos:'b1'}],
+   specs:['Rango HP: 8 – 30 bar','Rango LP: 0.5 – 7 bar','Rearme manual / automático','Contacto SPDT'],
+   svg:`<svg viewBox="0 0 48 60" width="48" height="60">
+     <rect x="1" y="1" width="46" height="58" rx="3" fill="#1a1410" stroke="#a05020" stroke-width="1.2"/>
+     <circle cx="24" cy="20" r="13" fill="#0f0d0a" stroke="#454a68" stroke-width="1.2"/>
+     <path d="M14,28 A13,13 0 0,1 24,8" stroke="#c0392b" stroke-width="2.5" fill="none"/>
+     <path d="M24,8 A13,13 0 0,1 34,28" stroke="#27ae60" stroke-width="2.5" fill="none"/>
+     <line x1="24" y1="20" x2="30" y2="13" stroke="#f47920" stroke-width="1.5"/><circle cx="24" cy="20" r="2" fill="#f47920"/>
+     <text x="24" y="40" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#c0392b">HP/LP bar</text>
+     <line x1="14" y1="46" x2="14" y2="58" stroke="#7a82a8" stroke-width="2"/><line x1="34" y1="46" x2="34" y2="58" stroke="#7a82a8" stroke-width="2"/>
+     <text x="24" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">PRESOST</text>
+   </svg>`},
+  {id:'termost',cat:'Refrigerazione',name:'Termostato',sub:'Controllo temperatura digitale',w:52,h:48,
+   ports:[{id:'C',t:'COM',pos:'b0'},{id:'NO',t:'OUT',pos:'b1'}],
+   specs:['Rango: -50 a +99°C','Sonda NTC / PT1000','Diferencial ajustable','Salida relé 16A'],
+   svg:`<svg viewBox="0 0 52 48" width="52" height="48">
+     <rect x="1" y="1" width="50" height="46" rx="3" fill="#101520" stroke="#2050a0" stroke-width="1.2"/>
+     <rect x="6" y="6" width="40" height="18" rx="2" fill="#0a0f18"/>
+     <text x="26" y="19" text-anchor="middle" font-family="Share Tech Mono" font-size="9" fill="#27ae60">-4.5°</text>
+     <circle cx="14" cy="32" r="3" fill="#c0392b"/><circle cx="26" cy="32" r="3" fill="#27ae60"/><circle cx="38" cy="32" r="3" fill="#f39c12"/>
+     <line x1="16" y1="38" x2="16" y2="46" stroke="#7a82a8" stroke-width="2"/><line x1="36" y1="38" x2="36" y2="46" stroke="#7a82a8" stroke-width="2"/>
+     <text x="26" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">TERMOSTATO</text>
+   </svg>`},
+  {id:'solenoide',cat:'Refrigerazione',name:'Valvola solenoide',sub:'Linea di liquido NC',w:48,h:52,
+   ports:[{id:'A1',t:'A1',pos:'t0'},{id:'A2',t:'A2',pos:'t1'}],
+   specs:['Normalmente cerrada (NC)','Bobina 220V AC / 24V','Línea de líquido','Apertura por energización'],
+   svg:`<svg viewBox="0 0 48 52" width="48" height="52">
+     <rect x="1" y="1" width="46" height="50" rx="3" fill="#161a24" stroke="#3a4560" stroke-width="1.2"/>
+     <line x1="16" y1="2" x2="16" y2="12" stroke="#f39c12" stroke-width="2"/><line x1="32" y1="2" x2="32" y2="12" stroke="#f39c12" stroke-width="2"/>
+     <rect x="14" y="12" width="20" height="16" rx="2" fill="#f47920" opacity=".15" stroke="#f47920" stroke-width="1"/>
+     <text x="24" y="23" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">BOB</text>
+     <line x1="10" y1="36" x2="38" y2="36" stroke="#6aaff0" stroke-width="3"/>
+     <path d="M20,32 L28,40 M28,32 L20,40" stroke="#c0392b" stroke-width="1.5"/>
+     <text x="24" y="49" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">SOLENOIDE</text>
+   </svg>`},
+  {id:'resist-calef',cat:'Refrigerazione',name:'Resistenza degelo',sub:'Calefattore scongelamento',w:60,h:40,
+   ports:[{id:'T1',t:'L1',pos:'lft'},{id:'T2',t:'N',pos:'rgt'}],
+   specs:['Potencia: 200 – 2000W','Tensión: 220V','Deshielo de evaporador','Termostato de corte'],
+   svg:`<svg viewBox="0 0 60 40" width="60" height="40">
+     <rect x="1" y="1" width="58" height="38" rx="3" fill="#1a1410" stroke="#a05020" stroke-width="1.2"/>
+     <line x1="2" y1="20" x2="10" y2="20" stroke="#c0392b" stroke-width="2"/>
+     <path d="M10,20 L14,12 L18,28 L22,12 L26,28 L30,12 L34,28 L38,12 L42,28 L46,20" stroke="#f39c12" stroke-width="2" fill="none"/>
+     <line x1="46" y1="20" x2="58" y2="20" stroke="#6aaff0" stroke-width="2"/>
+     <text x="30" y="36" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#a05020">RESIST DESHIELO</text>
+   </svg>`},
+
+  // ════ ENERGIA SOLARE FV ════
+  {id:'pv',cat:'Solare / Rinnovabile',name:'Pannello solare FV',sub:'Modulo fotovoltaico monocristallino',w:72,h:88,
+   ports:[{id:'+',t:'L1',pos:'b0'},{id:'-',t:'N',pos:'b1'}],
+   specs:['Potencia: 450 – 600Wp','Voc: ~50V / Isc: ~13.8A','Monocristalino PERC','Eficiencia: >21%'],
+   svg:`<svg viewBox="0 0 72 88" width="72" height="88">
+     <rect x="1" y="1" width="70" height="78" rx="2" fill="#0d1b30" stroke="#2050a0" stroke-width="1.5"/>
+     <g stroke="#008F6E" stroke-width=".8" opacity=".7">
+       <line x1="18" y1="4" x2="18" y2="76"/><line x1="36" y1="4" x2="36" y2="76"/><line x1="54" y1="4" x2="54" y2="76"/>
+       <line x1="4" y1="22" x2="68" y2="22"/><line x1="4" y1="40" x2="68" y2="40"/><line x1="4" y1="58" x2="68" y2="58"/>
+     </g>
+     <rect x="4" y="4" width="64" height="72" fill="#1a3a6a" opacity=".25"/>
+     <line x1="20" y1="79" x2="20" y2="87" stroke="#c0392b" stroke-width="2"/><text x="20" y="86" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#fff">+</text>
+     <line x1="52" y1="79" x2="52" y2="87" stroke="#222" stroke-width="2"/><text x="52" y="86" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#fff">−</text>
+     <text x="36" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#6aaff0" opacity=".8">PV</text>
+   </svg>`},
+  {id:'inv-ongrid',cat:'Solare / Rinnovabile',name:'Inverter on-grid',sub:'String inverter immissione in rete',w:84,h:96,
+   ports:[{id:'PV+',t:'L1',pos:'t0'},{id:'PV-',t:'N',pos:'t1'},{id:'L',t:'L1',pos:'b0'},{id:'N',t:'N',pos:'b1'},{id:'PE',t:'PE',pos:'b2'}],
+   specs:['Potencia: 3 – 110kW','MPPT: 2 – 4 entradas','Eficiencia: >98%','Salida 220/380V sincronizada'],
+   svg:`<svg viewBox="0 0 84 96" width="84" height="96">
+     <rect x="1" y="1" width="82" height="94" rx="4" fill="#0f1828" stroke="#1e6090" stroke-width="1.5"/>
+     <line x1="20" y1="2" x2="20" y2="14" stroke="#c0392b" stroke-width="2"/><text x="20" y="11" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">PV+</text>
+     <line x1="44" y1="2" x2="44" y2="14" stroke="#222" stroke-width="2"/><text x="44" y="11" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">PV−</text>
+     <rect x="6" y="16" width="72" height="30" rx="2" fill="#08101a"/>
+     <text x="42" y="28" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#27ae60">4.85 kW</text>
+     <text x="42" y="40" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">GRID-TIE</text>
+     <path d="M14,54 L20,54 L24,48 L28,60 L32,54 L38,54" stroke="#f47920" stroke-width="1.5" fill="none"/>
+     <text x="56" y="56" font-family="Share Tech Mono" font-size="5.5" fill="#27ae60">~ AC</text>
+     <rect x="6" y="64" width="72" height="16" rx="2" fill="#08101a"/>
+     <text x="42" y="75" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">INVERSOR</text>
+     <line x1="20" y1="80" x2="20" y2="94" stroke="#c0392b" stroke-width="2"/><line x1="42" y1="80" x2="42" y2="94" stroke="#6aaff0" stroke-width="2"/><line x1="64" y1="80" x2="64" y2="94" stroke="#27ae60" stroke-width="2"/>
+   </svg>`},
+  {id:'inv-hibrido',cat:'Solare / Rinnovabile',name:'Inverter ibrido',sub:'Ibrido con backup batterie',w:84,h:96,
+   ports:[{id:'PV+',t:'L1',pos:'t0'},{id:'PV-',t:'N',pos:'t1'},{id:'BAT+',t:'L1',pos:'lft'},{id:'L',t:'L1',pos:'b0'},{id:'N',t:'N',pos:'b1'},{id:'PE',t:'PE',pos:'b2'}],
+   specs:['On-grid + off-grid + respaldo','Cargador de baterías integrado','Conmutación UPS <10ms','48V batería / 5–12kW'],
+   svg:`<svg viewBox="0 0 84 96" width="84" height="96">
+     <rect x="1" y="1" width="82" height="94" rx="4" fill="#16122a" stroke="#5040a0" stroke-width="1.5"/>
+     <line x1="20" y1="2" x2="20" y2="14" stroke="#c0392b" stroke-width="2"/><text x="20" y="11" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">PV+</text>
+     <line x1="44" y1="2" x2="44" y2="14" stroke="#222" stroke-width="2"/>
+     <rect x="6" y="16" width="72" height="28" rx="2" fill="#0a0818"/>
+     <text x="42" y="27" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#9b59b6">HÍBRIDO</text>
+     <text x="42" y="38" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">BAT 82%</text>
+     <rect x="4" y="48" width="14" height="10" rx="2" fill="#f39c12" opacity=".3" stroke="#f39c12"/><text x="11" y="55" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#f39c12">BAT</text>
+     <rect x="6" y="62" width="72" height="16" rx="2" fill="#0a0818"/>
+     <text x="42" y="73" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">INV HÍBRIDO</text>
+     <line x1="20" y1="80" x2="20" y2="94" stroke="#c0392b" stroke-width="2"/><line x1="42" y1="80" x2="42" y2="94" stroke="#6aaff0" stroke-width="2"/><line x1="64" y1="80" x2="64" y2="94" stroke="#27ae60" stroke-width="2"/>
+   </svg>`},
+  {id:'mppt',cat:'Solare / Rinnovabile',name:'Regolatore MPPT',sub:'Controllore di carica solare',w:72,h:76,
+   ports:[{id:'PV+',t:'L1',pos:'t0'},{id:'PV-',t:'N',pos:'t1'},{id:'BAT+',t:'L1',pos:'b0'},{id:'BAT-',t:'N',pos:'b1'}],
+   specs:['Seguimiento MPPT: >99%','Corriente: 20 – 100A','12/24/48V auto','Voc máx PV: 150V'],
+   svg:`<svg viewBox="0 0 72 76" width="72" height="76">
+     <rect x="1" y="1" width="70" height="74" rx="3" fill="#101828" stroke="#1e6090" stroke-width="1.2"/>
+     <line x1="20" y1="2" x2="20" y2="12" stroke="#c0392b" stroke-width="2"/><text x="20" y="10" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">PV</text>
+     <line x1="44" y1="2" x2="44" y2="12" stroke="#222" stroke-width="2"/>
+     <rect x="6" y="14" width="60" height="24" rx="2" fill="#08101a"/>
+     <text x="36" y="25" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#27ae60">MPPT</text>
+     <text x="36" y="34" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f39c12">⚡ BULK</text>
+     <rect x="6" y="42" width="60" height="14" rx="2" fill="#08101a"/>
+     <text x="36" y="52" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">14.4V 45A</text>
+     <line x1="20" y1="60" x2="20" y2="74" stroke="#c0392b" stroke-width="2"/><text x="20" y="72" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">BAT</text>
+     <line x1="44" y1="60" x2="44" y2="74" stroke="#222" stroke-width="2"/>
+   </svg>`},
+  {id:'bateria',cat:'Solare / Rinnovabile',name:'Batteria litio',sub:'LiFePO4 banco di accumulo',w:60,h:72,
+   ports:[{id:'+',t:'L1',pos:'t0'},{id:'-',t:'N',pos:'t1'}],
+   specs:['Química: LiFePO4','Tensión: 12.8 / 25.6 / 51.2V','Capacidad: 100 – 300Ah','BMS integrado, >6000 ciclos'],
+   svg:`<svg viewBox="0 0 60 72" width="60" height="72">
+     <rect x="1" y="1" width="58" height="70" rx="3" fill="#0f1a14" stroke="#27ae60" stroke-width="1.5"/>
+     <line x1="18" y1="2" x2="18" y2="10" stroke="#c0392b" stroke-width="2.5"/><text x="18" y="9" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#fff">+</text>
+     <line x1="42" y1="2" x2="42" y2="10" stroke="#222" stroke-width="2.5"/><text x="42" y="9" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#fff">−</text>
+     <rect x="8" y="14" width="44" height="6" rx="1" fill="#27ae60" opacity=".7"/>
+     <rect x="8" y="22" width="44" height="6" rx="1" fill="#27ae60" opacity=".55"/>
+     <rect x="8" y="30" width="44" height="6" rx="1" fill="#27ae60" opacity=".4"/>
+     <rect x="8" y="38" width="44" height="6" rx="1" fill="#27ae60" opacity=".25"/>
+     <text x="30" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">LiFePO4</text>
+     <text x="30" y="66" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">51.2V</text>
+   </svg>`},
+  {id:'sec-dc',cat:'Solare / Rinnovabile',name:'Sezionatore DC',sub:'Disconnessione fotovoltaica DC',w:48,h:60,
+   ports:[{id:'+',t:'L1',pos:'t0'},{id:'-',t:'N',pos:'t1'},{id:'+o',t:'L1',pos:'b0'},{id:'-o',t:'N',pos:'b1'}],
+   specs:['Tensión: 1000/1500V DC','Corriente: 16 – 32A','4 polos (2 strings)','Maniobra bajo carga'],
+   svg:`<svg viewBox="0 0 48 60" width="48" height="60">
+     <rect x="1" y="1" width="46" height="58" rx="3" fill="#1a1d28" stroke="#a05020" stroke-width="1.2"/>
+     <line x1="16" y1="2" x2="16" y2="14" stroke="#c0392b" stroke-width="2"/><line x1="32" y1="2" x2="32" y2="14" stroke="#222" stroke-width="2"/>
+     <circle cx="24" cy="28" r="9" fill="#141825" stroke="#454a68"/>
+     <rect x="20" y="24" width="8" height="8" fill="#c0392b" opacity=".7"/>
+     <text x="24" y="42" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f39c12">DC ⎓</text>
+     <line x1="16" y1="46" x2="16" y2="58" stroke="#c0392b" stroke-width="2"/><line x1="32" y1="46" x2="32" y2="58" stroke="#222" stroke-width="2"/>
+     <text x="24" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">SEC DC</text>
+   </svg>`},
+  {id:'spd-dc',cat:'Solare / Rinnovabile',name:'Scaricatore DC',sub:'SPD protezione DC fotovoltaica',w:48,h:60,
+   ports:[{id:'+',t:'L1',pos:'t0'},{id:'-',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'b0'}],
+   specs:['Uc: 1000/1500V DC','Imax: 40kA','Up: ≤4kV','Tipo 2 para strings PV'],
+   svg:`<svg viewBox="0 0 48 60" width="48" height="60">
+     <rect x="1" y="1" width="46" height="58" rx="3" fill="#2a1e10" stroke="#a05020" stroke-width="1.2"/>
+     <line x1="16" y1="2" x2="16" y2="12" stroke="#c0392b" stroke-width="2"/><line x1="32" y1="2" x2="32" y2="12" stroke="#222" stroke-width="2"/>
+     <rect x="8" y="14" width="14" height="26" rx="2" fill="#1a1410" stroke="#f39c12"/><rect x="26" y="14" width="14" height="26" rx="2" fill="#1a1410" stroke="#f39c12"/>
+     <rect x="10" y="17" width="10" height="4" fill="#27ae60"/><rect x="28" y="17" width="10" height="4" fill="#27ae60"/>
+     <path d="M16,26 L14,31 L18,31 L16,36" stroke="#f47920" stroke-width="1.2" fill="none"/>
+     <path d="M32,26 L30,31 L34,31 L32,36" stroke="#f47920" stroke-width="1.2" fill="none"/>
+     <line x1="24" y1="42" x2="24" y2="58" stroke="#27ae60" stroke-width="2"/>
+     <text x="24" y="54" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#a05020">SPD DC</text>
+   </svg>`},
+  {id:'eolico',cat:'Solare / Rinnovabile',name:'Aerogeneratore',sub:'Turbina eolica di bassa potenza',w:72,h:96,
+   ports:[{id:'L1',t:'L1',pos:'b0'},{id:'L2',t:'L2',pos:'b1'},{id:'L3',t:'L3',pos:'b2'}],
+   specs:['Potencia: 400W – 5kW','Generador trifásico PMG','Arranque: 2.5 m/s','Salida AC a rectificar'],
+   svg:`<svg viewBox="0 0 72 96" width="72" height="96">
+     <rect x="33" y="40" width="6" height="50" fill="#2a3550" stroke="#454a68"/>
+     <circle cx="36" cy="36" r="6" fill="#1a1d28" stroke="#008F6E" stroke-width="1.5"/>
+     <path d="M36,36 L36,8 L40,12 Z" fill="#008F6E" opacity=".7"/>
+     <path d="M36,36 L60,48 L56,52 Z" fill="#008F6E" opacity=".7"/>
+     <path d="M36,36 L12,48 L16,52 Z" fill="#008F6E" opacity=".7"/>
+     <circle cx="36" cy="36" r="2.5" fill="#f47920"/>
+     <rect x="20" y="88" width="32" height="6" rx="2" fill="#141825" stroke="#353a58"/>
+     <line x1="26" y1="90" x2="26" y2="96" stroke="#c0392b" stroke-width="1.5"/><line x1="36" y1="90" x2="36" y2="96" stroke="#27ae60" stroke-width="1.5"/><line x1="46" y1="90" x2="46" y2="96" stroke="#2980b9" stroke-width="1.5"/>
+     <text x="36" y="76" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">EÓLICO</text>
+   </svg>`},
+
+  // ════ GABINETTI ════
+  {id:'gab-metal',cat:'Gabinetti',name:'Gabinetto metallico',sub:'Quadro lamiera con porta',w:120,h:140,ports:[],
+   specs:['Chapa DD calibre 16/18','Pintura epoxi poliéster','Grado: IP40 – IP54','Con contrazócalo y bandeja'],
+   svg:`<svg viewBox="0 0 120 140" width="120" height="140">
+     <rect x="2" y="2" width="116" height="136" rx="2" fill="#1a1d28" stroke="#555a78" stroke-width="2"/>
+     <rect x="8" y="8" width="104" height="124" rx="1" fill="#141825" stroke="#3a4560" stroke-width="1"/>
+     <line x1="14" y1="14" x2="14" y2="126" stroke="#2a3550" stroke-width="6" opacity=".5"/>
+     <circle cx="106" cy="70" r="3" fill="#454a68"/><rect x="102" y="66" width="3" height="8" fill="#353a58"/>
+     <circle cx="10" cy="16" r="1.5" fill="#6a7090"/><circle cx="10" cy="124" r="1.5" fill="#6a7090"/><circle cx="110" cy="16" r="1.5" fill="#6a7090"/><circle cx="110" cy="124" r="1.5" fill="#6a7090"/>
+     <text x="60" y="74" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">GABINETE</text>
+     <text x="60" y="86" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#454a68">IP54</text>
+   </svg>`},
+  {id:'gab-estanco',cat:'Gabinetti',name:'Gabinetto stagno',sub:'Poliestere / ABS IP65-IP66',w:104,h:124,ports:[],
+   specs:['Material: poliéster / ABS','Grado: IP65 – IP66','Resistente UV intemperie','Cierre con junta perimetral'],
+   svg:`<svg viewBox="0 0 104 124" width="104" height="124">
+     <rect x="2" y="2" width="100" height="120" rx="6" fill="#1a2028" stroke="#4a5568" stroke-width="2"/>
+     <rect x="8" y="8" width="88" height="108" rx="4" fill="#141a20" stroke="#3a4550" stroke-width="1" stroke-dasharray="3,2"/>
+     <circle cx="12" cy="12" r="2.5" fill="#555a78"/><circle cx="92" cy="12" r="2.5" fill="#555a78"/><circle cx="12" cy="112" r="2.5" fill="#555a78"/><circle cx="92" cy="112" r="2.5" fill="#555a78"/>
+     <text x="52" y="60" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">ESTANCO</text>
+     <text x="52" y="74" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#27ae60">IP66</text>
+   </svg>`},
+  {id:'caja-pvc',cat:'Gabinetti',name:'Scatola stagna PVC',sub:'Scatola di passaggio/derivazione IP55',w:72,h:72,ports:[],
+   specs:['PVC autoextinguible','Grado: IP55 – IP65','Conos rompibles para caños','Tapa con tornillos 1/4 vuelta'],
+   svg:`<svg viewBox="0 0 72 72" width="72" height="72">
+     <rect x="2" y="2" width="68" height="68" rx="4" fill="#20242e" stroke="#4a5060" stroke-width="2"/>
+     <rect x="9" y="9" width="54" height="54" rx="2" fill="#181c24" stroke="#343a48" stroke-width="1"/>
+     <circle cx="36" cy="6" r="3" fill="#141820" stroke="#3a4150"/><circle cx="36" cy="66" r="3" fill="#141820" stroke="#3a4150"/>
+     <circle cx="6" cy="36" r="3" fill="#141820" stroke="#3a4150"/><circle cx="66" cy="36" r="3" fill="#141820" stroke="#3a4150"/>
+     <circle cx="13" cy="13" r="1.5" fill="#5a6078"/><circle cx="59" cy="13" r="1.5" fill="#5a6078"/><circle cx="13" cy="59" r="1.5" fill="#5a6078"/><circle cx="59" cy="59" r="1.5" fill="#5a6078"/>
+     <text x="36" y="34" text-anchor="middle" font-family="Share Tech Mono" font-size="6.5" fill="#7a82a8">CAJA</text>
+     <text x="36" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">IP55</text>
+   </svg>`},
+  {id:'tablero-mod',cat:'Gabinetti',name:'Quadro da incasso',sub:'Scatola per moduli DIN (12-24 poli)',w:108,h:96,ports:[],
+   specs:['Embutir o aplicar','Capacidad: 8 – 54 módulos DIN','Puerta transparente','Riel y peine de neutro/tierra'],
+   svg:`<svg viewBox="0 0 108 96" width="108" height="96">
+     <rect x="2" y="2" width="104" height="92" rx="3" fill="#1c202a" stroke="#555a72" stroke-width="2"/>
+     <rect x="8" y="10" width="92" height="76" rx="2" fill="#12151d" stroke="#343a48"/>
+     <rect x="14" y="24" width="80" height="14" rx="1" fill="#0d1018"/>
+     <rect x="14" y="44" width="80" height="14" rx="1" fill="#0d1018"/>
+     <rect x="14" y="64" width="80" height="14" rx="1" fill="#0d1018"/>
+     <line x1="14" y1="31" x2="94" y2="31" stroke="#4a5068" stroke-width="3" opacity=".5"/>
+     <line x1="14" y1="51" x2="94" y2="51" stroke="#4a5068" stroke-width="3" opacity=".5"/>
+     <line x1="14" y1="71" x2="94" y2="71" stroke="#4a5068" stroke-width="3" opacity=".5"/>
+     <text x="54" y="20" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">TABLERO MODULAR DIN</text>
+   </svg>`},
+  {id:'cofre',cat:'Gabinetti',name:'Armadio con porta',sub:'Gabinetto di comando con vassoio',w:120,h:148,ports:[],
+   specs:['Chapa plegada calibre 16','Puerta ciega con manija y traba','Bandeja de montaje galvanizada','Para tableros de comando/potencia'],
+   svg:`<svg viewBox="0 0 120 148" width="120" height="148">
+     <rect x="2" y="2" width="116" height="144" rx="2" fill="#1a1d28" stroke="#5a607a" stroke-width="2.5"/>
+     <rect x="8" y="8" width="104" height="132" rx="1" fill="#13161e" stroke="#3a4050" stroke-width="1.2"/>
+     <rect x="14" y="14" width="92" height="120" rx="1" fill="none" stroke="#2a3040" stroke-width="1" stroke-dasharray="4,3"/>
+     <rect x="100" y="68" width="6" height="14" rx="1" fill="#3a4150" stroke="#555a72"/>
+     <circle cx="103" cy="75" r="2" fill="#6a7090"/>
+     <circle cx="11" cy="12" r="2" fill="#6a7090"/><circle cx="11" cy="136" r="2" fill="#6a7090"/>
+     <text x="60" y="78" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">COFRE</text>
+     <text x="60" y="90" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#454a68">c/ bandeja</text>
+   </svg>`},
+
+  // ════ MORSETTI E TERMINALI ════
+  {id:'born-tierra',cat:'Morsetti',name:'Morsetto di terra',sub:'Morsetto PE verde-giallo',w:24,h:34,
+   ports:[{id:'T',t:'PE',pos:'top'},{id:'B',t:'PE',pos:'bot'}],
+   specs:['Conexión a riel (contacto PE)','Sección: 2.5 – 35mm²','Verde-amarillo normalizado','Continuidad con riel DIN'],
+   svg:`<svg viewBox="0 0 24 34" width="24" height="34">
+     <rect x="1" y="1" width="22" height="32" rx="2" fill="#1a3010" stroke="#27ae60" stroke-width="1.2"/>
+     <rect x="4" y="6" width="16" height="3" fill="#f1c40f"/><rect x="4" y="9" width="16" height="3" fill="#27ae60"/>
+     <rect x="4" y="22" width="16" height="3" fill="#f1c40f"/><rect x="4" y="25" width="16" height="3" fill="#27ae60"/>
+     <line x1="12" y1="1" x2="12" y2="6" stroke="#27ae60" stroke-width="2"/><line x1="12" y1="28" x2="12" y2="33" stroke="#27ae60" stroke-width="2"/>
+     <path d="M9,16 L15,16 M10,18 L14,18 M11,20 L13,20" stroke="#27ae60" stroke-width="1"/>
+   </svg>`},
+  {id:'born-neutro',cat:'Morsetti',name:'Morsetto di neutro',sub:'Morsetto N azzurro sezionabile',w:24,h:34,
+   ports:[{id:'T',t:'N',pos:'top'},{id:'B',t:'N',pos:'bot'}],
+   specs:['Color azul (neutro)','Sección: 2.5 – 16mm²','Seccionable con cuchilla','Para barra de neutro'],
+   svg:`<svg viewBox="0 0 24 34" width="24" height="34">
+     <rect x="1" y="1" width="22" height="32" rx="2" fill="#0d1a30" stroke="#6aaff0" stroke-width="1.2"/>
+     <rect x="4" y="7" width="16" height="7" rx="1" fill="#0a1420"/><rect x="4" y="20" width="16" height="7" rx="1" fill="#0a1420"/>
+     <line x1="12" y1="1" x2="12" y2="7" stroke="#6aaff0" stroke-width="2"/><line x1="12" y1="27" x2="12" y2="33" stroke="#6aaff0" stroke-width="2"/>
+     <circle cx="12" cy="10.5" r="2.5" fill="#3498db"/><circle cx="12" cy="23.5" r="2.5" fill="#3498db"/>
+   </svg>`},
+  {id:'born-fus',cat:'Morsetti',name:'Morsetto portafusibile',sub:'Morsetto sezionabile con fusibile',w:24,h:40,
+   ports:[{id:'T',t:'L1',pos:'top'},{id:'B',t:'L1',pos:'bot'}],
+   specs:['Fusible 5×20 / 6×30mm','Tapa abatible con visor','Sección: hasta 6mm²','LED indicador opcional'],
+   svg:`<svg viewBox="0 0 24 40" width="24" height="40">
+     <rect x="1" y="1" width="22" height="38" rx="2" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+     <line x1="12" y1="1" x2="12" y2="7" stroke="#6af" stroke-width="2"/>
+     <rect x="6" y="8" width="12" height="3" rx="1" fill="#0f1820"/>
+     <rect x="7" y="13" width="10" height="14" rx="2" fill="#f39c12" opacity=".85"/>
+     <line x1="12" y1="16" x2="12" y2="24" stroke="#fff8" stroke-width="1.2"/>
+     <rect x="6" y="29" width="12" height="3" rx="1" fill="#0f1820"/>
+     <line x1="12" y1="33" x2="12" y2="39" stroke="#6af" stroke-width="2"/>
+   </svg>`},
+  {id:'born-doble',cat:'Borneras',name:'Bornera doble piso',sub:'Borne dos niveles paso',w:24,h:38,
+   ports:[{id:'T1',t:'COM',pos:'t0'},{id:'T2',t:'COM',pos:'t1'},{id:'B1',t:'COM',pos:'b0'},{id:'B2',t:'COM',pos:'b1'}],
+   specs:['Dos niveles independientes','Ahorro de espacio en riel','Sección: 2.5 – 4mm²','Puenteable por nivel'],
+   svg:`<svg viewBox="0 0 24 38" width="24" height="38">
+     <rect x="1" y="1" width="22" height="36" rx="2" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+     <rect x="3" y="5" width="18" height="12" rx="1" fill="#162030"/>
+     <rect x="3" y="21" width="18" height="12" rx="1" fill="#162030"/>
+     <circle cx="8" cy="11" r="2" fill="#008F6E"/><circle cx="16" cy="11" r="2" fill="#008F6E"/>
+     <circle cx="8" cy="27" r="2" fill="#008F6E"/><circle cx="16" cy="27" r="2" fill="#008F6E"/>
+   </svg>`},
+  {id:'tope-riel',cat:'Borneras',name:'Tope de riel',sub:'Freno/sujeción de borneras',w:12,h:34,ports:[],
+   specs:['Fijación a riel con tornillo','Evita desplazamiento de borneras','Metálico o plástico','Universal DIN 35mm'],
+   svg:`<svg viewBox="0 0 12 34" width="12" height="34">
+     <rect x="2" y="2" width="8" height="30" rx="2" fill="#3a4050" stroke="#5a6078" stroke-width="1"/>
+     <rect x="3" y="18" width="6" height="8" rx="1" fill="#1a1d28"/>
+     <circle cx="6" cy="8" r="2" fill="#6a7090"/>
+     <line x1="6" y1="6" x2="6" y2="10" stroke="#2a2e3a"/><line x1="4" y1="8" x2="8" y2="8" stroke="#2a2e3a"/>
+   </svg>`},
+  {id:'sep-borne',cat:'Borneras',name:'Separador / tapa',sub:'Placa final de bornera',w:10,h:34,ports:[],
+   specs:['Tapa de cierre lateral','Aísla el último borne','Mismo color que la serie','Evita contacto accidental'],
+   svg:`<svg viewBox="0 0 10 34" width="10" height="34">
+     <rect x="2" y="2" width="6" height="30" rx="1" fill="#2a3040" stroke="#454a68" stroke-width="1" stroke-dasharray="2,1.5"/>
+     <line x1="5" y1="6" x2="5" y2="28" stroke="#454a68" stroke-width=".6"/>
+   </svg>`},
+  {id:'born-pot',cat:'Borneras',name:'Bornera de potencia',sub:'Borne de paso alta sección',w:30,h:40,
+   ports:[{id:'T',t:'L1',pos:'top'},{id:'B',t:'L1',pos:'bot'}],
+   specs:['Sección: 16 – 95mm²','Para acometida / cargas grandes','Cuerpo poliamida reforzado','Tornillo M6/M8'],
+   svg:`<svg viewBox="0 0 30 40" width="30" height="40">
+     <rect x="1" y="1" width="28" height="38" rx="2" fill="#1e2840" stroke="#3050a0" stroke-width="1.4"/>
+     <rect x="5" y="7" width="20" height="9" rx="2" fill="#0f1820"/><rect x="5" y="24" width="20" height="9" rx="2" fill="#0f1820"/>
+     <line x1="15" y1="1" x2="15" y2="7" stroke="#c0392b" stroke-width="3"/><line x1="15" y1="33" x2="15" y2="39" stroke="#c0392b" stroke-width="3"/>
+     <circle cx="15" cy="11.5" r="3.5" fill="#008F6E"/><circle cx="15" cy="28.5" r="3.5" fill="#008F6E"/>
+     <text x="15" y="22" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">95mm²</text>
+   </svg>`},
+  {id:'peine',cat:'Borneras',name:'Peine de distribución',sub:'Barra peine para disyuntores',w:120,h:18,
+   ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L1',pos:'t1'},{id:'P3',t:'L1',pos:'t2'},{id:'P4',t:'L1',pos:'t3'}],
+   specs:['Distribución entre disyuntores','1P / 3P / 3P+N','Hasta 63A','Cobre aislado, paso 18mm'],
+   svg:`<svg viewBox="0 0 120 18" width="120" height="18">
+     <rect x="2" y="2" width="116" height="7" rx="2" fill="#c0392b" opacity=".8" stroke="#a03020" stroke-width="1"/>
+     <rect x="16" y="9" width="4" height="7" fill="#b87333"/><rect x="40" y="9" width="4" height="7" fill="#b87333"/><rect x="64" y="9" width="4" height="7" fill="#b87333"/><rect x="88" y="9" width="4" height="7" fill="#b87333"/>
+     <text x="60" y="7.5" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">PEINE DISTRIBUCIÓN</text>
+   </svg>`},
+  {id:'term-puntera',cat:'Terminales',name:'Terminal puntera',sub:'Ferrule tubular aislado',w:40,h:16,
+   ports:[{id:'C',t:'COM',pos:'lft'}],
+   specs:['Sección: 0.5 – 16mm²','Tubular de cobre estañado','Faldón aislado por color','Engaste con crimpadora'],
+   svg:`<svg viewBox="0 0 40 16" width="40" height="16">
+     <rect x="2" y="5" width="14" height="6" rx="3" fill="#3498db" opacity=".8"/>
+     <rect x="16" y="6" width="20" height="4" rx="1" fill="#c0c0c0"/>
+     <line x1="36" y1="8" x2="40" y2="8" stroke="#7a82a8" stroke-width="1.5"/>
+     <text x="9" y="3" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">aisl.</text>
+   </svg>`},
+  {id:'term-ojal',cat:'Terminales',name:'Terminal ojal',sub:'Ring terminal a tornillo',w:40,h:20,
+   ports:[{id:'C',t:'COM',pos:'lft'}],
+   specs:['Ojal: M4 – M12','Cobre estañado','Engaste o soldadura','Para barra o bornera de tornillo'],
+   svg:`<svg viewBox="0 0 40 20" width="40" height="20">
+     <rect x="2" y="7" width="16" height="6" rx="1" fill="#3498db" opacity=".7"/>
+     <rect x="18" y="8" width="8" height="4" fill="#c0c0c0"/>
+     <circle cx="32" cy="10" r="7" fill="none" stroke="#c0c0c0" stroke-width="3"/>
+     <circle cx="32" cy="10" r="3" fill="#1a1d28"/>
+   </svg>`},
+  {id:'term-pala',cat:'Terminales',name:'Terminal pala',sub:'Fork / horquilla a tornillo',w:40,h:20,
+   ports:[{id:'C',t:'COM',pos:'lft'}],
+   specs:['Horquilla: M3 – M6','Conexión rápida a tornillo','Cobre estañado aislado','Sección: 0.5 – 6mm²'],
+   svg:`<svg viewBox="0 0 40 20" width="40" height="20">
+     <rect x="2" y="7" width="16" height="6" rx="1" fill="#f39c12" opacity=".7"/>
+     <rect x="18" y="8" width="8" height="4" fill="#c0c0c0"/>
+     <path d="M26,6 L38,6 L38,8 L30,8 L30,12 L38,12 L38,14 L26,14 Z" fill="#c0c0c0"/>
+   </svg>`},
+  {id:'prensa',cat:'Terminales',name:'Prensacable',sub:'Glándula PG / métrica IP68',w:36,h:36,ports:[],
+   specs:['Rosca PG7 – PG48 / M12–M63','Grado: IP68','Sujeción y sellado de cable','Poliamida o latón'],
+   svg:`<svg viewBox="0 0 36 36" width="36" height="36">
+     <rect x="6" y="4" width="24" height="10" rx="2" fill="#2a2e3a" stroke="#454a68"/>
+     <path d="M10,14 L26,14 L24,24 L12,24 Z" fill="#1a1d28" stroke="#454a68"/>
+     <ellipse cx="18" cy="28" rx="8" ry="4" fill="#22262f" stroke="#454a68"/>
+     <line x1="14" y1="6" x2="14" y2="12" stroke="#555a78"/><line x1="18" y1="6" x2="18" y2="12" stroke="#555a78"/><line x1="22" y1="6" x2="22" y2="12" stroke="#555a78"/>
+     <text x="18" y="34" text-anchor="middle" font-family="Share Tech Mono" font-size="4.5" fill="#7a82a8">PG/M</text>
+   </svg>`},
+
+  // ════ PUESTA A TIERRA ════
+  {id:'jabalina',cat:'Puesta a Tierra',name:'Jabalina / electrodo',sub:'Pica de tierra Cu',w:40,h:80,
+   ports:[{id:'T',t:'PE',pos:'top'}],
+   specs:['Acero-cobre Ø 5/8" – 3/4"','Largo: 1.5 – 3m','Tomacable bronce','Resistencia objetivo <5Ω'],
+   svg:`<svg viewBox="0 0 40 80" width="40" height="80">
+     <line x1="20" y1="2" x2="20" y2="10" stroke="#27ae60" stroke-width="2"/>
+     <rect x="14" y="10" width="12" height="8" rx="2" fill="#b87333" stroke="#8a5a28"/>
+     <rect x="17" y="18" width="6" height="48" fill="#b87333" stroke="#8a5a28" stroke-width="1"/>
+     <path d="M17,66 L23,66 L20,76 Z" fill="#b87333" stroke="#8a5a28"/>
+     <line x1="6" y1="22" x2="34" y2="22" stroke="#5a4020" stroke-width="1" stroke-dasharray="3,2" opacity=".6"/>
+     <text x="30" y="30" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">PE</text>
+   </svg>`},
+  {id:'barra-equi',cat:'Puesta a Tierra',name:'Barra equipotencial',sub:'BEP colector de tierras',w:100,h:24,
+   ports:[{id:'P1',t:'PE',pos:'t0'},{id:'P2',t:'PE',pos:'t1'},{id:'P3',t:'PE',pos:'t2'},{id:'P4',t:'PE',pos:'t3'}],
+   specs:['Barra Cu colectora','Múltiples derivaciones','Unión equipotencial principal','Conexión a jabalina'],
+   svg:`<svg viewBox="0 0 100 24" width="100" height="24">
+     <rect x="2" y="8" width="96" height="10" rx="2" fill="#b87333" stroke="#8a5a28" stroke-width="1.2"/>
+     <circle cx="16" cy="13" r="2.5" fill="#1a1d28"/><circle cx="38" cy="13" r="2.5" fill="#1a1d28"/><circle cx="60" cy="13" r="2.5" fill="#1a1d28"/><circle cx="82" cy="13" r="2.5" fill="#1a1d28"/>
+     <text x="50" y="6" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#27ae60">BARRA EQUIPOTENCIAL (BEP)</text>
+   </svg>`},
+  {id:'simb-tierra',cat:'Puesta a Tierra',name:'Tierra de protección',sub:'Símbolo PE normalizado',w:36,h:40,
+   ports:[{id:'T',t:'PE',pos:'top'}],
+   specs:['Símbolo IEC 60417-5019','Tierra de protección (PE)','Punto de referencia','Conexión a masa de seguridad'],
+   svg:`<svg viewBox="0 0 36 40" width="36" height="40">
+     <line x1="18" y1="2" x2="18" y2="18" stroke="#27ae60" stroke-width="2"/>
+     <line x1="6" y1="18" x2="30" y2="18" stroke="#27ae60" stroke-width="2.5"/>
+     <line x1="10" y1="24" x2="26" y2="24" stroke="#27ae60" stroke-width="2"/>
+     <line x1="14" y1="30" x2="22" y2="30" stroke="#27ae60" stroke-width="2"/>
+     <text x="18" y="39" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#27ae60">PE</text>
+   </svg>`},
+  {id:'simb-masa',cat:'Puesta a Tierra',name:'Masa / chasis',sub:'Símbolo masa de chasis',w:36,h:40,
+   ports:[{id:'T',t:'PE',pos:'top'}],
+   specs:['Símbolo IEC masa/chasis','Tierra funcional','Referencia de chasis','Conexión equipotencial'],
+   svg:`<svg viewBox="0 0 36 40" width="36" height="40">
+     <line x1="18" y1="2" x2="18" y2="16" stroke="#7a82a8" stroke-width="2"/>
+     <line x1="8" y1="16" x2="28" y2="16" stroke="#7a82a8" stroke-width="2"/>
+     <line x1="8" y1="16" x2="4" y2="24" stroke="#7a82a8" stroke-width="1.8"/>
+     <line x1="18" y1="16" x2="14" y2="24" stroke="#7a82a8" stroke-width="1.8"/>
+     <line x1="28" y1="16" x2="24" y2="24" stroke="#7a82a8" stroke-width="1.8"/>
+     <text x="18" y="36" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">MASA</text>
+   </svg>`},
+
+  // ════ SENSORES / VARIOS ════
+  {id:'pt100',cat:'Sensores',name:'Sensor PT100',sub:'Termorresistencia industrial',w:48,h:44,
+   ports:[{id:'A',t:'OUT',pos:'b0'},{id:'B',t:'OUT',pos:'b1'}],
+   specs:['Rango: -200 a +600°C','Pt100 / Pt1000 3 hilos','Vaina inox AISI 316','Precisión clase A'],
+   svg:`<svg viewBox="0 0 48 44" width="48" height="44">
+     <rect x="1" y="1" width="46" height="42" rx="3" fill="#101520" stroke="#2050a0" stroke-width="1.2"/>
+     <circle cx="24" cy="16" r="9" fill="#0a0f18" stroke="#008F6E"/>
+     <path d="M24,16 L24,9" stroke="#c0392b" stroke-width="1.5"/><path d="M20,20 L28,20" stroke="#c0392b" stroke-width="1.5"/>
+     <text x="24" y="33" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">PT100</text>
+     <line x1="18" y1="38" x2="18" y2="44" stroke="#7a82a8" stroke-width="1.5"/><line x1="30" y1="38" x2="30" y2="44" stroke="#7a82a8" stroke-width="1.5"/>
+   </svg>`},
+  {id:'timer',cat:'Sensores',name:'Temporizador',sub:'Timer multifunción a riel',w:40,h:56,
+   ports:[{id:'A1',t:'A1',pos:'t0'},{id:'A2',t:'A2',pos:'t1'},{id:'C',t:'COM',pos:'b0'},{id:'NO',t:'OUT',pos:'b1'}],
+   specs:['Rango: 0.1s – 100h','Multifunción (ON/OFF delay)','Salida relé 8A','Alimentación 12–240V'],
+   svg:`<svg viewBox="0 0 40 56" width="40" height="56">
+     <rect x="1" y="1" width="38" height="54" rx="3" fill="#101520" stroke="#2050a0" stroke-width="1.2"/>
+     <line x1="14" y1="2" x2="14" y2="10" stroke="#f39c12" stroke-width="2"/><line x1="26" y1="2" x2="26" y2="10" stroke="#f39c12" stroke-width="2"/>
+     <circle cx="20" cy="24" r="11" fill="#0a0f18" stroke="#008F6E"/>
+     <line x1="20" y1="24" x2="20" y2="16" stroke="#27ae60" stroke-width="1.5"/><line x1="20" y1="24" x2="26" y2="24" stroke="#f47920" stroke-width="1.5"/>
+     <text x="20" y="40" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">TIMER</text>
+     <line x1="14" y1="46" x2="14" y2="54" stroke="#7a82a8" stroke-width="2"/><line x1="26" y1="46" x2="26" y2="54" stroke="#7a82a8" stroke-width="2"/>
+   </svg>`},
+  {id:'toma-din',cat:'Sensores',name:'Tomacorriente DIN',sub:'Toma de servicio a riel',w:40,h:44,
+   ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'t2'}],
+   specs:['Schuko 2P+T 16A','Montaje en riel DIN','220V servicio','Para mantenimiento de tablero'],
+   svg:`<svg viewBox="0 0 40 44" width="40" height="44">
+     <rect x="1" y="1" width="38" height="42" rx="3" fill="#1e2235" stroke="#353a58" stroke-width="1.2"/>
+     <line x1="12" y1="2" x2="12" y2="10" stroke="#c0392b" stroke-width="2"/><line x1="20" y1="2" x2="20" y2="10" stroke="#6aaff0" stroke-width="2"/><line x1="28" y1="2" x2="28" y2="10" stroke="#27ae60" stroke-width="2"/>
+     <circle cx="20" cy="26" r="13" fill="#0f1320" stroke="#454a68" stroke-width="1.2"/>
+     <circle cx="15" cy="26" r="2.5" fill="#1a1d28" stroke="#7a82a8"/><circle cx="25" cy="26" r="2.5" fill="#1a1d28" stroke="#7a82a8"/>
+     <rect x="18" y="18" width="4" height="2" fill="#27ae60"/><rect x="18" y="32" width="4" height="2" fill="#27ae60"/>
+   </svg>`},
+
+  // ── DISTRIBUCIÓN: cables ──
+  {id:'cable-ref',cat:'Conductores',name:'Conductor / cable',sub:'Etiqueta de sección de cable',w:60,h:20,
+   ports:[{id:'A',t:'COM',pos:'lft'},{id:'B',t:'COM',pos:'rgt'}],
+   specs:['Sección: 1.5 – 240mm²','Cu aislación PVC/XLPE','Unipolar o multipolar','Ampacidad según norma AEA'],
+   svg:`<svg viewBox="0 0 60 20" width="60" height="20">
+     <line x1="2" y1="10" x2="58" y2="10" stroke="#b87333" stroke-width="4"/>
+     <line x1="2" y1="10" x2="58" y2="10" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="1,3" opacity=".5"/>
+     <rect x="22" y="3" width="16" height="6" rx="1" fill="#1a1d28" stroke="#454a68"/>
+     <text x="30" y="8" text-anchor="middle" font-family="Share Tech Mono" font-size="4" fill="#f47920">mm²</text>
+   </svg>`},
+
+  // ════ ANOTACIÓN ════
+  {id:'lbl',cat:'Anotación',name:'Etiqueta',sub:'Rótulo de texto libre',w:60,h:24,ports:[],
+   svg:`<svg viewBox="0 0 60 24" width="60" height="24">
+     <rect x="1" y="1" width="58" height="22" rx="2" fill="none" stroke="#353a58" stroke-width="1" stroke-dasharray="4,3"/>
+     <text x="30" y="15" text-anchor="middle" font-family="Barlow Condensed" font-size="9" fill="#e8eaf4" font-weight="700">ETIQUETA</text>
+   </svg>`},
+  {id:'flecha',cat:'Anotación',name:'Continuación',sub:'Flecha referencia de hoja',w:52,h:24,ports:[{id:'C',t:'COM',pos:'lft'}],
+   svg:`<svg viewBox="0 0 52 24" width="52" height="24">
+     <polygon points="2,12 28,4 28,9 50,9 50,15 28,15 28,20" fill="#1e2235" stroke="#f47920" stroke-width="1.2"/>
+     <text x="36" y="14" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">/2</text>
+   </svg>`},
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════════════════
+const S={
+  tab:'layout', tool:'sel', zoom:1,
+  placed:[], wires:[], rails:[],
+  sel:null, selWire:null, selRail:null,
+  wireType:'L1',
+  nextId:1,
+  drag:null, pan:null, wiring:null, railDrag:null, railResize:null,
+  snapTarget:null,
+};
+
+let cvs,wireSvg,bridgeSvg,cscroll;
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  cvs=document.getElementById('cvs');
+  wireSvg=document.getElementById('wire-svg');
+  bridgeSvg=document.getElementById('bridge-svg');
+  cscroll=document.getElementById('cscroll');
+  buildRail();
+  setupCanvas();
+  setupKeys();
+  updateSB();
+  // fecha
+  const d=new Date();
+  document.getElementById('cinfo').textContent=d.toLocaleDateString('es-AR');
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  RAIL
+// ═══════════════════════════════════════════════════════════════
+let railCat='todos';
+function buildRail(){
+  const q=document.getElementById('rail-q').value.toLowerCase();
+  const cats=[...new Set(CATALOG.map(c=>c.cat))];
+  const ce=document.getElementById('lp-cats');
+  ce.innerHTML=`<button class="lp-cat ${railCat==='todos'?'on':''}" onclick="setCat('todos')">Todos</button>`+
+    cats.map(c=>`<button class="lp-cat ${railCat===c?'on':''}" onclick="setCat('${c}')">${c}</button>`).join('');
+  const items=CATALOG.filter(c=>{
+    const mc=railCat==='todos'||c.cat===railCat;
+    const mq=!q||c.name.toLowerCase().includes(q)||c.sub.toLowerCase().includes(q)||c.cat.toLowerCase().includes(q);
+    return mc&&mq;
+  });
+  const le=document.getElementById('lp-list');
+  le.innerHTML=items.length?'':'<div style="color:var(--mut);font-size:.75rem;padding:14px;text-align:center">Sin resultados</div>';
+  items.forEach(comp=>{
+    const el=document.createElement('div');
+    el.className='comp-row';
+    el.draggable=true;
+    el.dataset.cid=comp.id;
+    el.title=comp.specs&&comp.specs.length?`${comp.name}\n${comp.sub}\n\n${comp.specs.join('\n')}`:`${comp.name}\n${comp.sub}`;
+    el.innerHTML=`<div class="comp-sym">${comp.svg}</div><div class="comp-info"><div class="cn">${comp.name}</div><div class="cs">${comp.sub}</div></div>`;
+    el.addEventListener('dragstart',e=>{e.dataTransfer.setData('cid',comp.id);el.style.opacity='.4'});
+    el.addEventListener('dragend',()=>{el.style.opacity='1'});
+    le.appendChild(el);
+  });
+}
+function setCat(c){railCat=c;buildRail()}
+
+// ═══════════════════════════════════════════════════════════════
+//  CANVAS EVENTS
+// ═══════════════════════════════════════════════════════════════
+function setupCanvas(){
+  cvs.addEventListener('dragover',e=>e.preventDefault());
+  cvs.addEventListener('drop',e=>{
+    e.preventDefault();
+    const cid=e.dataTransfer.getData('cid');if(!cid)return;
+    const r=cvs.getBoundingClientRect();
+    const x=snap((e.clientX-r.left)/S.zoom);
+    const y=snap((e.clientY-r.top)/S.zoom);
+    place(cid,x,y);
+  });
+  cvs.addEventListener('mousedown',onDown);
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+  cvs.addEventListener('mousemove',e=>{
+    const r=cvs.getBoundingClientRect();
+    const x=Math.round((e.clientX-r.left)/S.zoom);
+    const y=Math.round((e.clientY-r.top)/S.zoom);
+    document.getElementById('cinfo').textContent=`x:${x} y:${y}`;
+    // snap hint for wire
+    if(S.wiring){
+      S.snapTarget=findSnapPort(x,y,S.wiring.fromPlacedId);
+      renderSnapRing();
+      S.wiring.cx=x; S.wiring.cy=y;
+      renderWirePreview();
+    }
+  });
+  // ctrl+scroll zoom
+  cscroll.addEventListener('wheel',e=>{
+    if(e.ctrlKey||e.metaKey){e.preventDefault();doZoom(e.deltaY<0?1.1:.91);}
+  },{passive:false});
+  // click bg = deselect
+  cvs.addEventListener('click',e=>{
+    if(e.target===cvs||e.target===wireSvg||e.target===bridgeSvg)desel();
+  });
+}
+
+function snap(v,g=20){return Math.round(v/g)*g}
+
+function onDown(e){
+  if(S.tool==='pan'){
+    S.pan={sx:e.clientX,sy:e.clientY,sl:cscroll.scrollLeft,st:cscroll.scrollTop};
+    return;
+  }
+}
+function onMove(e){
+  if(S.pan){
+    cscroll.scrollLeft=S.pan.sl-(e.clientX-S.pan.sx);
+    cscroll.scrollTop=S.pan.st-(e.clientY-S.pan.sy);
+    return;
+  }
+  if(S.railDrag){
+    const dx=(e.clientX-S.railDrag.sx)/S.zoom;
+    const dy=(e.clientY-S.railDrag.sy)/S.zoom;
+    const r=S.rails.find(r=>r.id===S.railDrag.id);
+    if(r){
+      const oldX=r.x,oldY=r.y;
+      r.x=snap(S.railDrag.ox+dx);
+      r.y=snap(S.railDrag.oy+dy);
+      // Move mounted components with the rail
+      const ddx=r.x-oldX, ddy=r.y-oldY;
+      S.placed.forEach(p=>{
+        if(p.railId===r.id){p.x+=ddx;p.y+=ddy;renderP(p);moveWires(p);}
+      });
+      renderRails();renderWires();renderBridges();
+    }
+    return;
+  }
+  if(S.railResize){
+    const dx=(e.clientX-S.railResize.sx)/S.zoom;
+    const r=S.rails.find(r=>r.id===S.railResize.id);
+    if(r){
+      if(S.railResize.edge==='r'){
+        r.w=Math.max(120,snap(S.railResize.ow+dx));
+      }else{
+        const nx=snap(S.railResize.ox+dx);
+        const delta=nx-S.railResize.ox;
+        if(S.railResize.ow-delta>=120){r.x=nx;r.w=S.railResize.ow-delta;}
+      }
+      renderRails();
+    }
+    return;
+  }
+  if(S.drag){
+    const dx=(e.clientX-S.drag.sx)/S.zoom;
+    const dy=(e.clientY-S.drag.sy)/S.zoom;
+    const p=S.placed.find(p=>p.id===S.drag.id);
+    if(p){
+      p.x=snap(S.drag.ox+dx);
+      p.y=snap(S.drag.oy+dy);
+      renderP(p);
+      // Move connected wires
+      moveWires(p);
+      renderWires();
+      renderBridges();
+    }
+  }
+}
+function onUp(){
+  if(S.pan){S.pan=null;return}
+  if(S.railDrag){S.railDrag=null;return}
+  if(S.railResize){S.railResize=null;return}
+  if(S.drag){
+    const p=S.placed.find(p=>p.id===S.drag.id);
+    S.drag=null;
+    if(p)snapToRail(p); // re-mount on drop
+    moveWires(p);renderWires();renderBridges();
+    autoConnect();
+    return;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PLACE
+// ═══════════════════════════════════════════════════════════════
+function place(cid,x,y,silent){
+  const comp=CATALOG.find(c=>c.id===cid);if(!comp)return;
+  const p={
+    id:`p${S.nextId++}`,cid,x,y,
+    label:comp.name,tag:'',rot:0,
+    props:{In:'',Vn:'',curva:'',desc:'',cable:''},
+    portPos:{} // cache of absolute port positions
+  };
+  S.placed.push(p);
+  renderP(p);
+  if(!silent)sel(p.id);
+  // auto-snap to nearest rail
+  snapToRail(p);
+  // try auto-connect to bus/neighbor
+  autoConnect();
+  updateSB();
+  if(!silent)toast(`${comp.name} agregado`);
+  return p;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RENDER PLACED
+// ═══════════════════════════════════════════════════════════════
+function renderP(p){
+  const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
+  let el=document.getElementById('pl_'+p.id);
+  if(!el){
+    el=document.createElement('div');
+    el.id='pl_'+p.id;
+    el.className='placed';
+    cvs.appendChild(el);
+    el.addEventListener('mousedown',e=>{
+      if(S.tool!=='sel')return;
+      e.stopPropagation();
+      sel(p.id);
+      S.drag={id:p.id,sx:e.clientX,sy:e.clientY,ox:p.x,oy:p.y};
+    });
+    el.addEventListener('click',e=>{e.stopPropagation();sel(p.id)});
+  }
+  el.style.left=p.x+'px';
+  el.style.top=p.y+'px';
+  el.style.transform=`rotate(${p.rot||0}deg)`;
+
+  // Build port HTML
+  const portsHtml=comp.ports.map(pt=>{
+    const style=pt.pos.startsWith('t')||pt.pos.startsWith('b')||pt.pos==='top'||pt.pos==='bot'?'':'' ;
+    return `<div class="port ${pt.pos}" data-t="${pt.t}" data-pid="${p.id}" data-port="${pt.id}"
+      title="${pt.id} (${pt.t})"
+      onmousedown="startWire(event,'${p.id}','${pt.id}','${pt.t}')"></div>`;
+  }).join('');
+
+  const tagHtml=p.tag?`<div class="placed-tag">${esc(p.tag)}</div>`:'';
+
+  // Namespace any gradient/def ids per instance so multiple copies render correctly
+  const svgHtml=comp.svg.replace(/(id|url\(#|xlink:href="#|href="#)(g\d+)/g,(m,pre,gid)=>pre+gid+'_'+p.id);
+
+  el.innerHTML=`
+    <div class="placed-body">
+      ${tagHtml}
+      ${svgHtml}
+      <button class="del-btn" onclick="delById('${p.id}')" title="Eliminar">✕</button>
+      ${portsHtml}
+    </div>
+    <div class="placed-lbl">${esc(p.label)}</div>`;
+  updatePortCache(p);
+}
+
+function renderAll(){
+  cvs.querySelectorAll('.placed').forEach(e=>e.remove());
+  S.placed.forEach(p=>renderP(p));
+  if(S.sel){const e=document.getElementById('pl_'+S.sel);if(e)e.classList.add('sel')}
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PORT CACHE — absolute positions for wire routing
+// ═══════════════════════════════════════════════════════════════
+function updatePortCache(p){
+  const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
+  const el=document.getElementById('pl_'+p.id);if(!el)return;
+  const body=el.querySelector('.placed-body');if(!body)return;
+  const br=body.getBoundingClientRect();
+  const cr=cvs.getBoundingClientRect();
+  p.portPos={};
+  comp.ports.forEach(pt=>{
+    const pe=el.querySelector(`[data-port="${pt.id}"]`);
+    if(!pe)return;
+    const pr=pe.getBoundingClientRect();
+    p.portPos[pt.id]={
+      x:(pr.left+pr.width/2-cr.left)/S.zoom,
+      y:(pr.top+pr.height/2-cr.top)/S.zoom,
+      t:pt.t
+    };
+  });
+}
+function refreshAllPortCaches(){S.placed.forEach(p=>updatePortCache(p))}
+
+// ═══════════════════════════════════════════════════════════════
+//  WIRE DRAWING
+// ═══════════════════════════════════════════════════════════════
+function startWire(e,pid,portId,portType){
+  if(S.tool!=='wire'&&S.tool!=='sel')return;
+  e.stopPropagation();
+  // If in sel mode, allow wire drawing from ports anyway
+  const p=S.placed.find(pp=>pp.id===pid);if(!p)return;
+  updatePortCache(p);
+  const pp=p.portPos[portId];if(!pp)return;
+  S.wiring={fromId:pid,fromPort:portId,fromType:portType,x1:pp.x,y1:pp.y,cx:pp.x,cy:pp.y,fromPlacedId:pid};
+  // Activate port
+  const portEl=document.querySelector(`[data-pid="${pid}"][data-port="${portId}"]`);
+  if(portEl)portEl.classList.add('active');
+  document.addEventListener('mouseup',endWire,{once:true});
+}
+
+function findSnapPort(x,y,excludeId,radius=18){
+  let best=null,bestD=radius*radius;
+  S.placed.forEach(p=>{
+    if(p.id===excludeId)return;
+    Object.entries(p.portPos).forEach(([pid,pp])=>{
+      const d=(pp.x-x)**2+(pp.y-y)**2;
+      if(d<bestD){bestD=d;best={pid,pp,p}}
+    });
+  });
+  return best;
+}
+
+function renderSnapRing(){
+  document.querySelectorAll('.snap-ring').forEach(e=>e.remove());
+  if(!S.snapTarget)return;
+  const el=document.createElement('div');
+  el.className='snap-ring';
+  el.style.left=S.snapTarget.pp.x+'px';
+  el.style.top=S.snapTarget.pp.y+'px';
+  cvs.appendChild(el);
+}
+
+function endWire(e){
+  document.querySelectorAll('.snap-ring').forEach(el=>el.remove());
+  document.querySelectorAll('.port.active').forEach(el=>el.classList.remove('active'));
+  if(!S.wiring){return}
+  const w=S.wiring;
+  // find target
+  const tgt=S.snapTarget||findSnapPort(w.cx,w.cy,w.fromPlacedId);
+  let x2=w.cx,y2=w.cy,toId=null,toPort=null,toType=null;
+  if(tgt){
+    x2=tgt.pp.x;y2=tgt.pp.y;
+    toId=tgt.p.id;toPort=tgt.pid;toType=tgt.pp.t;
+  }
+  if(Math.abs(x2-w.x1)<4&&Math.abs(y2-w.y1)<4){S.wiring=null;renderWires();return}
+  // route orthogonal
+  const pts=routeOrtho(w.x1,w.y1,x2,y2);
+  // wire color by from-type (IEC 60446)
+  const wt=resolveWireType(w.fromType||S.wireType);
+  S.wires.push({
+    id:`w${S.nextId++}`,
+    pts,type:wt,
+    fromId:w.fromId,fromPort:w.fromPort,
+    toId,toPort
+  });
+  S.wiring=null;
+  S.snapTarget=null;
+  renderWires();
+  updateSB();
+}
+
+function resolveWireType(t){
+  if(['L1','L2','L3','N','PE'].includes(t))return t;
+  // determine from wire toolbar selection
+  return S.wireType;
+}
+
+function routeOrtho(x1,y1,x2,y2){
+  // L-shaped routing: horizontal then vertical
+  const mx=snap(x1+(x2-x1)/2);
+  if(Math.abs(x2-x1)<10)return [{x:x1,y:y1},{x:x2,y:y2}];
+  return [{x:x1,y:y1},{x:mx,y:y1},{x:mx,y:y2},{x:x2,y:y2}];
+}
+
+function renderWirePreview(){
+  // Remove preview if exists
+  document.getElementById('wire-preview')?.remove();
+  if(!S.wiring)return;
+  const w=S.wiring;
+  const tx=S.snapTarget?S.snapTarget.pp.x:w.cx;
+  const ty=S.snapTarget?S.snapTarget.pp.y:w.cy;
+  const pts=routeOrtho(w.x1,w.y1,tx,ty);
+  const col=W_COL[S.wireType]||'#008F6E';
+  const pstr=pts.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
+  const el=document.createElementNS('http://www.w3.org/2000/svg','path');
+  el.id='wire-preview';
+  el.setAttribute('d',pstr);
+  el.setAttribute('stroke',col);
+  el.setAttribute('stroke-width','2');
+  el.setAttribute('fill','none');
+  el.setAttribute('stroke-dasharray','6 4');
+  el.setAttribute('opacity','.7');
+  el.setAttribute('stroke-linecap','round');
+  wireSvg.appendChild(el);
+}
+
+function renderWires(){
+  wireSvg.innerHTML='';
+  S.wires.forEach(w=>{
+    if(!w.pts||w.pts.length<2)return;
+    const col=W_COL[w.type]||'#008F6E';
+    const isSel=w.id===S.selWire;
+    const pstr=w.pts.map((p,i)=>`${i?'L':'M'}${p.x},${p.y}`).join(' ');
+    // hit
+    const hit=document.createElementNS('http://www.w3.org/2000/svg','path');
+    hit.setAttribute('d',pstr);hit.setAttribute('class','wire-hit');
+    hit.addEventListener('click',e=>{e.stopPropagation();S.selWire=w.id;desel();renderWires();});
+    // visible
+    const line=document.createElementNS('http://www.w3.org/2000/svg','path');
+    line.setAttribute('d',pstr);
+    line.setAttribute('class',`wire-ph wire-${w.type}`);
+    line.setAttribute('stroke',isSel?'var(--ora)':col);
+    line.setAttribute('stroke-width',isSel?'3':'2');
+    if(w.type==='N')line.setAttribute('stroke-dasharray','8 4');
+    if(w.type==='PE')line.setAttribute('stroke-dasharray','12 3 3 3');
+    // dot junctions
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.appendChild(hit);g.appendChild(line);
+    // wire label at midpoint
+    if(w.pts.length>=2){
+      const mid=Math.floor(w.pts.length/2);
+      const mx=(w.pts[mid-1].x+w.pts[mid].x)/2;
+      const my=(w.pts[mid-1].y+w.pts[mid].y)/2;
+      const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x',mx);txt.setAttribute('y',my-4);
+      txt.setAttribute('text-anchor','middle');
+      txt.setAttribute('font-family','Share Tech Mono');
+      txt.setAttribute('font-size','7');
+      txt.setAttribute('fill',isSel?'var(--ora)':col);
+      txt.setAttribute('opacity','.7');
+      txt.textContent=w.type;
+      g.appendChild(txt);
+    }
+    wireSvg.appendChild(g);
+  });
+}
+
+function moveWires(p){
+  updatePortCache(p);
+  S.wires.forEach(w=>{
+    let changed=false;
+    if(w.fromId===p.id){
+      const pp=p.portPos[w.fromPort];
+      if(pp&&w.pts.length>=2){w.pts[0]={x:pp.x,y:pp.y};changed=true;}
+    }
+    if(w.toId===p.id){
+      const pp=p.portPos[w.toPort];
+      if(pp&&w.pts.length>=2){w.pts[w.pts.length-1]={x:pp.x,y:pp.y};changed=true;}
+    }
+    if(changed&&w.pts.length>=2){
+      // re-route
+      const x1=w.pts[0].x,y1=w.pts[0].y,x2=w.pts[w.pts.length-1].x,y2=w.pts[w.pts.length-1].y;
+      w.pts=routeOrtho(x1,y1,x2,y2);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AUTO-CONNECT — detecta puertos alineados y conecta
+// ═══════════════════════════════════════════════════════════════
+function autoConnect(){
+  refreshAllPortCaches();
+  // For each port pair, if distance < 24px and same or compatible type, add wire
+  S.placed.forEach(p1=>{
+    Object.entries(p1.portPos).forEach(([pid1,pp1])=>{
+      S.placed.forEach(p2=>{
+        if(p2.id===p1.id)return;
+        Object.entries(p2.portPos).forEach(([pid2,pp2])=>{
+          const d=Math.sqrt((pp1.x-pp2.x)**2+(pp1.y-pp2.y)**2);
+          if(d<22){
+            // check not already connected
+            const exists=S.wires.some(w=>
+              (w.fromId===p1.id&&w.fromPort===pid1&&w.toId===p2.id&&w.toPort===pid2)||
+              (w.fromId===p2.id&&w.fromPort===pid2&&w.toId===p1.id&&w.toPort===pid1)
+            );
+            if(!exists){
+              const wt=pp1.t==='COM'?S.wireType:pp1.t;
+              S.wires.push({
+                id:`w${S.nextId++}`,
+                pts:[{x:pp1.x,y:pp1.y},{x:pp2.x,y:pp2.y}],
+                type:wt,
+                fromId:p1.id,fromPort:pid1,
+                toId:p2.id,toPort:pid2
+              });
+            }
+          }
+        });
+      });
+    });
+  });
+  renderWires();
+  renderBridges();
+  updateSB();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BRIDGES — visual puente overlay
+// ═══════════════════════════════════════════════════════════════
+function renderBridges(){
+  bridgeSvg.innerHTML='';
+  // Detect puente components and draw arc-style visual
+  S.placed.forEach(p=>{
+    if(!p.cid.startsWith('pte'))return;
+    const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
+    const ports=Object.values(p.portPos);
+    if(ports.length<2)return;
+    // draw curved line connecting all ports
+    let d=`M${ports[0].x},${ports[0].y}`;
+    for(let i=1;i<ports.length;i++){
+      const mx=(ports[i-1].x+ports[i].x)/2;
+      const my=Math.min(ports[i-1].y,ports[i].y)-10;
+      d+=` Q${mx},${my} ${ports[i].x},${ports[i].y}`;
+    }
+    const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',d);
+    path.setAttribute('stroke','#f39c12');
+    path.setAttribute('stroke-width','2.5');
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke-linecap','round');
+    bridgeSvg.appendChild(path);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DIN RAIL
+// ═══════════════════════════════════════════════════════════════
+function addDinRail(){
+  // Place new rail in the visible viewport area, stacked below existing ones
+  const baseY = S.rails.length ? Math.max(...S.rails.map(r=>r.y)) + 90 : snap(120 + cscroll.scrollTop/S.zoom);
+  const baseX = snap(60 + cscroll.scrollLeft/S.zoom);
+  const rid=`r${S.nextId++}`;
+  S.rails.push({id:rid,y:snap(baseY),x:baseX,w:900,label:`Riel ${S.rails.length+1}`});
+  renderRails();
+  toast('Riel DIN agregado — arrastralo para ubicarlo');
+}
+
+function renderRails(){
+  cvs.querySelectorAll('.din').forEach(e=>e.remove());
+  S.rails.forEach(r=>{
+    const el=document.createElement('div');
+    el.className='din'+(S.selRail===r.id?' sel':'');
+    el.id='din_'+r.id;
+    el.style.left=r.x+'px';
+    el.style.top=r.y+'px';
+    el.style.width=r.w+'px';
+    el.innerHTML=`
+      <div class="din-label">⎓ ${esc(r.label||'Riel DIN')} · ${Math.round(r.w/1)*1}px</div>
+      <div class="din-handle l" data-edge="l"></div>
+      <div class="din-handle r" data-edge="r"></div>
+      <button class="din-del" title="Eliminar riel">✕</button>`;
+    // Select + drag (move whole rail)
+    el.addEventListener('mousedown',e=>{
+      if(S.tool!=='sel')return;
+      const edge=e.target.closest('.din-handle');
+      e.stopPropagation();
+      selRail(r.id);
+      if(edge){
+        S.railResize={id:r.id,edge:edge.dataset.edge,sx:e.clientX,ox:r.x,ow:r.w};
+      }else{
+        S.railDrag={id:r.id,sx:e.clientX,sy:e.clientY,ox:r.x,oy:r.y};
+      }
+    });
+    el.querySelector('.din-del').addEventListener('click',e=>{e.stopPropagation();delRail(r.id);});
+    cvs.insertBefore(el,cvs.firstChild);
+  });
+}
+
+function selRail(id){
+  // clear component/wire selection without touching rail
+  if(S.sel){const e=document.getElementById('pl_'+S.sel);if(e)e.classList.remove('sel')}
+  S.sel=null;S.selWire=null;
+  document.getElementById('comp-rp').innerHTML=`<div class="pempty"><div class="pempty-ico">⎓</div><div class="pempty-txt">Riel DIN seleccionado.<br>Arrastrá para mover · tiradores laterales para ajustar largo · Supr para eliminar</div></div>`;
+  S.selRail=id;
+  renderRails();renderWires();
+}
+function delRail(id){
+  S.rails=S.rails.filter(r=>r.id!==id);
+  S.selRail=null;
+  renderRails();
+  toast('Riel eliminado');
+}
+
+// Snap a component vertically onto the nearest rail and clip-mount it
+function snapToRail(p){
+  if(!S.rails.length)return false;
+  const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return false;
+  let best=null,bestD=46;
+  // Mounting point: component is "clipped" so its vertical center sits on the rail line
+  S.rails.forEach(r=>{
+    const railLine=r.y+11; // center of rail
+    const compCenter=p.y+comp.h/2;
+    const d=Math.abs(compCenter-railLine);
+    // only snap if horizontally within rail span (with margin)
+    if(p.x+comp.w>r.x-20 && p.x<r.x+r.w+20 && d<bestD){bestD=d;best=r}
+  });
+  if(best){
+    p.y=snap(best.y+11-comp.h/2);
+    p.railId=best.id;
+    renderP(p);
+    return true;
+  }
+  p.railId=null;
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SELECTION
+// ═══════════════════════════════════════════════════════════════
+function sel(id){
+  desel();
+  S.sel=id;S.selWire=null;
+  const el=document.getElementById('pl_'+id);
+  if(el)el.classList.add('sel');
+  renderCompProps(id);
+}
+function desel(){
+  if(S.sel){const e=document.getElementById('pl_'+S.sel);if(e)e.classList.remove('sel')}
+  S.sel=null;S.selWire=null;
+  if(S.selRail){S.selRail=null;renderRails();}
+  document.getElementById('comp-rp').innerHTML=`<div class="pempty"><div class="pempty-ico">↖</div><div class="pempty-txt">Seleccioná un componente para ver sus propiedades</div></div>`;
+  renderWires();
+}
+function delById(id){
+  S.placed=S.placed.filter(p=>p.id!==id);
+  S.wires=S.wires.filter(w=>w.fromId!==id&&w.toId!==id);
+  document.getElementById('pl_'+id)?.remove();
+  desel();renderWires();renderBridges();updateSB();
+}
+function delWire(){
+  if(!S.selWire)return;
+  S.wires=S.wires.filter(w=>w.id!==S.selWire);
+  S.selWire=null;renderWires();updateSB();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROPS PANEL
+// ═══════════════════════════════════════════════════════════════
+function renderCompProps(id){
+  const p=S.placed.find(pp=>pp.id===id);if(!p)return;
+  const comp=CATALOG.find(c=>c.id===p.cid);
+  const el=document.getElementById('comp-rp');
+  el.innerHTML=`
+  <div class="rp-body">
+    ${comp&&comp.specs&&comp.specs.length?`<div class="spec-block"><div class="spec-hdr">${esc(comp.name)}<span class="spec-cat">${esc(comp.cat)}</span></div>${comp.specs.map(s=>{const parts=s.split(':');return parts.length>1?`<div class="spec-line">▸ ${esc(parts[0])}: <b>${esc(parts.slice(1).join(':').trim())}</b></div>`:`<div class="spec-line">▸ ${esc(s)}</div>`}).join('')}</div>`:''}
+    <div class="prow"><div class="plbl">Etiqueta</div><input class="pinp" id="pr-lbl" value="${esc(p.label)}" oninput="upProp('label',this.value,'${id}')"></div>
+    <div class="prow"><div class="plbl">Tag / Referencia</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')"></div>
+    <div class="psep"></div>
+    <div class="prow"><div class="plbl">Corriente nominal</div><input class="pinp" id="pr-in" value="${esc(p.props.In||'')}" placeholder="16A, 63A…" oninput="upNested('In',this.value,'${id}')"></div>
+    <div class="pgrid2">
+      <div class="prow"><div class="plbl">Tensión</div><input class="pinp" id="pr-vn" value="${esc(p.props.Vn||'')}" placeholder="220V" oninput="upNested('Vn',this.value,'${id}')"></div>
+      <div class="prow"><div class="plbl">Curva</div><input class="pinp" id="pr-cur" value="${esc(p.props.curva||'')}" placeholder="C / B / D" oninput="upNested('curva',this.value,'${id}')"></div>
+    </div>
+    <div class="prow"><div class="plbl">Sección cable</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')"></div>
+    <div class="prow"><div class="plbl">Circuito / Descripción</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')"></div>
+    <div class="psep"></div>
+    <div class="prow"><div class="plbl">Rotar</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="rot('${id}',-90)">↺ −90°</button>
+        <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="rot('${id}',90)">↻ +90°</button>
+      </div>
+    </div>
+    <div class="psep"></div>
+    <button class="btn" style="width:100%;justify-content:center;background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.25)" onclick="delById('${id}')">🗑 Eliminar</button>
+  </div>`;
+}
+function upProp(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p[k]=v;renderP(p);const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');}
+function upNested(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p.props[k]=v;}
+function rot(id,deg){
+  const p=S.placed.find(p=>p.id===id);if(!p)return;
+  p.rot=((p.rot||0)+deg+360)%360;
+  renderP(p);
+  const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');
+  setTimeout(()=>{updatePortCache(p);moveWires(p);renderWires();},50);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TOOLS / TABS
+// ═══════════════════════════════════════════════════════════════
+function setTool(t){
+  S.tool=t;
+  ['sel','pan','wire'].forEach(id=>{
+    document.getElementById('tb-'+id)?.classList.toggle('on',id===t);
+  });
+  cvs.className=t==='pan'?'pan-mode':'';
+  document.getElementById('st-tool').textContent=`Herramienta: ${{sel:'Seleccionar',pan:'Pan',wire:'Conductor'}[t]||t}`;
+  if(t!=='wire'){S.wiring=null;document.getElementById('wire-preview')?.remove();}
+}
+function setWT(t){
+  S.wireType=t;
+  ['L1','L2','L3','N','PE'].forEach(id=>document.getElementById('wt-'+id)?.classList.toggle('on',id===t));
+}
+function switchTab(tab){
+  S.tab=tab;
+  document.getElementById('tab-layout').classList.toggle('active',tab==='layout');
+  document.getElementById('tab-uni').classList.toggle('active',tab==='uni');
+  document.getElementById('wire-row').style.display=tab==='uni'?'flex':'none';
+  document.getElementById('st-tab').textContent=`Vista: ${tab==='layout'?'Física':'Unifilar'}`;
+  if(tab==='layout'){S.wiring=null;}
+  renderAll();renderWires();renderBridges();renderRails();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ZOOM / FIT
+// ═══════════════════════════════════════════════════════════════
+function doZoom(f){
+  S.zoom=Math.min(3,Math.max(.15,S.zoom*f));
+  cvs.style.transform=`scale(${S.zoom})`;
+  document.getElementById('zlbl').textContent=Math.round(S.zoom*100)+'%';
+}
+function fitView(){
+  if(!S.placed.length){S.zoom=1;cvs.style.transform='scale(1)';return}
+  const xs=S.placed.map(p=>p.x),ys=S.placed.map(p=>p.y);
+  const pw=cscroll.clientWidth,ph=cscroll.clientHeight;
+  const cw=Math.max(...xs)-Math.min(...xs)+300,ch=Math.max(...ys)-Math.min(...ys)+300;
+  S.zoom=Math.min(pw/cw,ph/ch,1.2);
+  cvs.style.transform=`scale(${S.zoom})`;
+  document.getElementById('zlbl').textContent=Math.round(S.zoom*100)+'%';
+  cscroll.scrollLeft=(Math.min(...xs)-60)*S.zoom;
+  cscroll.scrollTop=(Math.min(...ys)-60)*S.zoom;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATUS BAR
+// ═══════════════════════════════════════════════════════════════
+function updateSB(){
+  document.getElementById('st-comp').textContent=`Componentes: ${S.placed.length}`;
+  document.getElementById('st-wire').textContent=`Conductores: ${S.wires.length}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SAVE / LOAD / CLEAR
+// ═══════════════════════════════════════════════════════════════
+function getMeta(){return{nom:document.getElementById('p-nom').value,obra:document.getElementById('p-obra').value,ten:document.getElementById('p-ten').value,sis:document.getElementById('p-sis').value,tec:document.getElementById('p-tec').value}}
+function saveProj(){
+  const data=JSON.stringify({placed:S.placed.map(p=>({...p,portPos:{}})),wires:S.wires,rails:S.rails,meta:getMeta()},null,2);
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+  a.download=`Valve_Tablero_${Date.now()}.json`;
+  a.click();URL.revokeObjectURL(a.href);
+  toast('Proyecto guardado');
+}
+function loadProj(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      S.placed=d.placed||[];S.wires=d.wires||[];S.rails=d.rails||[];
+      S.nextId=Math.max(...[...S.placed,...S.wires].map(x=>parseInt((x.id||'0').replace(/\D/g,''))||0),1)+1;
+      if(d.meta){document.getElementById('p-nom').value=d.meta.nom||'';document.getElementById('p-obra').value=d.meta.obra||'';document.getElementById('p-tec').value=d.meta.tec||'';}
+      renderAll();renderWires();renderBridges();renderRails();updateSB();
+      setTimeout(()=>{refreshAllPortCaches();renderWires();},200);
+      toast('Proyecto cargado');
+    }catch{toast('Error al cargar');}
+  };
+  r.readAsText(f);e.target.value='';
+}
+function resetCanvas(){
+  S.placed=[];S.wires=[];S.rails=[];S.sel=null;S.selWire=null;S.selRail=null;S.nextId=1;
+  cvs.querySelectorAll('.placed,.din,.snap-ring').forEach(e=>e.remove());
+  wireSvg.innerHTML='';bridgeSvg.innerHTML='';
+}
+function clearAll(){
+  if(S.placed.length&&!confirm('¿Limpiar todo?'))return;
+  resetCanvas();
+  desel();updateSB();toast('Tablero limpiado');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PLANTILLAS PRECARGADAS
+// ═══════════════════════════════════════════════════════════════
+const TEMPLATES=[
+  {
+    key:'res-mono',
+    icon:'🏠',
+    name:'Residencial monofásico 220V',
+    metaTxt:'220V · Monofásico',
+    desc:'Interruttore generale, differenziale 30mA e 4 circuiti derivati tipici (illuminazione, prese cucina, prese generali, condizionatore) con barre di neutro e terra.',
+    meta:{nom:'Tablero Residencial Mono', ten:'220V', sis:'Monofásico'},
+    items:[
+      {cid:'qf2', tag:'IC',  props:{In:'40A', desc:'Interruptor general'}},
+      {cid:'id2', tag:'ID1', props:{In:'40A', desc:'Diferencial general 30mA'}},
+      {cid:'qf1', tag:'QF1', props:{In:'10A', desc:'Iluminación'}},
+      {cid:'qf1', tag:'QF2', props:{In:'20A', desc:'TUG cocina/baño'}},
+      {cid:'qf1', tag:'QF3', props:{In:'20A', desc:'TUG general'}},
+      {cid:'qf1', tag:'QF4', props:{In:'20A', desc:'Aire acondicionado'}},
+      {cid:'born-neutro', tag:'N',  props:{desc:'Barra de neutro'}},
+      {cid:'born-tierra', tag:'PE', props:{desc:'Barra de tierra'}},
+    ]
+  },
+  {
+    key:'tri-termica-dif',
+    icon:'⚡',
+    name:'Trifasico con termica + differenziale',
+    metaTxt:'220/380V · Trifásico',
+    desc:'Testa di sezioneamento omnipolare 4P, differenziale generale 4P, tre circuiti trifasici e due derivazioni monofasiche, con barra di distribuzione e di terra.',
+    meta:{nom:'Tablero Trifásico General', ten:'220/380V', sis:'Trifásico'},
+    items:[
+      {cid:'ica', tag:'IC',  props:{In:'63A', desc:'Corte general omnipolar 4P'}},
+      {cid:'id4', tag:'ID1', props:{In:'63A', desc:'Diferencial general 4P 30mA'}},
+      {cid:'qf3', tag:'QF1', props:{In:'16A', desc:'Circuito trifásico 1'}},
+      {cid:'qf3', tag:'QF2', props:{In:'20A', desc:'Circuito trifásico 2'}},
+      {cid:'qf3', tag:'QF3', props:{In:'25A', desc:'Circuito trifásico 3'}},
+      {cid:'qf1', tag:'QF4', props:{In:'16A', desc:'Derivación monofásica 1'}},
+      {cid:'qf1', tag:'QF5', props:{In:'16A', desc:'Derivación monofásica 2'}},
+      {cid:'bus3', tag:'',   props:{desc:'Barra de distribución 3P+N+PE'}},
+      {cid:'bpe',  tag:'PE', props:{desc:'Barra de puesta a tierra'}},
+    ]
+  },
+  {
+    key:'cmd-bomba',
+    icon:'🔧',
+    name:'Comando de bomba / motor trifásico',
+    metaTxt:'380V · Trifásico',
+    desc:'Arranque directo: protección general, contactor, relé térmico, comando local marcha/paro con selector manual-automático y señalización de marcha/falla.',
+    meta:{nom:'Tablero Comando Bomba', ten:'380V', sis:'Trifásico'},
+    items:[
+      {cid:'qf3',   tag:'QF1', props:{In:'16A', desc:'Protección general'}},
+      {cid:'km3',   tag:'KM1', props:{Vn:'220V', desc:'Contactor de línea'}},
+      {cid:'rt',    tag:'F1',  props:{desc:'Relé térmico motor bomba'}},
+      {cid:'sb-na', tag:'S1',  props:{desc:'Marcha'}},
+      {cid:'sb-nc', tag:'S0',  props:{desc:'Paro'}},
+      {cid:'sel2',  tag:'SA',  props:{desc:'Manual / Automático'}},
+      {cid:'pl-g',  tag:'H1',  props:{desc:'Señal de marcha'}},
+      {cid:'pl-r',  tag:'H2',  props:{desc:'Señal de falla'}},
+      {cid:'mtr3',  tag:'M1',  props:{desc:'Motor de la bomba'}},
+    ]
+  },
+];
+
+function openTplModal(){
+  const list=document.getElementById('tpl-list');
+  list.innerHTML=TEMPLATES.map(t=>`
+    <div class="tpl-card" onclick="loadTemplate('${t.key}')">
+      <div class="tpl-ico">${t.icon}</div>
+      <div>
+        <div class="tpl-tt">${t.name}</div>
+        <div class="tpl-meta">${t.metaTxt} · ${t.items.length} componentes</div>
+        <div class="tpl-desc">${t.desc}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('mtpl').classList.add('open');
+}
+function closeTplModal(){document.getElementById('mtpl').classList.remove('open');}
+
+function loadTemplate(key){
+  const tpl=TEMPLATES.find(t=>t.key===key);if(!tpl)return;
+  if(S.placed.length&&!confirm('Esto va a reemplazar el diseño actual. ¿Continuar?'))return;
+  resetCanvas();
+
+  // Calcular ancho total necesario según los componentes reales del catálogo
+  const gap=14, marginX=20;
+  let totalW=marginX*2-gap;
+  tpl.items.forEach(it=>{
+    const c=CATALOG.find(c=>c.id===it.cid);
+    totalW+=(c?c.w:40)+gap;
+  });
+
+  const railY=140, railX=60;
+  const rid=`r${S.nextId++}`;
+  S.rails.push({id:rid, y:railY, x:railX, w:Math.max(300,totalW), label:tpl.name});
+  renderRails();
+
+  let cx=railX+marginX;
+  tpl.items.forEach(it=>{
+    const c=CATALOG.find(c=>c.id===it.cid);if(!c)return;
+    const y=railY+11-c.h/2; // centrado exacto sobre la línea del riel
+    const p=place(it.cid,cx,y,true);
+    if(p){
+      p.tag=it.tag||'';
+      Object.assign(p.props,it.props||{});
+      renderP(p);
+    }
+    cx+=c.w+gap;
+  });
+
+  if(tpl.meta){
+    if(tpl.meta.nom)document.getElementById('p-nom').value=tpl.meta.nom;
+    if(tpl.meta.ten)document.getElementById('p-ten').value=tpl.meta.ten;
+    if(tpl.meta.sis)document.getElementById('p-sis').value=tpl.meta.sis;
+  }
+  fitView();
+  updateSB();
+  closeTplModal();
+  toast(`Plantilla "${tpl.name}" cargada — completá el cableado con la herramienta de cable`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════════════════════
+function setupKeys(){
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+    if(e.key==='s'||e.key==='S')setTool('sel');
+    if(e.key==='p'||e.key==='P')setTool('pan');
+    if(e.key==='w'||e.key==='W')setTool('wire');
+    if(e.key==='Delete'||e.key==='Backspace'){
+      if(S.sel)delById(S.sel);
+      else if(S.selWire)delWire();
+      else if(S.selRail)delRail(S.selRail);
+    }
+    if(e.key==='Escape'){desel();S.wiring=null;document.getElementById('wire-preview')?.remove();document.querySelectorAll('.snap-ring').forEach(el=>el.remove());}
+    if(e.key==='+')doZoom(1.2);
+    if(e.key==='-')doZoom(.83);
+    if(e.key==='f'||e.key==='F')fitView();
+  });
+  document.getElementById('mpdf').addEventListener('click',e=>{if(e.target===e.currentTarget)closePDF()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closePDF()});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PDF EXPORT — Professional 2-page document
+// ═══════════════════════════════════════════════════════════════
+function openPDF(){
+  const m=getMeta();
+  document.getElementById('pdf-tit').value=m.nom||'Plano de tablero eléctrico';
+  document.getElementById('mpdf').classList.add('open');
+}
+function closePDF(){document.getElementById('mpdf').classList.remove('open')}
+
+function genPDF(){
+  const {jsPDF}=window.jspdf;
+  const hoja=document.getElementById('pdf-hoja').value;
+  const land=hoja.includes('Horizontal');
+  const a3=hoja.includes('A3');
+  const doc=new jsPDF({orientation:land?'landscape':'portrait',unit:'mm',format:a3?'a3':'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const H=doc.internal.pageSize.getHeight();
+  const meta=getMeta();
+  const titulo=document.getElementById('pdf-tit').value||'Plano tablero eléctrico';
+  const num=document.getElementById('pdf-num').value||'PE-001';
+  const rev=document.getElementById('pdf-rev').value||'A';
+  const esc_=document.getElementById('pdf-esc').value||'S/E';
+  const obs=document.getElementById('pdf-obs').value;
+  const fecha=new Date().toLocaleDateString('es-AR');
+
+  const NAVY=[27,42,74]; const ORA=[244,121,32]; const BLU=[74,142,194];
+  const GRN=[39,174,96]; const RED=[192,57,43]; const MUT=[100,110,140];
+  const BORD=[42,46,63]; const BG=[13,15,22];
+
+  // ── PAGE 1: PLANO ──────────────────────────────────────────
+  doc.setFillColor(...BG); doc.rect(0,0,W,H,'F');
+
+  // Subtle grid
+  doc.setDrawColor(...BLU); doc.setLineWidth(.04);
+  for(let x=0;x<W;x+=10){doc.setGState(new doc.GState({opacity:.04}));doc.line(x,0,x,H)}
+  for(let y=0;y<H;y+=10){doc.setGState(new doc.GState({opacity:.04}));doc.line(0,y,W,y)}
+  doc.setGState(new doc.GState({opacity:1}));
+
+  // Header band
+  doc.setFillColor(...NAVY); doc.rect(0,0,W,20,'F');
+  doc.setFillColor(...ORA);  doc.rect(0,20,W,.8,'F');
+
+  // Logo
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
+  doc.text('Valve Electronics',10,13);
+  doc.setTextColor(...ORA); doc.text('ELECTRONICS',28,13);
+  doc.setFontSize(7); doc.setTextColor(...MUT); doc.text('INGENIERÍA ELÉCTRICA',10,18);
+
+  // Título
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
+  doc.text(titulo.toUpperCase(),W/2,11,{align:'center'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
+  doc.text(`${meta.nom||''}  ·  ${meta.obra||''}`,W/2,17,{align:'center'});
+
+  // N° plano y fecha
+  doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...ORA);
+  doc.text(`N° ${num}  REV:${rev}`,W-8,10,{align:'right'});
+  doc.setTextColor(...MUT); doc.text(fecha,W-8,16,{align:'right'});
+
+  // ── ÁREA DE DIAGRAMA ────────────────────────────────────────
+  const diagY=24, diagH=H-24-32;
+  doc.setFillColor(10,13,20); doc.rect(8,diagY,W-16,diagH,'F');
+  doc.setDrawColor(...BLU); doc.setLineWidth(.4); doc.rect(8,diagY,W-16,diagH);
+  // inner grid
+  doc.setDrawColor(...BLU); doc.setLineWidth(.04);
+  for(let gx=8;gx<W-8;gx+=10){doc.setGState(new doc.GState({opacity:.05}));doc.line(gx,diagY,gx,diagY+diagH)}
+  for(let gy=diagY;gy<diagY+diagH;gy+=10){doc.setGState(new doc.GState({opacity:.05}));doc.line(8,gy,W-8,gy)}
+  doc.setGState(new doc.GState({opacity:1}));
+  // Tab label
+  doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...MUT);
+  doc.text(S.tab==='layout'?'VISTA FÍSICA DEL TABLERO':'DIAGRAMA UNIFILAR',W/2,diagY+5,{align:'center'});
+
+  // ── Render rails ────────────────────────────────────────────
+  if(S.placed.length>0){
+    const xs=S.placed.map(p=>p.x), ys=S.placed.map(p=>p.y);
+    const minX=Math.min(...xs)-30, minY=Math.min(...ys)-30;
+    const maxX=Math.max(...xs)+140, maxY=Math.max(...ys)+140;
+    const cw=maxX-minX, ch=maxY-minY;
+    const aw=W-20, ah=diagH-14;
+    const sf=Math.min(aw/cw,ah/ch,.5);
+    const ox=10+(aw-cw*sf)/2, oy=diagY+10+(ah-ch*sf)/2;
+    const tx=(v)=>ox+(v-minX)*sf, ty=(v)=>oy+(v-minY)*sf;
+
+    // DIN rails
+    S.rails.forEach(r=>{
+      doc.setFillColor(60,66,90); doc.setDrawColor(90,96,130); doc.setLineWidth(.3);
+      doc.rect(tx(r.x),ty(r.y),r.w*sf,4*sf,'FD');
+    });
+
+    // Wires
+    const wcols={L1:[192,57,43],L2:[39,174,96],L3:[41,128,185],N:[100,180,240],PE:[39,174,96]};
+    S.wires.forEach(w=>{
+      if(!w.pts||w.pts.length<2)return;
+      const col=wcols[w.type]||BLU;
+      doc.setDrawColor(...col); doc.setLineWidth(.6);
+      if(w.type==='N')doc.setLineDashPattern([2,1.5],0);
+      else if(w.type==='PE')doc.setLineDashPattern([3,1,1,1],0);
+      else doc.setLineDashPattern([],0);
+      for(let i=0;i<w.pts.length-1;i++){
+        doc.line(tx(w.pts[i].x),ty(w.pts[i].y),tx(w.pts[i+1].x),ty(w.pts[i+1].y));
+      }
+      doc.setLineDashPattern([],0);
+      // wire label
+      const mid=Math.floor(w.pts.length/2);
+      const mx=tx((w.pts[mid-1].x+w.pts[mid].x)/2);
+      const my=ty((w.pts[mid-1].y+w.pts[mid].y)/2)-1.5;
+      doc.setFont('helvetica','bold'); doc.setFontSize(4); doc.setTextColor(...col);
+      doc.text(w.type,mx,my,{align:'center'});
+    });
+
+    // Components
+    S.placed.forEach((p,i)=>{
+      const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
+      const px=tx(p.x), py=ty(p.y);
+      const bw=comp.w*sf, bh=comp.h*sf;
+      // Shadow
+      doc.setFillColor(8,10,16); doc.rect(px+1,py+1,bw,bh,'F');
+      // Body
+      doc.setFillColor(30,34,52); doc.setDrawColor(...BLU); doc.setLineWidth(.3);
+      doc.rect(px,py,bw,bh,'FD');
+      // Tag badge
+      if(p.tag){
+        doc.setFillColor(...ORA);
+        const tw=doc.getTextWidth(p.tag)*4+4;
+        doc.rect(px,py-4*sf,Math.max(tw,bw*.6),3.5*sf,'F');
+        doc.setFont('helvetica','bold'); doc.setFontSize(Math.max(3.5,4*sf)); doc.setTextColor(255,255,255);
+        doc.text(p.tag,px+Math.max(tw,bw*.6)/2,py-1.5*sf,{align:'center'});
+      }
+      // Component name
+      const name=comp.name.length>12?comp.name.substring(0,10)+'…':comp.name;
+      doc.setFont('helvetica','bold'); doc.setFontSize(Math.max(4,5.5*sf)); doc.setTextColor(200,210,240);
+      doc.text(name,px+bw/2,py+bh*.5,{align:'center'});
+      // Spec
+      const spec=[p.props.In,p.props.curva].filter(Boolean).join(' ');
+      if(spec){doc.setFont('helvetica','normal'); doc.setFontSize(Math.max(3,4*sf)); doc.setTextColor(...MUT); doc.text(spec,px+bw/2,py+bh*.7,{align:'center'});}
+      // Description
+      if(p.props.desc){doc.setFont('helvetica','italic'); doc.setFontSize(Math.max(3,3.5*sf)); doc.setTextColor(...MUT); doc.text(p.props.desc.substring(0,18),px+bw/2,py+bh+3*sf,{align:'center'});}
+    });
+  }else{
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUT);
+    doc.text('Sin componentes en el tablero',W/2,diagY+diagH/2,{align:'center'});
+  }
+
+  // ── LEYENDA ──────────────────────────────────────────────────
+  const leyY=diagY+diagH+2;
+  doc.setFillColor(12,16,28); doc.rect(8,leyY,W-16,14,'F');
+  doc.setDrawColor(...BORD); doc.setLineWidth(.2); doc.rect(8,leyY,W-16,14);
+  const ley=[{c:[192,57,43],d:false,l:'L1 — Fase R'},{c:[39,174,96],d:false,l:'L2 — Fase S'},{c:[41,128,185],d:false,l:'L3 — Fase T'},{c:[100,180,240],d:true,l:'N — Neutro'},{c:[39,174,96],d:false,l:'PE — Tierra'}];
+  ley.forEach((ly,i)=>{
+    const lx=12+i*44;
+    doc.setDrawColor(...ly.c); doc.setLineWidth(.8);
+    if(ly.d)doc.setLineDashPattern([2,1.5],0);
+    doc.line(lx,leyY+7,lx+12,leyY+7);
+    doc.setLineDashPattern([],0);
+    doc.setFont('helvetica','normal'); doc.setFontSize(5); doc.setTextColor(180,190,220);
+    doc.text(ly.l,lx+14,leyY+8.5);
+  });
+  if(obs){doc.setFont('helvetica','italic'); doc.setFontSize(5); doc.setTextColor(...MUT); doc.text('OBS: '+obs,W-10,leyY+8.5,{align:'right'});}
+
+  // ── CAJETÍN ──────────────────────────────────────────────────
+  const cjY=H-28;
+  doc.setFillColor(10,13,22); doc.rect(0,cjY,W,28,'F');
+  doc.setFillColor(...NAVY); doc.rect(0,cjY,.8,28,'F');
+  doc.setFillColor(...ORA);  doc.rect(0,cjY,W,.6,'F');
+  const fields=[
+    {l:'PROYECTO / CLIENTE',v:meta.obra||'—',w:W*.32},
+    {l:'TABLERO',v:meta.nom||'—',w:W*.18},
+    {l:'SISTEMA',v:`${meta.ten} — ${meta.sis}`,w:W*.14},
+    {l:'TÉCNICO',v:meta.tec||'—',w:W*.12},
+    {l:'ESCALA',v:esc_,w:W*.08},
+    {l:'FECHA',v:fecha,w:W*.1},
+    {l:'N° PLANO / REV.',v:`${num} / ${rev}`,w:W*.06},
+  ];
+  let cx=0;
+  doc.setLineWidth(.2); doc.setDrawColor(...BORD);
+  fields.forEach(f=>{
+    doc.rect(cx,cjY+.5,f.w,27.5);
+    doc.setFont('helvetica','bold'); doc.setFontSize(5); doc.setTextColor(...MUT);
+    doc.text(f.l,cx+2.5,cjY+7);
+    doc.setFont('helvetica','bold'); doc.setFontSize(Math.min(8,7.5*(f.w/36))); doc.setTextColor(240,245,255);
+    doc.text(f.v.substring(0,24),cx+2.5,cjY+18);
+    cx+=f.w;
+  });
+  // Logo en cajetín
+  doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(255,255,255);
+  doc.text('Valve Electronics',cx+(W-cx)/2,cjY+11,{align:'center'});
+  doc.setTextColor(...ORA); doc.text('ELECTRONICS',cx+(W-cx)/2,cjY+19,{align:'center'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(4.5); doc.setTextColor(...MUT);
+  doc.text('INGENIERÍA ELÉCTRICA',cx+(W-cx)/2,cjY+25,{align:'center'});
+
+  // ── PAGE 2: LISTA DE MATERIALES ─────────────────────────────
+  if(S.placed.length>0){
+    doc.addPage(a3?'a3':'a4',land?'landscape':'portrait');
+    doc.setFillColor(...BG); doc.rect(0,0,W,H,'F');
+    doc.setFillColor(...NAVY); doc.rect(0,0,W,18,'F');
+    doc.setFillColor(...ORA);  doc.rect(0,18,W,.8,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(255,255,255);
+    doc.text('Valve Electronics',10,12); doc.setTextColor(...ORA); doc.text('ELECTRONICS',27,12);
+    doc.setTextColor(255,255,255); doc.text('LISTA DE MATERIALES',W/2,12,{align:'center'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
+    doc.text(`${titulo}  ·  ${meta.obra||''}  ·  N° ${num}`,W/2,17,{align:'center'});
+
+    // Tabla
+    const tY=24;
+    const cols=[
+      {l:'ÍTEM',w:10},{l:'TAG',w:18},{l:'DESCRIPCIÓN',w:50},{l:'CORRIENTE',w:22},
+      {l:'TENSIÓN',w:20},{l:'CURVA',w:18},{l:'SECCIÓN',w:20},{l:'CIRCUITO',w:W-168}
+    ];
+    // Header
+    doc.setFillColor(...NAVY); doc.rect(8,tY,W-16,8,'F');
+    doc.setDrawColor(...BLU); doc.setLineWidth(.25); doc.rect(8,tY,W-16,8);
+    let hx=8;
+    doc.setFont('helvetica','bold'); doc.setFontSize(5.5); doc.setTextColor(...ORA);
+    cols.forEach(col=>{
+      doc.text(col.l,hx+2,tY+5.5);
+      doc.setDrawColor(...BORD); doc.line(hx+col.w,tY,hx+col.w,tY+8);
+      hx+=col.w;
+    });
+    // Rows
+    let ry=tY+8;
+    S.placed.forEach((p,i)=>{
+      const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
+      if(ry>H-40){doc.addPage(a3?'a3':'a4',land?'landscape':'portrait'); ry=20;}
+      const even=i%2===0;
+      doc.setFillColor(even?16:20,even?20:25,even?36:42); doc.rect(8,ry,W-16,7,'F');
+      doc.setDrawColor(...BORD); doc.setLineWidth(.12); doc.rect(8,ry,W-16,7);
+      let rx=8;
+      const cells=[String(i+1),p.tag||'—',p.label||comp.name,p.props.In||'—',p.props.Vn||meta.ten||'—',p.props.curva||'—',p.props.cable||'—',(p.props.desc||'—').substring(0,35)];
+      doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(215,220,240);
+      cells.forEach((cell,ci)=>{
+        doc.text(String(cell),rx+2,ry+5);
+        doc.setDrawColor(...BORD); doc.line(rx+cols[ci].w,ry,rx+cols[ci].w,ry+7);
+        rx+=cols[ci].w;
+      });
+      ry+=7;
+    });
+    // Totales por categoría
+    ry+=8;
+    const cats={};
+    S.placed.forEach(p=>{const c=CATALOG.find(cc=>cc.id===p.cid);if(c)cats[c.cat]=(cats[c.cat]||0)+1});
+    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...ORA);
+    doc.text(`Total de componentes: ${S.placed.length}  ·  Conductores: ${S.wires.length}`,10,ry);
+    ry+=6;
+    Object.entries(cats).forEach(([cat,qty])=>{
+      doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(170,180,210);
+      doc.text(`• ${cat}: ${qty}`,14,ry); ry+=5;
+    });
+    // Footer p2
+    doc.setFillColor(10,13,22); doc.rect(0,H-16,W,16,'F');
+    doc.setFillColor(...ORA); doc.rect(0,H-16,W,.5,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(5.5); doc.setTextColor(...MUT);
+    doc.text(`Valve Electronics™  ·  ${meta.tec||''}  ·  ${fecha}  ·  Página 2 de 2`,W/2,H-5,{align:'center'});
+  }
+
+  doc.save(`Valve_Tablero_${(meta.nom||'plano').replace(/\s+/g,'_')}_${num}.pdf`);
+  closePDF();
+  toast('PDF exportado ✓');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+let tt;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2600)}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

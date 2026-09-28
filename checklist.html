@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Checklist di Manutenzione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh}
+
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fd);font-weight:700;font-size:.85rem;letter-spacing:.04em;padding:9px 16px;border-radius:4px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-ghost{background:none;color:var(--dim);border:1px solid var(--b1)}
+.btn-ghost:hover{color:var(--w);border-color:var(--b2)}
+.btn-ora{background:var(--ora);color:#fff}
+.btn-ora:hover{background:var(--ora2)}
+
+.wrap{max-width:880px;margin:0 auto;padding:26px 5vw 80px}
+.sect{background:var(--card);border:1px solid var(--b1);border-radius:6px;margin-bottom:20px;overflow:hidden}
+.sect-hd{padding:14px 20px;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,rgba(74,142,194,.06),transparent);display:flex;align-items:center;gap:10px}
+.sect-tt{font-family:var(--fd);font-size:1.05rem;font-weight:700}
+.sect-bd{padding:18px 20px}
+
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fld:last-child{margin-bottom:0}
+.flbl{font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.inp,.sel,.txt{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:10px 12px;border-radius:4px;outline:none;transition:border-color .15s;width:100%}
+.inp:focus,.sel:focus,.txt:focus{border-color:var(--ora)}
+.sel{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238089a8' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.sel option{background:var(--surf)}
+.txt{resize:vertical;min-height:70px;font-family:var(--fb)}
+
+.citem{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1)}
+.citem:last-child{border-bottom:none}
+.citem-lbl{flex:1;min-width:200px;font-size:.9rem}
+.citem-opts{display:flex;gap:6px}
+.copt{font-family:var(--fd);font-size:.74rem;font-weight:700;letter-spacing:.04em;padding:6px 11px;border-radius:3px;border:1px solid var(--b1);background:none;color:var(--dim);cursor:pointer;transition:all .15s}
+.copt:hover{border-color:var(--b2);color:var(--w)}
+.copt.ok.on{background:rgba(46,204,113,.18);border-color:var(--grn);color:var(--grn)}
+.copt.warn.on{background:rgba(243,156,18,.18);border-color:var(--yel);color:var(--yel)}
+.copt.na.on{background:rgba(128,137,168,.15);border-color:var(--mut);color:var(--dim)}
+.citem-note{width:100%;margin-top:6px;display:none}
+.citem-note.show{display:block}
+.citem-note input{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.85rem;padding:7px 10px;border-radius:3px;outline:none;width:100%}
+.citem-note input:focus{border-color:var(--ora)}
+
+.sig-wrap{display:flex;flex-direction:column;gap:8px}
+canvas.sig{background:#f8f9fb;border:1px solid var(--b1);border-radius:4px;width:100%;height:160px;touch-action:none;cursor:crosshair}
+.sig-acts{display:flex;justify-content:space-between;align-items:center}
+.sig-hint{font-size:.78rem;color:var(--mut)}
+
+.summary-bar{display:flex;gap:14px;padding:12px 20px;background:var(--card2);border-radius:5px;margin-bottom:16px;flex-wrap:wrap}
+.sb-item{font-family:var(--fm);font-size:.78rem;display:flex;align-items:center;gap:5px}
+.sb-dot{width:8px;height:8px;border-radius:50%}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .fgrid{grid-template-columns:1fr}
+  .top-actions .btn span.lbl{display:none}
+}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="brand">Valve Electronics <b>ELECTRONICS</b><span>CHECKLIST DI MANUTENZIONE</span></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn btn-ghost" onclick="clearForm()">✕ <span class="lbl">Pulisci</span></button>
+    <button class="btn btn-ora" onclick="genPDF()">📄 <span class="lbl">Genera PDF</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- DATOS GENERALES -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">📋 Dati del servizio</span></div>
+    <div class="sect-bd">
+      <div class="fgrid">
+        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale"></div>
+        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date"></div>
+      </div>
+      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo"></div>
+      <div class="fgrid">
+        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico"></div>
+        <div class="fld"><span class="flbl">Prossima manutenzione</span><input class="inp" id="proximo" type="date"></div>
+      </div>
+      <div class="fgrid">
+        <div class="fld"><span class="flbl">Tipo di apparecchio</span>
+          <select class="sel" id="tipo-equipo" onchange="buildChecklist()">
+            <option value="ac">Aria condizionata (split)</option>
+            <option value="heladera">Frigorifero / freezer commerciale</option>
+            <option value="generador">Generatore</option>
+            <option value="tablero">Quadro elettrico (preventivo)</option>
+          </select></div>
+        <div class="fld"><span class="flbl">Apparecchio (marca / modello)</span><input class="inp" id="equipo-info" type="text" placeholder="Es: Split 3500W Inverter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt" id="check-title">🔧 Punti di ispezione</span></div>
+    <div class="sect-bd">
+      <div class="summary-bar" id="summary-bar"></div>
+      <div id="check-list"></div>
+    </div>
+  </div>
+
+  <!-- OBSERVACIONES -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">📝 Conclusione e materiali</span></div>
+    <div class="sect-bd">
+      <div class="fld"><span class="flbl">Conclusione generale</span><textarea class="txt" id="conclusion" placeholder="Stato generale dell'apparecchio, osservazioni rilevanti…"></textarea></div>
+      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Filtri, gas, ricambi…" style="min-height:50px"></textarea></div>
+    </div>
+  </div>
+
+  <!-- FIRMA -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">✍️ Conformità del cliente</span></div>
+    <div class="sect-bd">
+      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome"></div>
+      <div class="sig-wrap">
+        <span class="flbl">Firma</span>
+        <canvas class="sig" id="sigpad"></canvas>
+        <div class="sig-acts">
+          <span class="sig-hint">Firma con il dito o il mouse all'interno del riquadro</span>
+          <button class="btn btn-ghost" onclick="clearSig()" style="padding:6px 12px;font-size:.75rem">Cancella firma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+
+// ═══════════ CHECKLISTS POR EQUIPO ═══════════
+const CHECKLISTS={
+  ac:{name:'Aria condizionata (split)',items:[
+    'Pulizia filtri aria',
+    'Pulizia serpentina evaporatrice',
+    'Pulizia serpentina condensatrice',
+    'Verifica pressione gas refrigerante',
+    'Verifica corrente compressore',
+    'Verifica scarico condensa',
+    'Stato supporti e fissaggio unità',
+    'Funzionamento comando / telecomando',
+    'Livello rumori e vibrazioni anomale',
+    'Pulizia generale carcasse',
+  ]},
+  heladera:{name:'Frigorifero / freezer commerciale',items:[
+    'Pulizia condensatore',
+    'Verifica temperatura interna',
+    'Stato guarnizioni / tenute porta',
+    'Verifica corrente compressore',
+    'Stato illuminazione interna',
+    'Verifica termostato / controllo elettronico',
+    'Pulizia vassoio degelo',
+    'Verifica ventilatore evaporatore',
+  ]},
+  generador:{name:'Generatore',items:[
+    'Livello carburante',
+    'Livello olio motore',
+    'Stato batteria avviamento',
+    'Prova avviamento automatico',
+    'Verifica tensione di uscita',
+    'Stato filtri aria e carburante',
+    'Verifica trasferimento automatico (ATS)',
+    'Pulizia generale apparecchio',
+  ]},
+  tablero:{name:'Quadro elettrico (manutenzione preventiva)',items:[
+    'Stretto morsetti e connessioni',
+    'Verifica termica punti caldi',
+    'Prova interruttori differenziali (pulsante TEST)',
+    'Verifica etichettatura circuiti',
+    'Pulizia interna quadro',
+    'Verifica messa a terra',
+    'Stato pressacavi e tenuta IP',
+  ]},
+};
+
+let checkState={}; // { itemIndex: {status:'ok'|'warn'|'na'|null, note:''} }
+
+function buildChecklist(){
+  const tipo=$('tipo-equipo').value;
+  const cl=CHECKLISTS[tipo];
+  $('check-title').textContent='🔧 Punti di ispezione — '+cl.name;
+  checkState={};
+  cl.items.forEach((_,i)=>checkState[i]={status:null,note:''});
+  renderChecklist();
+}
+
+function renderChecklist(){
+  const tipo=$('tipo-equipo').value;
+  const cl=CHECKLISTS[tipo];
+  const el=$('check-list');
+  el.innerHTML=cl.items.map((item,i)=>`
+    <div class="citem">
+      <div class="citem-lbl">${item}</div>
+      <div class="citem-opts">
+        <button class="copt ok ${checkState[i].status==='ok'?'on':''}" onclick="setStatus(${i},'ok')">✓ OK</button>
+        <button class="copt warn ${checkState[i].status==='warn'?'on':''}" onclick="setStatus(${i},'warn')">⚠ Attenzione</button>
+        <button class="copt na ${checkState[i].status==='na'?'on':''}" onclick="setStatus(${i},'na')">— N/A</button>
+      </div>
+      <div class="citem-note ${checkState[i].status==='warn'?'show':''}" id="note-wrap-${i}">
+        <input type="text" placeholder="Osservazione…" value="${esc(checkState[i].note)}" oninput="checkState[${i}].note=this.value">
+      </div>
+    </div>`).join('');
+  updateSummary();
+}
+
+function setStatus(i,status){
+  checkState[i].status=checkState[i].status===status?null:status;
+  renderChecklist();
+}
+
+function updateSummary(){
+  const vals=Object.values(checkState);
+  const ok=vals.filter(v=>v.status==='ok').length;
+  const warn=vals.filter(v=>v.status==='warn').length;
+  const na=vals.filter(v=>v.status==='na').length;
+  const pend=vals.length-ok-warn-na;
+  $('summary-bar').innerHTML=`
+    <span class="sb-item"><span class="sb-dot" style="background:#2ecc71"></span>${ok} OK</span>
+    <span class="sb-item"><span class="sb-dot" style="background:#f39c12"></span>${warn} attenzione</span>
+    <span class="sb-item"><span class="sb-dot" style="background:#454d6a"></span>${na} N/A</span>
+    <span class="sb-item"><span class="sb-dot" style="background:#2a2e42"></span>${pend} da verificare</span>`;
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ═══════════ FIRMA (canvas) ═══════════
+let sigCtx,drawing=false,sigHasContent=false;
+function setupSig(){
+  const canvas=$('sigpad');
+  const ratio=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*ratio;
+  canvas.height=rect.height*ratio;
+  sigCtx=canvas.getContext('2d');
+  sigCtx.scale(ratio,ratio);
+  sigCtx.lineWidth=2.2;
+  sigCtx.lineCap='round';
+  sigCtx.strokeStyle='#1B2A4A';
+
+  const pos=e=>{
+    const r=canvas.getBoundingClientRect();
+    const t=e.touches?e.touches[0]:e;
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  };
+  const start=e=>{e.preventDefault();drawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
+  const move=e=>{if(!drawing)return;e.preventDefault();const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasContent=true;};
+  const end=()=>{drawing=false;};
+
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',move);
+  canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('mouseleave',end);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',move,{passive:false});
+  canvas.addEventListener('touchend',end);
+}
+function clearSig(){
+  const canvas=$('sigpad');
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  sigHasContent=false;
+}
+
+// ═══════════ LIMPIAR FORM ═══════════
+function clearForm(){
+  if(!confirm('Pulire tutto il modulo?'))return;
+  ['cliente','direccion','tecnico','equipo-info','conclusion','materiales','firmante'].forEach(id=>$(id).value='');
+  $('fecha').value='';$('proximo').value='';
+  buildChecklist();
+  clearSig();
+}
+
+// ═══════════ PDF ═══════════
+function genPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const H=doc.internal.pageSize.getHeight();
+  const NAVY=[27,42,74],ORA=[0,212,170],BLU=[0,143,110],MUT=[120,130,160],BORD=[210,214,224];
+
+  // Header
+  doc.setFillColor(...NAVY);doc.rect(0,0,W,26,'F');
+  doc.setFillColor(...ORA);doc.rect(0,26,W,1,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);
+  doc.text('Valve Electronics',14,15);doc.setTextColor(...ORA);doc.text('ELECTRONICS',32,15);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,205,220);
+  doc.text('CHECKLIST DI MANUTENZIONE TECNICO',14,21);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,205,220);
+  doc.text(new Date().toLocaleDateString('it-IT'),W-14,15,{align:'right'});
+
+  let y=36;
+  doc.setTextColor(20,25,35);
+
+  // Datos generales
+  const tipo=$('tipo-equipo').value;
+  const cl=CHECKLISTS[tipo];
+  doc.setFont('helvetica','bold');doc.setFontSize(11);
+  doc.text('Dati del servizio',14,y); y+=2;
+  doc.setDrawColor(...ORA);doc.setLineWidth(.5);doc.line(14,y,60,y); y+=6;
+
+  const fields=[
+    ['Cliente',$('cliente').value||'—'],
+    ['Data',$('fecha').value||'—'],
+    ['Indirizzo',$('direccion').value||'—'],
+    ['Tecnico',$('tecnico').value||'—'],
+    ['Tipo di apparecchio',cl.name],
+    ['Apparecchio (marca/modello)',$('equipo-info').value||'—'],
+    ['Prossima manutenzione',$('proximo').value||'—'],
+  ];
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+  fields.forEach(([l,v])=>{
+    doc.setFont('helvetica','bold');doc.setTextColor(...MUT);doc.text(l+':',14,y);
+    doc.setFont('helvetica','normal');doc.setTextColor(20,25,35);doc.text(String(v),58,y);
+    y+=6;
+  });
+  y+=4;
+
+  // Checklist tabla
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,25,35);
+  doc.text('Punti di ispezione',14,y); y+=2;
+  doc.setDrawColor(...ORA);doc.line(14,y,70,y); y+=7;
+
+  doc.setFillColor(...NAVY);doc.rect(14,y-5,W-28,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(255,255,255);
+  doc.text('VOCE',16,y);doc.text('STATO',W-70,y);doc.text('OSSERVAZIONE',W-50,y);
+  y+=4;
+
+  cl.items.forEach((item,i)=>{
+    if(y>H-70){doc.addPage();y=20;}
+    const st=checkState[i]?checkState[i].status:null;
+    const note=checkState[i]?checkState[i].note:'';
+    const stLabel=st==='ok'?'OK':st==='warn'?'ATTENZIONE':st==='na'?'N/A':'—';
+    const stColor=st==='ok'?[39,174,96]:st==='warn'?[230,150,20]:[150,155,170];
+    doc.setDrawColor(...BORD);doc.setLineWidth(.2);doc.line(14,y+2,W-14,y+2);
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(30,35,45);
+    const itemLines=doc.splitTextToSize(item,W-100);
+    doc.text(itemLines,16,y+6);
+    doc.setFont('helvetica','bold');doc.setTextColor(...stColor);
+    doc.text(stLabel,W-70,y+6);
+    doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...MUT);
+    const noteLines=doc.splitTextToSize(note||'—',38);
+    doc.text(noteLines,W-50,y+6);
+    y+=Math.max(itemLines.length,noteLines.length)*5+4;
+  });
+
+  y+=6;
+  if(y>H-90){doc.addPage();y=20;}
+
+  // Conclusión
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,25,35);
+  doc.text('Conclusione generale',14,y); y+=2;
+  doc.setDrawColor(...ORA);doc.line(14,y,70,y); y+=7;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,45,55);
+  const conclLines=doc.splitTextToSize($('conclusion').value||'Nessuna osservazione aggiuntiva.',W-28);
+  doc.text(conclLines,14,y); y+=conclLines.length*5+8;
+
+  const matLines=doc.splitTextToSize('Materiali/ricambi: '+($('materiales').value||'—'),W-28);
+  doc.setFont('helvetica','italic');doc.setFontSize(8.5);doc.setTextColor(...MUT);
+  doc.text(matLines,14,y); y+=matLines.length*5+10;
+
+  if(y>H-65){doc.addPage();y=20;}
+
+  // Firma
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,25,35);
+  doc.text('Conformità del cliente',14,y); y+=2;
+  doc.setDrawColor(...ORA);doc.line(14,y,70,y); y+=8;
+
+  doc.setDrawColor(...BORD);doc.setLineWidth(.3);doc.rect(14,y,80,35);
+  if(sigHasContent){
+    try{
+      const sigData=$('sigpad').toDataURL('image/png');
+      doc.addImage(sigData,'PNG',16,y+2,76,28);
+    }catch(e){}
+  }
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...MUT);
+  doc.text('Firma',16,y+39);
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(20,25,35);
+  doc.text($('firmante').value||'—',100,y+15);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...MUT);
+  doc.text('Qualifica',100,y+22);
+
+  // Footer
+  doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...MUT);
+  doc.text('Valve Electronics™ · Soluzioni tecniche residenziali e corporate',14,H-10);
+
+  const fname=`Valve_Checklist_${cl.name.replace(/[\s\/]+/g,'_')}_${($('cliente').value||'cliente').replace(/\s+/g,'_')}.pdf`;
+  doc.save(fname);
+}
+
+// ═══════════ INIT ═══════════
+$('fecha').value=new Date().toISOString().split('T')[0];
+buildChecklist();
+window.addEventListener('DOMContentLoaded',setupSig);
+setupSig();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

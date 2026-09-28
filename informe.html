@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Relazione Tecnica di Visita</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh}
+
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fd);font-weight:700;font-size:.85rem;letter-spacing:.04em;padding:9px 16px;border-radius:4px;border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-ghost{background:none;color:var(--dim);border:1px solid var(--b1)}
+.btn-ghost:hover{color:var(--w);border-color:var(--b2)}
+.btn-ora{background:var(--ora);color:#fff}
+.btn-ora:hover{background:var(--ora2)}
+
+.wrap{max-width:880px;margin:0 auto;padding:26px 5vw 80px}
+.sect{background:var(--card);border:1px solid var(--b1);border-radius:6px;margin-bottom:20px;overflow:hidden}
+.sect-hd{padding:14px 20px;border-bottom:1px solid var(--b1);background:linear-gradient(180deg,rgba(74,142,194,.06),transparent);display:flex;align-items:center;gap:10px}
+.sect-tt{font-family:var(--fd);font-size:1.05rem;font-weight:700}
+.sect-bd{padding:18px 20px}
+
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fld{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fld:last-child{margin-bottom:0}
+.flbl{font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.inp,.sel,.txt{background:var(--surf);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:10px 12px;border-radius:4px;outline:none;transition:border-color .15s;width:100%}
+.inp:focus,.sel:focus,.txt:focus{border-color:var(--ora)}
+.sel{cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238089a8' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+.sel option{background:var(--surf)}
+.txt{resize:vertical;min-height:80px;font-family:var(--fb)}
+
+.photo-drop{border:2px dashed var(--b1);border-radius:6px;padding:24px;text-align:center;cursor:pointer;transition:border-color .15s;color:var(--dim)}
+.photo-drop:hover{border-color:var(--ora)}
+.photo-drop input{display:none}
+.photo-drop .pd-ico{font-size:1.8rem;margin-bottom:6px}
+.photo-drop .pd-txt{font-size:.85rem}
+
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:14px}
+.photo-item{background:var(--surf);border:1px solid var(--b1);border-radius:5px;overflow:hidden;display:flex;flex-direction:column}
+.photo-item img{width:100%;height:100px;object-fit:cover;display:block}
+.photo-item input{border:none;background:none;color:var(--w);font-size:.75rem;padding:6px 8px;outline:none;font-family:var(--fb)}
+.photo-item input::placeholder{color:var(--mut)}
+.photo-item-del{align-self:flex-end;background:var(--red);color:#fff;border:none;width:18px;height:18px;border-radius:50%;font-size:.6rem;cursor:pointer;margin:5px;display:flex;align-items:center;justify-content:center}
+
+.sig-wrap{display:flex;flex-direction:column;gap:8px}
+canvas.sig{background:#f8f9fb;border:1px solid var(--b1);border-radius:4px;width:100%;height:150px;touch-action:none;cursor:crosshair}
+.sig-acts{display:flex;justify-content:space-between;align-items:center}
+.sig-hint{font-size:.78rem;color:var(--mut)}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .fgrid{grid-template-columns:1fr}
+  .top-actions .btn span.lbl{display:none}
+}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="brand">Valve Electronics <b>ELECTRONICS</b><span>RELAZIONE TECNICA DI VISITA</span></div>
+  </div>
+  <div class="top-actions">
+    <button class="btn btn-ghost" onclick="clearForm()">✕ <span class="lbl">Pulisci</span></button>
+    <button class="btn btn-ora" onclick="genPDF()">📄 <span class="lbl">Genera PDF</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- DATOS GENERALES -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">📋 Dati del servizio</span></div>
+    <div class="sect-bd">
+      <div class="fgrid">
+        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale"></div>
+        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date"></div>
+      </div>
+      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo"></div>
+      <div class="fgrid">
+        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico"></div>
+        <div class="fld"><span class="flbl">Tipo di servizio</span>
+          <select class="sel" id="tipo-serv">
+            <option>Elettrico</option><option>Solare / Energie rinnovabili</option>
+            <option>Climatizzazione / Aria condizionata</option><option>Refrigerazione</option>
+            <option>Sicurezza / Telecamere</option><option>Reti / Connettività</option>
+            <option>Automazione</option><option>Idraulica / Gas</option><option>Generatori</option>
+          </select></div>
+      </div>
+      <div class="fld"><span class="flbl">N° ordine / riferimento (opzionale)</span><input class="inp" id="orden" type="text" placeholder="OS-0001"></div>
+    </div>
+  </div>
+
+  <!-- DIAGNÓSTICO -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">🔍 Diagnosi</span></div>
+    <div class="sect-bd">
+      <div class="fld"><span class="flbl">Motivo della visita</span><textarea class="txt" id="motivo" placeholder="Reclamo del cliente, manutenzione programmata, nuovo impianto…" style="min-height:60px"></textarea></div>
+      <div class="fld"><span class="flbl">Diagnosi riscontrata</span><textarea class="txt" id="diagnostico" placeholder="Descrizione tecnica dello stato riscontrato e la causa del problema…"></textarea></div>
+      <div class="fld"><span class="flbl">Interventi effettuati</span><textarea class="txt" id="tareas" placeholder="Dett degli interventi realizzati durante la visita…"></textarea></div>
+      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Elenco materiali e ricambi impiegati…" style="min-height:55px"></textarea></div>
+      <div class="fld"><span class="flbl">Raccomandazioni</span><textarea class="txt" id="recomendazioni" placeholder="Raccomandazioni tecniche per il cliente, prossimi passi…" style="min-height:60px"></textarea></div>
+    </div>
+  </div>
+
+  <!-- FOTOS -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">📷 Registro fotografico</span></div>
+    <div class="sect-bd">
+      <label class="photo-drop">
+        <div class="pd-ico">📷</div>
+        <div class="pd-txt">Tocca per aggiungere foto del lavoro svolto</div>
+        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(event)">
+      </label>
+      <div class="photo-grid" id="photo-grid"></div>
+    </div>
+  </div>
+
+  <!-- FIRMA -->
+  <div class="sect">
+    <div class="sect-hd"><span class="sect-tt">✍️ Conformità del cliente</span></div>
+    <div class="sect-bd">
+      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome"></div>
+      <div class="sig-wrap">
+        <span class="flbl">Firma</span>
+        <canvas class="sig" id="sigpad"></canvas>
+        <div class="sig-acts">
+          <span class="sig-hint">Firma con il dito o il mouse all'interno del riquadro</span>
+          <button class="btn btn-ghost" onclick="clearSig()" style="padding:6px 12px;font-size:.75rem">Cancella firma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+let photos=[]; // {dataUrl, caption}
+let photoSeq=0;
+
+// ═══════════ FOTOS ═══════════
+function handlePhotos(e){
+  const files=Array.from(e.target.files);
+  files.forEach(file=>{
+    if(!file.type.startsWith('image/'))return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        // Redimensionar a max 900px de ancho para controlar el peso del PDF
+        const maxW=900;
+        const scale=Math.min(1,maxW/img.width);
+        const cw=img.width*scale,ch=img.height*scale;
+        const canvas=document.createElement('canvas');
+        canvas.width=cw;canvas.height=ch;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,cw,ch);
+        const dataUrl=canvas.toDataURL('image/jpeg',0.78);
+        photos.push({id:photoSeq++,dataUrl,caption:''});
+        renderPhotos();
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value='';
+}
+
+function renderPhotos(){
+  $('photo-grid').innerHTML=photos.map(p=>`
+    <div class="photo-item">
+      <button class="photo-item-del" onclick="delPhoto(${p.id})">✕</button>
+      <img src="${p.dataUrl}">
+      <input type="text" placeholder="Descripción…" value="${esc(p.caption)}" oninput="setCaption(${p.id},this.value)">
+    </div>`).join('');
+}
+function delPhoto(id){photos=photos.filter(p=>p.id!==id);renderPhotos();}
+function setCaption(id,v){const p=photos.find(p=>p.id===id);if(p)p.caption=v;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ═══════════ FIRMA ═══════════
+let sigCtx,drawing=false,sigHasContent=false;
+function setupSig(){
+  const canvas=$('sigpad');
+  const ratio=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*ratio;
+  canvas.height=rect.height*ratio;
+  sigCtx=canvas.getContext('2d');
+  sigCtx.scale(ratio,ratio);
+  sigCtx.lineWidth=2.2;
+  sigCtx.lineCap='round';
+  sigCtx.strokeStyle='#1B2A4A';
+
+  const pos=e=>{
+    const r=canvas.getBoundingClientRect();
+    const t=e.touches?e.touches[0]:e;
+    return {x:t.clientX-r.left,y:t.clientY-r.top};
+  };
+  const start=e=>{e.preventDefault();drawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
+  const move=e=>{if(!drawing)return;e.preventDefault();const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasContent=true;};
+  const end=()=>{drawing=false;};
+
+  canvas.addEventListener('mousedown',start);
+  canvas.addEventListener('mousemove',move);
+  canvas.addEventListener('mouseup',end);
+  canvas.addEventListener('mouseleave',end);
+  canvas.addEventListener('touchstart',start,{passive:false});
+  canvas.addEventListener('touchmove',move,{passive:false});
+  canvas.addEventListener('touchend',end);
+}
+function clearSig(){
+  const canvas=$('sigpad');
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  sigHasContent=false;
+}
+
+// ═══════════ LIMPIAR ═══════════
+function clearForm(){
+  if(!confirm('Pulire tutto il rapporto?'))return;
+  ['cliente','direccion','tecnico','orden','motivo','diagnostico','tareas','materiales','recomendaciones','firmante'].forEach(id=>$(id).value='');
+  $('fecha').value=new Date().toISOString().split('T')[0];
+  photos=[];renderPhotos();
+  clearSig();
+}
+
+// ═══════════ PDF ═══════════
+function genPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const H=doc.internal.pageSize.getHeight();
+  const NAVY=[27,42,74],ORA=[0,212,170],BLU=[0,143,110],MUT=[120,130,160];
+
+  function header(subtitle){
+    doc.setFillColor(...NAVY);doc.rect(0,0,W,26,'F');
+    doc.setFillColor(...ORA);doc.rect(0,26,W,1,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(255,255,255);
+    doc.text('Valve Electronics',14,15);doc.setTextColor(...ORA);doc.text('ELECTRONICS',32,15);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,205,220);
+    doc.text(subtitle,14,21);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(200,205,220);
+    doc.text(new Date().toLocaleDateString('it-IT'),W-14,15,{align:'right'});
+    const orden=$('orden').value;
+    if(orden){doc.text('Ref: '+orden,W-14,21,{align:'right'});}
+  }
+
+  function footer(){
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...MUT);
+    doc.text('Valve Electronics™ · Soluzioni tecniche residenziali e corporate · Italia',14,H-8);
+  }
+
+  header('RELAZIONE TECNICA DI VISITA');
+  let y=36;
+
+  // Datos generales
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,25,35);
+  doc.text('Dati del servizio',14,y); y+=2;
+  doc.setDrawColor(...ORA);doc.setLineWidth(.5);doc.line(14,y,60,y); y+=6;
+
+  const fields=[
+    ['Cliente',$('cliente').value||'—'],
+    ['Data',$('fecha').value||'—'],
+    ['Indirizzo',$('direccion').value||'—'],
+    ['Tecnico',$('tecnico').value||'—'],
+    ['Tipo di servizio',$('tipo-serv').value],
+  ];
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);
+  fields.forEach(([l,v])=>{
+    doc.setFont('helvetica','bold');doc.setTextColor(...MUT);doc.text(l+':',14,y);
+    doc.setFont('helvetica','normal');doc.setTextColor(20,25,35);doc.text(String(v),58,y);
+    y+=6;
+  });
+  y+=4;
+
+  // Bloques de texto
+  const blocks=[
+    ['Motivo della visita',$('motivo').value],
+    ['Diagnosi riscontrata',$('diagnostico').value],
+    ['Interventi effettuati',$('tareas').value],
+    ['Materiali / ricambi utilizzati',$('materiales').value],
+    ['Raccomandazioni',$('recomendazioni').value],
+  ];
+  blocks.forEach(([title,text])=>{
+    if(y>H-40){doc.addPage();header('RELAZIONE TECNICA DI VISITA');y=36;}
+    doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.setTextColor(20,25,35);
+    doc.text(title,14,y); y+=2;
+    doc.setDrawColor(...ORA);doc.setLineWidth(.4);doc.line(14,y,14+doc.getTextWidth(title)+2,y); y+=6;
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,45,55);
+    const lines=doc.splitTextToSize(text||'Nessuna informazione registrata.',W-28);
+    if(y+lines.length*5>H-30){doc.addPage();header('RELAZIONE TECNICA DI VISITA');y=36;}
+    doc.text(lines,14,y); y+=lines.length*5+8;
+  });
+
+  footer();
+
+  // ── Página de fotos ──
+  if(photos.length){
+    doc.addPage();header('REGISTRO FOTOGRAFICO');
+    let py=36;
+    const cols=2,gap=8;
+    const cw=(W-28-gap)/cols;
+    const ch=cw*0.72;
+    let col=0;
+    photos.forEach((p,i)=>{
+      const px=14+col*(cw+gap);
+      if(py+ch+12>H-15){doc.addPage();header('REGISTRO FOTOGRAFICO');py=36;col=0;}
+      try{ doc.addImage(p.dataUrl,'JPEG',px,py,cw,ch); }catch(e){}
+      doc.setDrawColor(220,224,232);doc.setLineWidth(.2);doc.rect(px,py,cw,ch);
+      if(p.caption){
+        doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(80,86,100);
+        const capLines=doc.splitTextToSize(p.caption,cw);
+        doc.text(capLines,px,py+ch+4);
+      }
+      col++;
+      if(col>=cols){col=0;py+=ch+16;}
+    });
+    footer();
+  }
+
+  // ── Firma ──
+  doc.addPage();header('CONFORMITÀ DEL CLIENTE');
+  let fy=40;
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(20,25,35);
+  doc.text('Conformità del cliente',14,fy); fy+=2;
+  doc.setDrawColor(...ORA);doc.line(14,fy,70,fy); fy+=10;
+
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(40,45,55);
+  doc.text('Il sottoscritto dichiara conformità con il lavoro svolto e le informazioni dettagliate nella presente relazione.',14,fy,{maxWidth:W-28});
+  fy+=18;
+
+  doc.setDrawColor(200,204,214);doc.setLineWidth(.3);doc.rect(14,fy,90,38);
+  if(sigHasContent){
+    try{
+      const sigData=$('sigpad').toDataURL('image/png');
+      doc.addImage(sigData,'PNG',16,fy+2,86,30);
+    }catch(e){}
+  }
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...MUT);
+  doc.text('Firma',16,fy+43);
+
+  doc.setFont('helvetica','normal');doc.setFontSize(9.5);doc.setTextColor(20,25,35);
+  doc.text($('firmante').value||'—',112,fy+18);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(...MUT);
+  doc.text('Qualifica',112,fy+25);
+  doc.text('Tecnico: '+($('tecnico').value||'—'),112,fy+34);
+  footer();
+
+  const fname=`Valve_Informe_${($('cliente').value||'cliente').replace(/\s+/g,'_')}_${($('fecha').value||'').replace(/-/g,'')}.pdf`;
+  doc.save(fname);
+}
+
+// ═══════════ INIT ═══════════
+$('fecha').value=new Date().toISOString().split('T')[0];
+setupSig();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

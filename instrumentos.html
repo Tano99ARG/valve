@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Valve Electronics">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><polygon points='20,2 38,34 2,34' fill='%234A8EC2' opacity='.75'/><polygon points='20,2 38,34 20,34' fill='%233a3a4a' opacity='.8'/><path d='M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z' fill='%23F47920'/></svg>" type="image/svg+xml">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%230a0a0a'/><polygon points='96,24 176,156 16,156' fill='%234A8EC2' opacity='.75'/><polygon points='96,24 176,156 96,156' fill='%233a3a4a' opacity='.8'/><path d='M75,105 L96,60 L117,105 L106,105 L117,140 L75,140 L86,105 Z' fill='%23F47920'/></svg>">
+<title>Valve Electronics — Strumenti di Misura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --navy:#1B2A4A;--ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;--cyan:#48c9d8;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:17px;scroll-behavior:smooth}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:1rem;line-height:1.6;min-height:100vh}
+
+.top{position:sticky;top:0;z-index:50;height:60px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;padding:0 5vw;gap:12px}
+.logo{display:flex;align-items:center;gap:9px}
+.logo svg{width:30px;height:30px}
+.brand{font-family:var(--fd);font-weight:800;font-size:1.15rem;letter-spacing:.06em;line-height:1}
+.brand b{color:var(--ora)}
+.brand span{display:block;font-size:.6rem;letter-spacing:.18em;color:var(--dim);font-weight:600}
+.top-title{font-family:var(--fd);font-size:.9rem;font-weight:600;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-left:auto}
+
+.tabs{position:sticky;top:60px;z-index:40;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;overflow-x:auto;padding:0 5vw;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:14px 16px;font-family:var(--fd);font-size:.95rem;font-weight:700;letter-spacing:.03em;color:var(--dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
+.tab:hover{color:var(--w)}
+.tab.on{border-bottom-color:var(--accent)}
+.tab .cnt{font-family:var(--fm);font-size:.7rem;color:var(--mut);background:var(--card);padding:1px 6px;border-radius:8px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:24px 5vw 80px}
+.searchbar{margin-bottom:20px}
+.searchbar input{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.95rem;padding:12px 16px;border-radius:5px;outline:none;transition:border-color .15s}
+.searchbar input:focus{border-color:var(--ora)}
+.searchbar input::placeholder{color:var(--mut)}
+
+.view{display:none}
+.view.on{display:block}
+.view-intro{margin-bottom:22px}
+.view-intro h2{font-family:var(--fd);font-size:1.7rem;font-weight:800;margin-bottom:4px}
+.view-intro p{color:var(--dim);font-size:.95rem}
+
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+.icard{background:var(--card);border:1px solid var(--b1);border-radius:6px;overflow:hidden;display:flex;flex-direction:column;border-top:3px solid var(--accent)}
+.icard-hd{padding:16px 18px 14px;display:flex;gap:14px;align-items:flex-start;border-bottom:1px solid var(--b1)}
+.icard-ico{width:54px;height:54px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--card2);border-radius:8px}
+.icard-ico svg{width:38px;height:38px}
+.icard-tt{font-family:var(--fd);font-size:1.18rem;font-weight:700;line-height:1.2;margin-bottom:3px}
+.icard-sub{font-size:.83rem;color:var(--dim);line-height:1.4}
+.icard-bd{padding:14px 18px;display:flex;flex-direction:column;gap:13px;flex:1}
+.isec-lbl{font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ilist{display:flex;flex-direction:column;gap:5px;padding-left:0}
+.ilist li{list-style:none;font-size:.84rem;color:var(--dim);padding-left:14px;position:relative;line-height:1.45}
+.ilist li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:.78rem}
+.ilist.apps li::before{content:'•';color:var(--mut)}
+.itip{margin-top:auto;background:linear-gradient(135deg,var(--navy),#16223c);border:1px solid var(--b2);border-left:3px solid var(--ora);border-radius:4px;padding:10px 13px;font-size:.78rem;color:var(--w);line-height:1.5;opacity:.92}
+.itip b{color:var(--ora2)}
+
+@media(max-width:600px){
+  html{font-size:16px}
+  .igrid{grid-template-columns:1fr}
+  .top-title{display:none}
+  .icard-ico{width:46px;height:46px}
+  .icard-ico svg{width:30px;height:30px}
+}
+@media (pointer: coarse) {
+  a, button, input, select, textarea {
+    min-height: 44px;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 38,34 2,34" fill="#008F6E" opacity=".75"/>
+      <polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/>
+      <path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/>
+    </svg>
+    <div class="brand">Valve Electronics <b>ELECTRONICS</b><span>STRUMENTI DI MISURA</span></div>
+  </div>
+  <div class="top-title">Catalogo tecnico di riferimento</div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="wrap">
+  <div class="view-intro">
+    <h2 id="cat-title">Strumenti di misura</h2>
+    <p id="cat-desc">Caratteristiche tecniche e applicazioni di campo per categoria.</p>
+  </div>
+  <div class="searchbar"><input type="text" id="search" placeholder="Cerca strumento per nome, caratteristica o applicazione…" oninput="render()"></div>
+  <div class="igrid" id="grid"></div>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+
+// ═══════════ CATEGORÍAS ═══════════
+const CATS=[
+  {id:'electrico', name:'Elettrico', accent:'#008F6E', desc:'Strumenti per misura, diagnosi e verifica di impianti elettrici a bassa tensione (CEI 64-8).'},
+  {id:'refrigeracion', name:'Refrigerazione / Clima', accent:'#48c9d8', desc:'Strumenti per diagnosi cicli frigoriferi, cargia gas e avviamento apparecchi di climatizzazione.'},
+  {id:'solar', name:'Solare / Rinnovabili', accent:'#f1c40f', desc:'Strumenti specifici per collaudo e manutenzione di sistemi fotovoltaici.'},
+  {id:'redes', name:'Reti / Sicurezza', accent:'#9b59b6', desc:'Strumenti per certificazione cablaggio strutturato, fibra ottica e sistemi di videosorveglianza.'},
+  {id:'gas', name:'Gas / Idraulica', accent:'#e85d4a', desc:'Strumenti per verifica di tenuta, pressione e portata in impianti di gas e acqua (UNI 9039).'},
+  {id:'general', name:'Generale / Multiuso', accent:'#2ecc71', desc:'Strumenti trasversali applicabili a molteplici ambiti dell\'impianto.'},
+];
+
+// ═══════════ ICONOS (SVG simples, estilo línea) ═══════════
+const ic = {
+  multimetro:`<rect x="6" y="3" width="26" height="34" rx="3" fill="none" stroke="#008F6E" stroke-width="2"/><rect x="10" y="7" width="18" height="9" rx="1" fill="#008F6E" opacity=".25"/><text x="19" y="14" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">2.20</text><circle cx="13" cy="22" r="2.5" fill="none" stroke="#008F6E" stroke-width="1.5"/><circle cx="19" cy="22" r="2.5" fill="none" stroke="#008F6E" stroke-width="1.5"/><circle cx="25" cy="22" r="2.5" fill="none" stroke="#008F6E" stroke-width="1.5"/><circle cx="16" cy="29" r="2.5" fill="none" stroke="#008F6E" stroke-width="1.5"/><circle cx="22" cy="29" r="2.5" fill="none" stroke="#008F6E" stroke-width="1.5"/><line x1="13" y1="34" x2="9" y2="40" stroke="#c0392b" stroke-width="2"/><line x1="25" y1="34" x2="29" y2="40" stroke="#1a1d28" stroke-width="2"/>`,
+  pinza:`<path d="M10,20 A12,12 0 1 1 28,20" fill="none" stroke="#008F6E" stroke-width="3.5"/><rect x="6" y="20" width="8" height="6" rx="1.5" fill="#008F6E"/><rect x="24" y="20" width="8" height="6" rx="1.5" fill="#008F6E"/><rect x="11" y="24" width="16" height="14" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><text x="19" y="34" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#008F6E">A</text>`,
+  teluro:`<rect x="9" y="6" width="20" height="16" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><text x="19" y="16" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">Ω</text><line x1="19" y1="22" x2="19" y2="30" stroke="#27ae60" stroke-width="2"/><line x1="9" y1="34" x2="29" y2="34" stroke="#27ae60" stroke-width="2"/><line x1="13" y1="30" x2="13" y2="38" stroke="#27ae60" stroke-width="1.5"/><line x1="19" y1="30" x2="19" y2="38" stroke="#27ae60" stroke-width="1.5"/><line x1="25" y1="30" x2="25" y2="38" stroke="#27ae60" stroke-width="1.5"/>`,
+  megger:`<rect x="7" y="8" width="24" height="20" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><path d="M11,22 A8,8 0 0 1 27,22" fill="none" stroke="#008F6E" stroke-width="2"/><line x1="19" y1="22" x2="24" y2="16" stroke="#00D4AA" stroke-width="1.8"/><text x="19" y="14" text-anchor="middle" font-family="Share Tech Mono" font-size="5.5" fill="#00D4AA">MΩ</text><line x1="13" y1="28" x2="13" y2="36" stroke="#c0392b" stroke-width="2"/><line x1="25" y1="28" x2="25" y2="36" stroke="#1a1d28" stroke-width="2"/>`,
+  analizador:`<rect x="6" y="6" width="26" height="26" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><path d="M9,24 L13,16 L17,26 L21,12 L25,22 L29,18" fill="none" stroke="#00D4AA" stroke-width="1.8"/><line x1="9" y1="29" x2="29" y2="29" stroke="#008F6E" stroke-width="1" opacity=".5"/>`,
+  voltstick:`<rect x="15" y="4" width="8" height="26" rx="4" fill="none" stroke="#008F6E" stroke-width="2"/><circle cx="19" cy="9" r="2" fill="#00D4AA"/><line x1="19" y1="30" x2="19" y2="38" stroke="#008F6E" stroke-width="2"/><path d="M24,8 Q30,9 28,15" fill="none" stroke="#00D4AA" stroke-width="1.2" opacity=".7"/>`,
+  fasesec:`<rect x="9" y="14" width="20" height="16" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><text x="19" y="25" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">1·2·3</text><line x1="13" y1="14" x2="13" y2="6" stroke="#c0392b" stroke-width="2"/><line x1="19" y1="14" x2="19" y2="6" stroke="#27ae60" stroke-width="2"/><line x1="25" y1="14" x2="25" y2="6" stroke="#2980b9" stroke-width="2"/>`,
+  luxometro:`<rect x="9" y="16" width="20" height="16" rx="2" fill="none" stroke="#008F6E" stroke-width="2"/><circle cx="19" cy="13" r="6" fill="none" stroke="#f1c40f" stroke-width="2"/><line x1="19" y1="3" x2="19" y2="6" stroke="#f1c40f" stroke-width="1.5"/><line x1="11" y1="8" x2="13" y2="10" stroke="#f1c40f" stroke-width="1.5"/><line x1="27" y1="8" x2="25" y2="10" stroke="#f1c40f" stroke-width="1.5"/><text x="19" y="26" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#008F6E">lx</text>`,
+  manometro:`<circle cx="13" cy="17" r="9" fill="none" stroke="#c0392b" stroke-width="2"/><line x1="13" y1="17" x2="17" y2="12" stroke="#c0392b" stroke-width="1.5"/><circle cx="26" cy="17" r="9" fill="none" stroke="#2980b9" stroke-width="2"/><line x1="26" y1="17" x2="22" y2="11" stroke="#2980b9" stroke-width="1.5"/><line x1="13" y1="26" x2="13" y2="34" stroke="#7a82a8" stroke-width="2"/><line x1="26" y1="26" x2="26" y2="34" stroke="#7a82a8" stroke-width="2"/><line x1="13" y1="34" x2="26" y2="34" stroke="#7a82a8" stroke-width="2"/>`,
+  termopinza:`<path d="M11,18 A8,8 0 1 1 27,18" fill="none" stroke="#48c9d8" stroke-width="3"/><rect x="14" y="22" width="10" height="12" rx="2" fill="none" stroke="#48c9d8" stroke-width="2"/><text x="19" y="30" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#48c9d8">°C</text>`,
+  termoir:`<rect x="8" y="14" width="14" height="10" rx="2" fill="none" stroke="#48c9d8" stroke-width="2"/><path d="M22,17 L30,13 M22,21 L30,25" stroke="#48c9d8" stroke-width="2"/><circle cx="30" cy="13" r="1.4" fill="#e74c3c"/><line x1="15" y1="24" x2="15" y2="32" stroke="#48c9d8" stroke-width="2"/><path d="M24,9 Q28,11 27,15" fill="none" stroke="#e74c3c" stroke-width="1.2"/>`,
+  balanza:`<rect x="6" y="26" width="26" height="6" rx="1.5" fill="none" stroke="#48c9d8" stroke-width="2"/><rect x="14" y="10" width="10" height="16" rx="2" fill="none" stroke="#7a82a8" stroke-width="1.6"/><ellipse cx="19" cy="10" rx="5" ry="2" fill="none" stroke="#7a82a8" stroke-width="1.4"/><text x="19" y="22" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#48c9d8">kg</text>`,
+  detfuga:`<line x1="13" y1="32" x2="22" y2="13" stroke="#48c9d8" stroke-width="2.5"/><circle cx="24" cy="9" r="4" fill="none" stroke="#48c9d8" stroke-width="2"/><path d="M28,6 Q34,8 32,13" fill="none" stroke="#f39c12" stroke-width="1.4"/><path d="M30,3 Q37,6 34,12" fill="none" stroke="#f39c12" stroke-width="1.2" opacity=".6"/>`,
+  vacuo:`<circle cx="14" cy="14" r="8" fill="none" stroke="#48c9d8" stroke-width="2"/><text x="14" y="17" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#48c9d8">μm</text><rect x="20" y="20" width="12" height="14" rx="2" fill="none" stroke="#7a82a8" stroke-width="1.6"/><line x1="20" y1="20" x2="14" y2="22" stroke="#7a82a8" stroke-width="1.6"/>`,
+  piranometro:`<ellipse cx="19" cy="22" rx="13" ry="5" fill="none" stroke="#f1c40f" stroke-width="2"/><path d="M6,22 A13,9 0 0 1 32,22" fill="none" stroke="#f1c40f" stroke-width="2"/><circle cx="19" cy="6" r="3" fill="#f1c40f"/><line x1="19" y1="11" x2="19" y2="16" stroke="#f1c40f" stroke-width="1.5"/><line x1="10" y1="9" x2="13" y2="13" stroke="#f1c40f" stroke-width="1.2"/><line x1="28" y1="9" x2="25" y2="13" stroke="#f1c40f" stroke-width="1.2"/>`,
+  ivtracer:`<rect x="6" y="6" width="26" height="22" rx="2" fill="none" stroke="#f1c40f" stroke-width="2"/><path d="M9,24 Q14,24 18,18 Q22,10 29,9" fill="none" stroke="#00D4AA" stroke-width="1.8"/><line x1="9" y1="28" x2="9" y2="6" stroke="#f1c40f" stroke-width="1" opacity=".4"/><line x1="6" y1="24" x2="32" y2="24" stroke="#f1c40f" stroke-width="1" opacity=".4"/>`,
+  termocam:`<rect x="7" y="13" width="18" height="13" rx="2" fill="none" stroke="#f1c40f" stroke-width="2"/><circle cx="28" cy="19" r="5" fill="none" stroke="#f1c40f" stroke-width="2"/><circle cx="28" cy="19" r="2" fill="#f1c40f"/><rect x="10" y="16" width="12" height="7" rx="1" fill="#e74c3c" opacity=".35"/>`,
+  cabletest:`<rect x="6" y="12" width="11" height="16" rx="1.5" fill="none" stroke="#9b59b6" stroke-width="2"/><rect x="22" y="12" width="11" height="16" rx="1.5" fill="none" stroke="#9b59b6" stroke-width="2"/><line x1="17" y1="20" x2="22" y2="20" stroke="#9b59b6" stroke-width="1.6" stroke-dasharray="2,2"/><rect x="9" y="22" width="5" height="3" fill="#9b59b6"/><rect x="25" y="22" width="5" height="3" fill="#9b59b6"/>`,
+  opticalmeter:`<rect x="5" y="14" width="11" height="12" rx="1.5" fill="none" stroke="#9b59b6" stroke-width="2"/><rect x="23" y="14" width="11" height="12" rx="1.5" fill="none" stroke="#9b59b6" stroke-width="2"/><line x1="16" y1="20" x2="23" y2="20" stroke="#f1c40f" stroke-width="1.8"/><text x="10.5" y="22" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#9b59b6">dBm</text>`,
+  toner:`<rect x="6" y="10" width="11" height="14" rx="2" fill="none" stroke="#9b59b6" stroke-width="2"/><line x1="24" y1="8" x2="24" y2="20" stroke="#9b59b6" stroke-width="2"/><circle cx="24" cy="22" r="3" fill="none" stroke="#9b59b6" stroke-width="1.8"/><path d="M28,8 Q33,11 31,16" fill="none" stroke="#f1c40f" stroke-width="1.2"/>`,
+  cctvtest:`<rect x="7" y="9" width="20" height="14" rx="2" fill="none" stroke="#9b59b6" stroke-width="2"/><path d="M14,29 L24,29 L22,23 L16,23 Z" fill="none" stroke="#9b59b6" stroke-width="1.6"/><circle cx="17" cy="16" r="3" fill="none" stroke="#9b59b6" stroke-width="1.5"/><rect x="27" y="13" width="6" height="6" rx="1" fill="#9b59b6" opacity=".5"/>`,
+  detgas:`<line x1="13" y1="32" x2="22" y2="13" stroke="#e85d4a" stroke-width="2.5"/><path d="M21,5 C24,9 20,11 22,15 C24,11 27,10 25,5 C24,7 22,6 21,5 Z" fill="#e85d4a" opacity=".75"/>`,
+  manogas:`<path d="M10,30 Q10,15 19,15 Q28,15 28,30" fill="none" stroke="#e85d4a" stroke-width="2.5"/><line x1="10" y1="30" x2="10" y2="22" stroke="#008F6E" stroke-width="2"/><line x1="28" y1="30" x2="28" y2="26" stroke="#008F6E" stroke-width="2"/><line x1="6" y1="30" x2="32" y2="30" stroke="#7a82a8" stroke-width="1.5"/>`,
+  caudalimetro:`<line x1="6" y1="20" x2="32" y2="20" stroke="#7a82a8" stroke-width="4"/><circle cx="19" cy="20" r="8" fill="none" stroke="#e85d4a" stroke-width="2"/><path d="M19,14 L19,20 L24,23" stroke="#e85d4a" stroke-width="1.6" fill="none"/>`,
+  termocamgen:`<rect x="7" y="13" width="18" height="13" rx="2" fill="none" stroke="#2ecc71" stroke-width="2"/><circle cx="28" cy="19" r="5" fill="none" stroke="#2ecc71" stroke-width="2"/><circle cx="28" cy="19" r="2" fill="#2ecc71"/><rect x="10" y="16" width="12" height="7" rx="1" fill="#f39c12" opacity=".35"/>`,
+  anemometro:`<circle cx="19" cy="16" r="3" fill="#2ecc71"/><path d="M19,16 Q26,10 26,5" stroke="#2ecc71" stroke-width="2" fill="none"/><path d="M19,16 Q13,23 19,28" stroke="#2ecc71" stroke-width="2" fill="none"/><path d="M19,16 Q26,22 13,9" stroke="#2ecc71" stroke-width="2" fill="none" opacity=".7"/><line x1="19" y1="28" x2="19" y2="36" stroke="#7a82a8" stroke-width="2"/>`,
+};
+
+// ═══════════ DATOS ═══════════
+const INSTR=[
+  // ELÉCTRICO
+  {id:'multimetro',cat:'electrico',name:'Multimetro digitale',sub:'Strumento di base per misura elettrica multifunzione',
+   specs:['Categoria di sicurezza CAT III 600V / CAT IV 300V','True RMS per segnali non sinusoidali','Funzioni: V AC/DC, A AC/DC, Ω, continuità, diodo, frequenza, capacità','Risoluzione tipica 0.1mV / 0.1Ω'],
+   apps:['Verifica tensione in quadri e prese','Misura continuità e resistenza circuiti','Diagnosi circuiti di controllo e elettronica','Prova componenti (diodi, condensatori)'],
+   tip:'Usar siempre la categoría <b>CAT</b> adecuada al punto de medición. Non misurare mai corrente nel range amperometro senza la protezione di fusibile interno verificata.'},
+  {id:'pinza',cat:'electrico',name:'Pinza amperometrica',sub:'Misura di corrente senza interrompere il circuito',
+   specs:['True RMS, range tipico 0–600A AC/DC','Apertura mascella fino a Ø30–40mm','Funzione VFD (lettura stabile su inverter)','Alcune includono misura simultanea di V e Ω'],
+   apps:['Misura corrente di linea senza interrompere il circuito','Diagnosi motori, compressori e pompe','Verifica bilanciamento carichi in sistemi trifase','Misura corrente di fuga nei differenziali'],
+   tip:'Per correnti molto basse, dare più giri al conduttore dentro la mascella e dividere la lettura per il numero di giri dati.'},
+  {id:'teluro',cat:'electrico',name:'Telurmetro',sub:'Misuratore di resistenza di messa a terra',
+   specs:['Metodo di caduta di potenziale (3 poli) o Wenner (4 poli)','Range tipico 0–2000Ω, risoluzione 0.01Ω','Include elettrodi ausiliari e bobine di cavo calibrato','Funzione di misura di resistività terreno (4 poli)'],
+   apps:['Verifica punti di terra e reti di terra','Certificazione PE in nuovi quadri','Misura resistività terreno per progettazione messa a terra','Manutenzione periodica sistemi di protezione'],
+   tip:'Scollegare l'elettrodo in prova dal sistema prima di misurare: una conexión activa puede falsear la lectura por corrientes de fuga circulantes.'},
+  {id:'megger',cat:'electrico',name:'Megohmetro (prova isolamento)',sub:'Verifica resistenza di isolamento',
+   specs:['Tensioni di prova selezionabili: 250V / 500V / 1000V DC','Range di misura fino a 200GΩ','Funzione di scarica automatica post-prova','Alcuni modelli includono misura di continuità a bassa resistenza'],
+   apps:['Verifica isolamento cavi prima di energizzare','Diagnosi avvolgimenti motori e trasformatori','Rilevamento fughe a terra negli impianti','Manutenzione predittiva in industria'],
+   tip:'Eseguire la prova sempre con il circuito deenergizzato e scaricato. Non applicare mai tensione di megger su elettronica sensibile senza scollegarla prima.'},
+  {id:'analizador',cat:'electrico',name:'Analizzatore di rete / qualità energia',sub:'Diagnosi avanzata della rete elettrica',
+   specs:['Misura THD (distorsione armonica totale)','Analisi armoniche fino all'ordine 50','Misura flicker, squilibrio fasi e fattore di potenza','Funzione datalogger per registro prolungato'],
+   apps:['Diagnosi problemi qualità energia','Dimensionamento filtri armonici','Audit energetici in impianti industriali','Ricerca scatti intempestivi delle protezioni'],
+   tip:'Registrare come minimo 7 giorni continuivi per catturare variazioni di carico rappresentative prima di emettere una diagnosi.'},
+  {id:'voltstick',cat:'electrico',name:'Rilevatore di tensione senza contatto',sub:'Verifica rapida presenza di tensione',
+   specs:['Rilevamento per accoppiamento capacitivo','Range tipico 12–1000V AC','Indicazione visiva e sonora','Non richiede contatto diretto con il conduttore'],
+   apps:['Verifica rapida prima di intervenire su un quadro','Identificazione conduttori attivi in morsetti','Prima verifica di sicurezza in campo'],
+   tip:'Non sostituisce la verifica con strumento di contatto: sempre confermare la <b>assenza di tensione</b> con un multimetro prima di lavorare.'},
+  {id:'fasesec',cat:'electrico',name:'Controllo sequenza fasi',sub:'Verifica rotazione trifase',
+   specs:['Indicazione sequenza L1-L2-L3 (diretta/inversa)','Range tipico 60–600V AC','Alcuni modelli senza contatto (per prossimità)'],
+   apps:['Verifica senso di rotazione prima di collegare motori trifase','Diagnosi guasti di avviamento in pompe e compressori','Avviamento apparecchi rotativi nuovi'],
+   tip:'Essenziale prima di energizzare pompe, compressori e ventilatori trifase: un giro inverso può danneggiare l'apparecchio meccanicamente.'},
+  {id:'luxometro',cat:'electrico',name:'Luxmetro',sub:'Misura livelli di illuminazione',
+   specs:['Range tipico 0–200.000 lux','Sensore di cella fotoelettrica con filtro di correzione spettrale','Risoluzione tipica 1 lux in scale basse'],
+   apps:['Verifica livelli illuminamento secondo normativa sicurezza','Progettazione e regolazione impianti luminosi','Controllo qualità installazione luminarie'],
+   tip:'Misurare all'altezza del piano di lavoro (0.75–0.85m) e in più punti dell'ambiente per ottenere una media rappresentativa.'},
+
+  // REFRIGERACIÓN
+  {id:'manometro',cat:'refrigeracion',name:'Set di manometri (multiplo)',sub:'Diagnosi pressioni del ciclo frigorifero',
+   specs:['Manometro bassa (0–500 psi) e alta (0–800 psi)','Corpo a 2 o 4 vie secondo modello','Tubi con connessione rapida 1/4" SAE','Quadranti con scale di pressione e temperatura di saturazione per refrigerante'],
+   apps:['Carica e recupero refrigerante','Diagnosi pressioni di lavoro del sistema','Rilevamento guasti nel ciclo (valvole, compressore, ostruzioni)','Verifica vuoto durante disidratazione'],
+   tip:'Verificare periodicamente la calibrazione del manometro contro vuoto assoluto (0 psi = 0 in/Hg) per evitare diagnosi errate.'},
+  {id:'termopinza',cat:'refrigeracion',name:'Termometro a pinza / contatto',sub:'Misura temperatura in tubazioni',
+   specs:['Range tipico -50°C a 150°C','Precisione tipica ±0.5°C','Sonda tipo K o pinza specifica per tubo di rame'],
+   apps:['Misura surriscaldamento e sottoraffreddamento','Verifica temperatura in linee di aspirazione e liquido','Diagnosi carica refrigerante per metodo temperature'],
+   tip:'Isolare la sonda dall'ambiente con nastro o schiuma isolante per evitare letture influenzate dalla temperatura esterna al tubo.'},
+  {id:'termoir',cat:'refrigeracion',name:'Termometro a infrarossi',sub:'Misura temperatura senza contatto',
+   specs:['Range tipico -50°C a 550°C','Rapporto distanza:punto (D:S) tipico 12:1','Mirino laser di puntamento','Emissività regolabile secondo materiale'],
+   apps:['Misura rapida superfici senza contatto','Rilevamento punti caldi in componenti elettrici e meccanici','Verifica temperatura di scarico compressori'],
+   tip:'L'emissività della superficie influenza la lettura reale; regolare il fattore di emissività dello strumento secondo il materiale che si sta misurando.'},
+  {id:'balanza',cat:'refrigeracion',name:'Bilancia elettronica di carica',sub:'Carica precisa di refrigerante per peso',
+   specs:['Capacità tipica 50–100kg','Risoluzione tipica 1–5g','Piattaforma per cilindro di refrigerante','Funzione di carica programmata in alcuni modelli'],
+   apps:['Carica refrigerante per peso esatto secondo targa apparecchio','Controllo recupero gas durante manutenzione','Tracciabilità carica per relazioni tecniche'],
+   tip:'Tara la bilancia con il cilindro e i tubi collegati (senza gas circolante) prima di avviare la carica, per non introdurre errore di peso.'},
+  {id:'detfuga',cat:'refrigeracion',name:'Rilevatore elettronico di fughe',sub:'Localizzazione perdite di refrigerante',
+   specs:['Sensibilità da 3 g/anno secondo modello','Sensore a diodo riscaldato o infrarosso','Allarme sonoro e visivo graduato per intensità'],
+   apps:['Localizzazione fughe in giunzioni, valvole e serpentine','Verifica tenuta dopo riparazione','Ispezioni periodiche di manutenzione preventiva'],
+   tip:'Spostare la sonda lentamente (2–3 cm/s) e il più vicino possibile alla superficie senza toccarla, poiché il gas è più denso dell'aria e tende a cadere.'},
+  {id:'vacuo',cat:'refrigeracion',name:'Pompa a vuoto + vuometro (micronmetro)',sub:'Disidratazione e verifica di tenuta',
+   specs:['Portata di estrazione tipica 4–8 CFM','Vuoto finale raggiungibile inferiore a 50 micron','Vuometro digitale ad alta risoluzione (lettura in micron)'],
+   apps:['Disidratazione e degassificazione circuiti prima della carica','Verifica tenuta del sistema prima dell'avviamento','Eliminazione umidità e aria non condensabile'],
+   tip:'Il manometro comune non rileva piccole fughe: usare sempre un vuometro digitale indipendente per validare che il vuoto finale rimanga stabile.'},
+
+  // SOLAR
+  {id:'piranometro',cat:'solar',name:'Piranometro / misuratore di irraggiamento',sub:'Misura radiazione solare incidente',
+   specs:['Range tipico 0–2000 W/m²','Risposta spettrale a banda larga','Uscita analogica o digitale con registro dati'],
+   apps:['Misura irraggiamento solare in situ','Verifica condizioni reali per prove di resa pannelli','Correlazione produzione FV con risorsa solare disponibile'],
+   tip:'Posizionare il sensore nello stesso piano e inclinazione dei pannelli in prova per ottenere una lettura realmente rappresentativa.'},
+  {id:'ivtracer',cat:'solar',name:'Tracciatore di curva I-V',sub:'Diagnosi resa di string fotovoltaiche',
+   specs:['Misura tensione a circuito aperto (Voc) e corrente di corto circuito (Isc)','Traccia la curva I-V completa e calcola il punto di massima potenza (Pmax)','Correzione automatica per irraggiamento e temperatura in alcuni modelli'],
+   apps:['Diagnosi string fotovoltaiche in campo','Rilevamento pannelli degradati, sporchi o con microfessure','Colaudo e collaudo tecnico impianti FV'],
+   tip:'Confrontare sempre la curva ottenuta con la curva di fabbrica corretta per le condizioni reali di irraggiamento e temperatura del momento della misura.'},
+  {id:'termocam',cat:'solar',name:'Camera termografica (uso fotovoltaico)',sub:'Rilevamento hot-spots su pannelli',
+   specs:['Risoluzione termica tipica 160×120 a 320×240 px','Sensibilità termica inferiore a 0.1°C','Range di misura -20°C a 350°C'],
+   apps:['Rilevamento punti caldi (hot-spots) nelle celle','Diagnosi celle danneggiate o disconnesse','Ispezione connessioni in string box e connettori MC4'],
+   tip:'Ispezionare con irraggiamento minimo di 600 W/m² e il sistema in carico, perché i difetti termici siano realmente visibili nell'immagine.'},
+
+  // REDES Y SEGURIDAD
+  {id:'cabletest',cat:'redes',name:'Tester cavo di rete',sub:'Certificazione cablaggio strutturato',
+   specs:['Verifica mappa cablaggio (pinout) degli 8 fili','Continuità e rilevamento coppie incrociate, aperte o in corto','Identificazione remota con unità principale + remota'],
+   apps:['Certificazione cablaggio strutturato nuovo','Diagnosi guasti in patch cord e prese di rete','Localizzazione coppie incrociate o mal connesse'],
+   tip:'Verificare sempre entrambi i capi del collegamento: un cavo può dare "continuità" e comunque avere coppie incrociate che degradano il collegamento.'},
+  {id:'opticalmeter',cat:'redes',name:'Misuratore di potenza ottica + sorgente di luce',sub:'Certificazione collegamenti fibra ottica',
+   specs:['Range di misura tipico -50 a +26 dBm','Lunghezze d'onda di prova: 850/1300/1310/1550nm','Calcolo budget ottico (power budget) del collegamento'],
+   apps:['Certificazione collegamenti fibra ottica','Calcolo perdite e attenuazione del tracciato','Diagnosi attenuazione eccessiva o connettori difettosi'],
+   tip:'Pulire sempre i connettori con alcol isopropilico e panno specifico prima di misurare: lo sporco è la causa più comune di false perdite.'},
+  {id:'toner',cat:'redes',name:'Localizzatore di cavi / generatore di toni',sub:'Trazado e identificación de conductores',
+   specs:['Generatore di tono più sonda ricevente','Portata tipica di 300m su cavo non energizzato','Compatibile con cavo di rete, telefonico e a bassa tensione'],
+   apps:['Identificazione conduttori in morsetti','Traccia linee in pareti, pavimenti e canalizzazioni','Localizzazione estremità cavo in impianti esistenti'],
+   tip:'Non usare su linee energizzate salvo che lo strumento sia specificamente certificato per quella funzione — rischio di danno allo strumento e all'utente.'},
+  {id:'cctvtest',cat:'redes',name:'Prova telecamere CCTV',sub:'Monitor di prova per videosorveglianza',
+   specs:['Schermo integrato per visualizzazione in campo','Alimentazione di prova PoE incorporata','Supporto multiformato: analogico (HD-CVI/TVI/AHD) e IP'],
+   apps:['Verifica immagine durante installazione','Diagnosi cablaggio coassiale o UTP di videosorveglianza','Regolazione focale e iris in campo senza tornare al centralino'],
+   tip:'Provare la telecameraa nel punto di installazione finale, non solo in banco: così si rilevano problemi di lunghezza del cavo o interferenze reali.'},
+
+  // GAS Y PLOMERÍA
+  {id:'detgas',cat:'gas',name:'Rilevatore fughe gas combustibile',sub:'Ispezione impianti di gas',
+   specs:['Sensore a semiconduttore o catalitico','Sensibilità da 5 ppm secondo modello','Allarme graduato secondo concentrazione rilevata'],
+   apps:['Ispezione impianti gas naturale e GPL','Verifica dopo riparazioni o interventi','Controllo rutinario sicurezza in impianti esistenti'],
+   tip:'Non usare mai fiamma né generare scintille per rilevare fughe: sempre uno strumento certificato per atmosfere potenzialmente esplosive.'},
+  {id:'manogas',cat:'gas',name:'Manometro di pressione gas',sub:'Verifica pressione di erogazione',
+   specs:['Tipo colonna d'acqua (mbar) o digitale','Range tipico 0–60 mbar in bassa pressione, maggiore in media pressione','Connessione rapida a presa di prova'],
+   apps:['Verifica pressione di erogazione e di lavoro negli apparecchi','Prova di tenuta di impianto nuovo o modificato','Diagnosi caduta di pressione per ostruzione'],
+   tip:'La prova di tenuta regolamentaria richiede un tempo di stabilizzazione e una perdita massima ammessa secondo la normativa UNI 9039 vigente.'},
+  {id:'caudalimetro',cat:'gas',name:'Misuratore di portata portatile',sub:'Verifica portata acqua o gas',
+   specs:['Tipo rotametro (in linea) o ultrasoonico non invasivo','Range di misura secondo diametro tubazione','Alcuni modelli con registro dati integrato'],
+   apps:['Verifica portata acqua o gas in servicio','Diagnosi perdite di pressione per ostruzione','Bilanciamento impianti con più punti di consumo'],
+   tip:'I misuratori ultrasonici non invasivi richiedono un tratto retto di tubazione senza accessori per garantire una lettura affidabile.'},
+
+  // GENERAL
+  {id:'termocamgen',cat:'general',name:'Camera termografica (manutenzione generale)',sub:'Ispezione termica quadri e meccanismi',
+   specs:['Risoluzione e sensibilità simili alla versione ad uso fotovoltaico','Tavolozza colori regolabile per evidenziare differenziali termici','Cattura simultanea di immagine visibile e termica'],
+   apps:['Rilevamento punti caldi in connessioni quadri elettrici','Diagnosi cuscinetti, giunzioni e motori','Programmi manutenzione predittiva industriale'],
+   tip:'Le ispezioni termiche su quadri devono essere eseguite con l'impianto in carico normale di lavoro, mai a vuoto: un punto caldo appare solo con corrente circolante.'},
+  {id:'anemometro',cat:'general',name:'Anemometro',sub:'Misura velocità e portata aria',
+   specs:['Range tipico 0.3–30 m/s','Sensore a elica o a filo riscaldato secondo modello','Funzione di calcolo portata (CFM / m³h) inserendo l'area del condotto'],
+   apps:['Verifica portata aria in apparecchi di climatizzazione','Bilanciamento condotti aria condizionata','Controllo sistemi di estrazione e ventilazione'],
+   tip:'Prendere più letture in diversi punti della sezione del condotto e mediarle, poiché il profilo di velocità dell'aria non è uniforme.'},
+];
+
+// ═══════════ RENDER ═══════════
+let activeCat='electrico';
+
+function buildTabs(){
+  const t=$('tabs');
+  t.innerHTML=CATS.map(c=>{
+    const n=INSTR.filter(i=>i.cat===c.id).length;
+    return `<button class="tab ${c.id===activeCat?'on':''}" data-cat="${c.id}" style="--accent:${c.accent};${c.id===activeCat?'color:'+c.accent:''}" onclick="setCat('${c.id}')">${c.name} <span class="cnt">${n}</span></button>`;
+  }).join('');
+}
+
+function setCat(id){
+  activeCat=id;
+  const c=CATS.find(c=>c.id===id);
+  document.documentElement.style.setProperty('--accent',c.accent);
+  $('cat-title').textContent=c.name;
+  $('cat-desc').textContent=c.desc;
+  buildTabs();
+  render();
+}
+
+function render(){
+  const q=$('search').value.toLowerCase().trim();
+  const c=CATS.find(c=>c.id===activeCat);
+  let items=INSTR.filter(i=>i.cat===activeCat);
+  if(q){
+    items=items.filter(i=>
+      i.name.toLowerCase().includes(q)||
+      i.sub.toLowerCase().includes(q)||
+      i.specs.some(s=>s.toLowerCase().includes(q))||
+      i.apps.some(a=>a.toLowerCase().includes(q))
+    );
+  }
+  const grid=$('grid');
+  if(!items.length){
+    grid.innerHTML=`<div style="color:var(--mut);padding:30px;text-align:center;grid-column:1/-1">Nessun risultato per questa ricerca in questa categoria.</div>`;
+    return;
+  }
+  grid.innerHTML=items.map(i=>`
+    <div class="icard" style="--accent:${c.accent}">
+      <div class="icard-hd">
+        <div class="icard-ico"><svg viewBox="0 0 38 42">${ic[i.id]||''}</svg></div>
+        <div>
+          <div class="icard-tt">${i.name}</div>
+          <div class="icard-sub">${i.sub}</div>
+        </div>
+      </div>
+      <div class="icard-bd">
+        <div>
+          <div class="isec-lbl">⚙ Caratteristiche</div>
+          <ul class="ilist">${i.specs.map(s=>`<li>${s}</li>`).join('')}</ul>
+        </div>
+        <div>
+          <div class="isec-lbl">🔧 Applicazioni</div>
+          <ul class="ilist apps">${i.apps.map(a=>`<li>${a}</li>`).join('')}</ul>
+        </div>
+        <div class="itip">💡 ${i.tip}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════ INIT ═══════════
+buildTabs();
+setCat('electrico');
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
