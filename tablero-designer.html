@@ -252,6 +252,21 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+
+/* ── SMARTPHONE ── */
+@media (max-width: 768px) {
+  .lp{position:fixed;left:0;top:48px;bottom:0;width:280px;z-index:100;transform:translateX(-100%);transition:transform .25s}
+  .lp.open{transform:translateX(0)}
+  .rp{position:fixed;right:0;top:48px;bottom:0;width:280px;z-index:100;transform:translateX(100%);transition:transform .25s}
+  .rp.open{transform:translateX(0)}
+  .tb-btn{min-width:36px;min-height:36px}
+  .wire-btn{min-height:36px}
+  .comp-row{min-height:44px}
+  .placed-lbl{font-size:.7rem}
+  .topbar{overflow-x:auto}
+  .tb-brand{font-size:.8rem}
+  .btn{font-size:.7rem;padding:8px 10px}
+}
 </style>
 </head>
 <body>
@@ -400,6 +415,22 @@ body {
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Mobile menu toggle -->
+<button id="mobile-menu-btn" style="display:none;position:fixed;bottom:20px;left:20px;z-index:200;width:50px;height:50px;border-radius:50%;background:var(--ora);color:#fff;border:none;font-size:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,.3)" onclick="toggleMobileMenu()">☰</button>
+
+<script>
+// Mobile menu toggle
+function toggleMobileMenu(){
+  const lp=document.querySelector('.lp');
+  const rp=document.querySelector('.rp');
+  if(lp.classList.contains('open')){lp.classList.remove('open');rp.classList.remove('open')}
+  else{lp.classList.add('open')}
+}
+// Show mobile button on small screens
+if(window.innerWidth<768){document.getElementById('mobile-menu-btn').style.display='block'}
+window.addEventListener('resize',()=>{document.getElementById('mobile-menu-btn').style.display=window.innerWidth<768?'block':'none'})
+</script>
 
 <script>
 'use strict';
@@ -1438,6 +1469,92 @@ const CATALOG=[
      <polygon points="2,12 28,4 28,9 50,9 50,15 28,15 28,20" fill="#1e2235" stroke="#f47920" stroke-width="1.2"/>
      <text x="36" y="14" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">/2</text>
    </svg>`},
+  // ── COMPONENTI AGGIUNTI
+  {id:'trafo',cat:'Variatori/PLC',name:'Trasformatore',sub:'220/24V — 100VA',w:80,h:80,
+    ports:[{id:'L1',t:'L1',pos:'t0'},{id:'N1',t:'N',pos:'t1'},{id:'L2',t:'L1',pos:'b0'},{id:'N2',t:'N',pos:'b1'}],
+    svg:`<svg viewBox="0 0 80 80" width="80" height="80">
+      <rect x="10" y="10" width="60" height="60" rx="4" fill="#1a2030" stroke="#3a4560" stroke-width="1.5"/>
+      <circle cx="40" cy="40" r="22" fill="#0f1525" stroke="#008F6E" stroke-width="1.5"/>
+      <path d="M28,40 Q40,28 52,40 Q40,52 28,40" fill="none" stroke="#00D4AA" stroke-width="2"/>
+      <text x="40" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#00D4AA">T</text>
+      <text x="40" y="70" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">220/24V</text>
+    </svg>`},
+  {id:'cond',cat:'Comando',name:'Condensatore',sub:'Motore — 25µF',w:40,h:50,
+    ports:[{id:'T1',t:'COM',pos:'top'},{id:'T2',t:'COM',pos:'bot'}],
+    svg:`<svg viewBox="0 0 40 50" width="40" height="50">
+      <rect x="8" y="8" width="24" height="34" rx="3" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+      <line x1="20" y1="2" x2="20" y2="8" stroke="#6af" stroke-width="2"/>
+      <line x1="20" y1="42" x2="20" y2="48" stroke="#6af" stroke-width="2"/>
+      <line x1="12" y1="25" x2="28" y2="25" stroke="#00D4AA" stroke-width="2"/>
+      <line x1="12" y1="28" x2="28" y2="28" stroke="#00D4AA" stroke-width="2"/>
+      <text x="20" y="38" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">25µF</text>
+    </svg>`},
+  {id:'fus2',cat:'Protezione',name:'Fusibile',sub:'NH00 — 16A',w:30,h:60,
+    ports:[{id:'T1',t:'L1',pos:'top'},{id:'T2',t:'L1',pos:'bot'}],
+    svg:`<svg viewBox="0 0 30 60" width="30" height="60">
+      <rect x="5" y="5" width="20" height="50" rx="3" fill="#2a2e40" stroke="#4a5068" stroke-width="1.2"/>
+      <rect x="8" y="15" width="14" height="30" rx="2" fill="#f39c12" opacity=".8"/>
+      <line x1="15" y1="2" x2="15" y2="5" stroke="#6af" stroke-width="2"/>
+      <line x1="15" y1="55" x2="15" y2="58" stroke="#6af" stroke-width="2"/>
+      <text x="15" y="52" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#f39c12">16A</text>
+    </svg>`},
+  {id:'sw-pos',cat:'Comando',name:'Interruttore di posizione',sub:'Finecorsa — NC/NO',w:40,h:40,
+    ports:[{id:'T1',t:'COM',pos:'lft'},{id:'T2',t:'OUT',pos:'rgt'}],
+    svg:`<svg viewBox="0 0 40 40" width="40" height="40">
+      <rect x="8" y="12" width="24" height="16" rx="3" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+      <circle cx="14" cy="20" r="3" fill="#6af"/>
+      <circle cx="26" cy="20" r="3" fill="#6af"/>
+      <line x1="14" y1="20" x2="26" y2="20" stroke="#00D4AA" stroke-width="2"/>
+      <line x1="2" y1="20" x2="8" y2="20" stroke="#6af" stroke-width="2"/>
+      <line x1="32" y1="20" x2="38" y2="20" stroke="#6af" stroke-width="2"/>
+      <text x="20" y="36" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">SW</text>
+    </svg>`},
+  {id:'prox',cat:'Comando',name:'Sensore di prossimità',sub:'Induttivo — PNP',w:40,h:40,
+    ports:[{id:'L1',t:'L1',pos:'lft'},{id:'N1',t:'N',pos:'top'},{id:'OUT',t:'OUT',pos:'rgt'}],
+    svg:`<svg viewBox="0 0 40 40" width="40" height="40">
+      <circle cx="20" cy="20" r="14" fill="#1e2840" stroke="#3050a0" stroke-width="1.5"/>
+      <circle cx="20" cy="20" r="8" fill="#0f1525" stroke="#008F6E" stroke-width="1.2"/>
+      <circle cx="20" cy="20" r="3" fill="#00D4AA"/>
+      <line x1="2" y1="20" x2="6" y2="20" stroke="#6af" stroke-width="2"/>
+      <line x1="20" y1="2" x2="20" y2="6" stroke="#6af" stroke-width="2"/>
+      <line x1="34" y1="20" x2="38" y2="20" stroke="#6af" stroke-width="2"/>
+      <text x="20" y="36" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">PROX</text>
+    </svg>`},
+  {id:'timer',cat:'Comando',name:'Timer',sub:'Ritardo — 0.1-30s',w:50,h:50,
+    ports:[{id:'A1',t:'A1',pos:'lft'},{id:'A2',t:'A2',pos:'rgt'},{id:'OUT',t:'OUT',pos:'top'}],
+    svg:`<svg viewBox="0 0 50 50" width="50" height="50">
+      <rect x="8" y="8" width="34" height="34" rx="4" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+      <circle cx="25" cy="25" r="10" fill="#0f1525" stroke="#008F6E" stroke-width="1.2"/>
+      <line x1="25" y1="25" x2="25" y2="18" stroke="#00D4AA" stroke-width="2"/>
+      <line x1="25" y1="25" x2="30" y2="25" stroke="#00D4AA" stroke-width="2"/>
+      <line x1="2" y1="25" x2="8" y2="25" stroke="#6af" stroke-width="2"/>
+      <line x1="42" y1="25" x2="48" y2="25" stroke="#6af" stroke-width="2"/>
+      <line x1="25" y1="2" x2="25" y2="8" stroke="#6af" stroke-width="2"/>
+      <text x="25" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">TMR</text>
+    </svg>`},
+  {id:'counter',cat:'Comando',name:'Contatore',sub:'Impulsi — 230V',w:50,h:50,
+    ports:[{id:'L1',t:'L1',pos:'lft'},{id:'N1',t:'N',pos:'rgt'},{id:'IN',t:'COM',pos:'top'}],
+    svg:`<svg viewBox="0 0 50 50" width="50" height="50">
+      <rect x="8" y="8" width="34" height="34" rx="4" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
+      <rect x="12" y="12" width="26" height="14" rx="2" fill="#0f1525"/>
+      <text x="25" y="22" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00D4AA">0000</text>
+      <line x1="2" y1="25" x2="8" y2="25" stroke="#6af" stroke-width="2"/>
+      <line x1="42" y1="25" x2="48" y2="25" stroke="#6af" stroke-width="2"/>
+      <line x1="25" y1="2" x2="25" y2="8" stroke="#6af" stroke-width="2"/>
+      <text x="25" y="44" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">CNT</text>
+    </svg>`},
+  {id:'rel-sic',cat:'Comando',name:'Relè di sicurezza',sub:'Cat. 3 — 230V',w:50,h:60,
+    ports:[{id:'A1',t:'A1',pos:'lft'},{id:'A2',t:'A2',pos:'rgt'},{id:'S1',t:'COM',pos:'top'},{id:'S2',t:'OUT',pos:'bot'}],
+    svg:`<svg viewBox="0 0 50 60" width="50" height="60">
+      <rect x="8" y="8" width="34" height="44" rx="4" fill="#1e1a30" stroke="#5040a0" stroke-width="1.2"/>
+      <rect x="12" y="12" width="26" height="16" rx="2" fill="#100e20"/>
+      <text x="25" y="22" text-anchor="middle" font-family="Share Tech Mono" font-size="6" fill="#9b59b6">SICUREZZA</text>
+      <line x1="2" y1="30" x2="8" y2="30" stroke="#6af" stroke-width="2"/>
+      <line x1="42" y1="30" x2="48" y2="30" stroke="#6af" stroke-width="2"/>
+      <line x1="25" y1="2" x2="25" y2="8" stroke="#6af" stroke-width="2"/>
+      <line x1="25" y1="52" x2="25" y2="58" stroke="#6af" stroke-width="2"/>
+      <text x="25" y="56" text-anchor="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">RLS</text>
+    </svg>`},
 ];
 
 // ═══════════════════════════════════════════════════════════════
