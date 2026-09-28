@@ -238,6 +238,12 @@ body { background: var(--black); color: var(--white); font-family: var(--font-b)
     font-size: 16px !important;
   }
 }
+
+/* Safe area per notch iPhone */
+body {
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+}
 </style>
 </head>
 <body>

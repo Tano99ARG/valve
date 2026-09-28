@@ -221,6 +221,12 @@ table.dtbl tr:nth-child(even) td{background:#f8f9fc}
     font-size: 16px !important;
   }
 }
+
+/* Safe area per notch iPhone */
+body {
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+}
 </style>
 </head>
 <body>
