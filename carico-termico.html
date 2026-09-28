@@ -1055,7 +1055,6 @@
       aggiornaOrario();
 
       // Registra service worker inline
-      registraServiceWorker();
     });
 
     // ===== FUNZIONI DI UTILITÀ =====
@@ -1581,36 +1580,13 @@
       chiudiModal('modal-pdf');
     }
 
-    // ===== SERVICE WORKER INLINE =====
-    function registraServiceWorker() {
-      // Service worker inline come Blob (funziona solo su HTTPS)
-      if ('serviceWorker' in navigator && location.protocol === 'https:') {
-        const swCode = `
-          const CACHE_NAME = 'carico-termico-v1';
-          const urlsToCache = ['/'];
-
-          self.addEventListener('install', event => {
-            event.waitUntil(
-              caches.open(CACHE_NAME)
-                .then(cache => cache.addAll(urlsToCache))
-            );
-          });
-
-          self.addEventListener('fetch', event => {
-            event.respondWith(
-              caches.match(event.request)
-                .then(response => response || fetch(event.request))
-            );
-          });
-        `;
-
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-
-        navigator.serviceWorker.register(swUrl)
-          .catch(err => console.log('Service Worker non registrato:', err));
-      }
-    }
   </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
 </body>
 </html>

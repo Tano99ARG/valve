@@ -1,0 +1,2901 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1A2E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dim. Solare">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="Calcolatore di dimensionamento impianto fotovoltaico: consumi, sito, potenza consigliata, producibile, autoconsumo, risparmio, payback e confronto moduli.">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Dimensionamento Solare","short_name":"DimSolare","start_url":".","display":"standalone","orientation":"portrait-primary","background_color":"#1A1A2E","theme_color":"#1A1A2E"}'>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%231A1A2E'/><circle cx='32' cy='20' r='9' fill='%2300D4AA'/><path d='M10 34 L24 34 L28 52 L6 52 Z' fill='%23008F6E'/><path d='M30 34 L44 34 L48 52 L26 52 Z' fill='%234A8EC2'/></svg>">
+  <title>Valve Electronics™ — Dimensionamento Solare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* ===== PALETTE VALVE ELECTRONICS ===== */
+    :root {
+      --verde: #00D4AA;
+      --verde-scuro: #008F6E;
+      --grigio: #1A1A2E;
+      --grigio-medio: #2A2A3E;
+      --grigio-chiaro: #3A3A4E;
+      --nero: #0D0D1A;
+      --blu: #4A8EC2;
+      --blu-scuro: #2F5F87;
+      --arancio: #FF6B35;
+      --giallo: #FFD93D;
+      --rosso: #FF4757;
+      --bianco: #FFFFFF;
+      --grigio-txt: #8A8AA0;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--nero);
+      color: var(--bianco);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: var(--safe-top);
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
+      padding-bottom: var(--safe-bottom);
+      font-size: 16px;
+    }
+
+    /* ===== TOPBAR ===== */
+    .topbar {
+      background: var(--grigio);
+      border-bottom: 2px solid var(--verde);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+      z-index: 200;
+    }
+
+    .topbar-logo { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .topbar-logo svg { width: 34px; height: 34px; flex-shrink: 0; }
+
+    .topbar-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-sub {
+      display: block;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 500;
+      color: var(--grigio-txt);
+      text-transform: none;
+      letter-spacing: 0.5px;
+    }
+
+    .topbar-tools { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .topbar-btn {
+      background: var(--grigio-medio);
+      border: 1px solid var(--verde-scuro);
+      color: var(--bianco);
+      min-height: 36px;
+      padding: 6px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background .18s, border-color .18s, color .18s;
+      white-space: nowrap;
+    }
+    .topbar-btn:hover { background: var(--verde-scuro); border-color: var(--verde); }
+    .topbar-btn.accent { background: var(--verde); border-color: var(--verde); color: var(--nero); }
+    .topbar-btn.accent:hover { background: #00b894; }
+    .topbar-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ===== LAYOUT ===== */
+    .main-container {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .panel { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .panel-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+    .panel-left {
+      width: 350px;
+      flex-shrink: 0;
+      background: var(--grigio);
+      border-right: 1px solid var(--grigio-medio);
+    }
+
+    .panel-center { flex: 1; min-width: 0; background: var(--nero); }
+
+    .panel-right {
+      width: 320px;
+      flex-shrink: 0;
+      background: var(--grigio);
+      border-left: 1px solid var(--grigio-medio);
+    }
+
+    /* pannelli pieghevoli (solo mobile/tablet) */
+    .panel-head {
+      display: none;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--grigio-medio);
+      border: none;
+      border-bottom: 1px solid var(--verde-scuro);
+      color: var(--verde);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 14px 14px;
+      min-height: 50px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .panel-head svg { width: 18px; height: 18px; transition: transform .2s; flex-shrink: 0; }
+    .panel.collapsed .panel-head svg { transform: rotate(-90deg); }
+    .panel.collapsed .panel-body { display: none; }
+
+    /* ===== SEZIONI PANNELLO INPUT ===== */
+    .sec {
+      border-bottom: 1px solid var(--grigio-medio);
+      padding: 13px 14px;
+    }
+
+    .sec-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 11px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .sec-title::before {
+      content: '';
+      width: 3px;
+      height: 15px;
+      background: var(--verde);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .sec-title .num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--nero);
+      background: var(--verde);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-left: auto;
+    }
+
+    .hint {
+      font-size: 0.7rem;
+      color: #6E6E88;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    .field { margin-bottom: 11px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      display: block;
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--grigio-txt);
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    .input-wrap { position: relative; display: flex; }
+
+    input[type="number"], input[type="text"], select, textarea {
+      width: 100%;
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      color: var(--bianco);
+      padding: 9px 10px;
+      border-radius: 5px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.92rem;
+      min-height: 40px;
+      transition: border-color .2s, background .2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    select {
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300D4AA' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      padding-right: 32px;
+    }
+    option { background: var(--grigio-medio); color: var(--bianco); }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--verde);
+      background: #26263c;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    .input-unit {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--verde-scuro);
+      pointer-events: none;
+      font-weight: 600;
+    }
+    .has-unit input { padding-right: 46px; }
+
+    .row { display: flex; gap: 9px; }
+    .row .field { flex: 1; min-width: 0; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+
+    .seg {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .seg-btn {
+      flex: 1 1 auto;
+      min-width: 42px;
+      min-height: 38px;
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      color: var(--grigio-txt);
+      border-radius: 5px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all .15s;
+      text-transform: uppercase;
+    }
+    .seg-btn:hover { border-color: var(--verde-scuro); color: var(--bianco); }
+    .seg-btn.active { background: var(--verde); border-color: var(--verde); color: var(--nero); }
+
+    .btn {
+      width: 100%;
+      min-height: 44px;
+      background: var(--verde);
+      border: none;
+      color: var(--nero);
+      border-radius: 5px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background .18s;
+    }
+    .btn:hover { background: #00b894; }
+    .btn.ghost { background: transparent; border: 1px solid var(--verde-scuro); color: var(--verde); }
+    .btn.ghost:hover { background: rgba(0,143,110,.15); }
+    .btn.blue { background: var(--blu); color: var(--bianco); }
+    .btn.blue:hover { background: var(--blu-scuro); }
+
+    .quick-models { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .qm {
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      border-radius: 6px;
+      padding: 9px 7px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .15s;
+      min-height: 58px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+    .qm:hover, .qm.active { border-color: var(--verde); background: rgba(0,212,170,.1); }
+    .qm b { font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; color: var(--bianco); text-transform: uppercase; letter-spacing: .5px; }
+    .qm span { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--verde); }
+
+    details.adv { border: 1px solid var(--grigio-medio); border-radius: 6px; padding: 0; overflow: hidden; }
+    details.adv > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 10px 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0,212,170,.06);
+    }
+    details.adv > summary::-webkit-details-marker { display: none; }
+    details.adv > summary::before { content: '▸'; font-size: 0.8rem; transition: transform .2s; }
+    details.adv[open] > summary::before { transform: rotate(90deg); }
+    details.adv .adv-body { padding: 12px; border-top: 1px solid var(--grigio-medio); }
+
+    /* ===== CENTER ===== */
+    .center-inner { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+
+    .disclaimer {
+      background: rgba(255,107,53,.09);
+      border: 1px solid rgba(255,107,53,.45);
+      border-left: 4px solid var(--arancio);
+      border-radius: 6px;
+      padding: 10px 13px;
+      font-size: 0.76rem;
+      color: #FFC9B0;
+      line-height: 1.4;
+    }
+    .disclaimer b { color: var(--arancio); }
+
+    .hero {
+      background: linear-gradient(135deg, var(--grigio) 0%, #122a2a 100%);
+      border: 1px solid var(--verde-scuro);
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,212,170,.18), transparent 70%);
+    }
+    .hero-main { flex: 1 1 220px; min-width: 0; position: relative; z-index: 1; }
+    .hero-kpi {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--verde);
+      line-height: 1;
+      text-shadow: 0 0 22px rgba(0,212,170,.35);
+    }
+    .hero-kpi small { font-size: 1.1rem; color: var(--verde-scuro); }
+    .hero-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--bianco);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 4px;
+    }
+    .hero-sub { font-size: 0.78rem; color: var(--grigio-txt); margin-top: 6px; }
+    .hero-side { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+    .hero-pill {
+      background: rgba(0,212,170,.1);
+      border: 1px solid var(--verde-scuro);
+      border-radius: 8px;
+      padding: 9px 14px;
+      min-width: 108px;
+      text-align: center;
+    }
+    .hero-pill .v { font-family: 'Share Tech Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--bianco); display: block; }
+    .hero-pill .l { font-size: 0.62rem; color: var(--verde); text-transform: uppercase; letter-spacing: 1px; font-family: 'Barlow Condensed', sans-serif; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 10px; }
+
+    .card {
+      background: var(--grigio);
+      border: 1px solid var(--grigio-medio);
+      border-radius: 8px;
+      padding: 13px 11px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn .3s ease;
+    }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--verde); }
+    .card.blue::before { background: var(--blu); }
+    .card.arancio::before { background: var(--arancio); }
+    .card.giallo::before { background: var(--giallo); }
+    .card.rosso::before { background: var(--rosso); }
+    .card.vuoto::before { background: var(--grigio-chiaro); }
+
+    .card .v {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--verde);
+      margin: 7px 0 3px;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+    .card.blue .v { color: var(--blu); }
+    .card.arancio .v { color: var(--arancio); }
+    .card.giallo .v { color: var(--giallo); }
+    .card.rosso .v { color: var(--rosso); }
+    .card.vuoto .v { color: var(--grigio-txt); }
+    .card .l {
+      font-size: 0.66rem;
+      color: var(--grigio-txt);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .card .u { font-size: 0.66rem; color: #5E5E78; margin-top: 3px; }
+
+    .card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+    .card-title .tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      color: var(--verde-scuro);
+      border: 1px solid var(--verde-scuro);
+      border-radius: 3px;
+      padding: 1px 6px;
+      margin-left: auto;
+    }
+
+    .chart-card {
+      background: var(--grigio);
+      border: 1px solid var(--grigio-medio);
+      border-radius: 8px;
+      padding: 14px;
+      animation: fadeIn .3s ease;
+    }
+    .chart-box { width: 100%; overflow: hidden; }
+    .chart-box svg { width: 100%; height: auto; display: block; }
+
+    .charts-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 1400px) { .charts-2 { grid-template-columns: 1fr; } }
+
+    .alerts { display: flex; flex-direction: column; gap: 8px; }
+    .alert {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      border: 1px solid;
+    }
+    .alert svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert.ok { background: rgba(0,212,170,.08); border-color: rgba(0,212,170,.4); color: #A8F0DF; }
+    .alert.warn { background: rgba(255,107,53,.08); border-color: rgba(255,107,53,.4); color: #FFC9B0; }
+    .alert.info { background: rgba(74,142,194,.1); border-color: rgba(74,142,194,.45); color: #BBD9F0; }
+
+    /* ===== TABELLE ===== */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 6px; border: 1px solid var(--grigio-medio); }
+
+    table.tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+      min-width: 620px;
+    }
+    table.tbl th, table.tbl td { padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--grigio-medio); white-space: nowrap; }
+    table.tbl th:first-child, table.tbl td:first-child { text-align: left; position: sticky; left: 0; background: var(--grigio); }
+    table.tbl thead th {
+      background: #23233a;
+      color: var(--verde);
+      font-family: 'Barlow Condensed', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      position: sticky; top: 0; z-index: 2;
+    }
+    table.tbl thead th:first-child { z-index: 3; }
+    table.tbl td { font-family: 'Share Tech Mono', monospace; color: #D6D6E6; }
+    table.tbl td:first-child { font-family: 'Barlow', sans-serif; color: var(--grigio-txt); font-size: 0.75rem; }
+    table.tbl tbody tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+    table.tbl tbody tr:nth-child(even) td:first-child { background: #1d1d30; }
+    table.tbl tbody tr:hover td { background: rgba(0,212,170,.07); }
+    table.tbl .best { color: var(--verde); font-weight: 700; }
+    table.tbl .best-pill {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--nero);
+      border-radius: 3px;
+      font-size: 0.6rem;
+      padding: 0 4px;
+      font-weight: 700;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    table.tbl .col-hi { background: rgba(0,212,170,.08) !important; }
+
+    /* ===== RIEPILOGO ===== */
+    .sum-group { padding: 13px 14px; border-bottom: 1px solid var(--grigio-medio); }
+
+    .sum-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.06);
+      font-size: 0.78rem;
+    }
+    .sum-item:last-child { border-bottom: none; }
+    .sum-item .k { color: var(--grigio-txt); flex: 1; min-width: 0; }
+    .sum-item .v { font-family: 'Share Tech Mono', monospace; color: var(--verde); font-weight: 600; text-align: right; white-space: nowrap; }
+    .sum-item .v.blu { color: var(--blu); }
+    .sum-item .v.arancio { color: var(--arancio); }
+    .sum-item.strong { border-top: 1px solid var(--verde-scuro); margin-top: 5px; padding-top: 9px; }
+    .sum-item.strong .k { color: var(--bianco); font-weight: 600; }
+    .sum-item.strong .v { font-size: 1rem; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-ok { background: var(--verde); color: var(--nero); }
+    .badge-info { background: var(--blu); color: #fff; }
+    .badge-warn { background: var(--arancio); color: #fff; }
+    .badge-bad { background: var(--rosso); color: #fff; }
+
+    .note-box {
+      background: rgba(74,142,194,.07);
+      border: 1px solid rgba(74,142,194,.3);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.72rem;
+      color: #A9C6DC;
+      line-height: 1.45;
+    }
+    .note-box b { color: var(--blu); }
+    .note-box ul { margin: 6px 0 0 16px; }
+    .note-box li { margin-bottom: 3px; }
+
+    .formula-box {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      color: #9FA8C8;
+      background: rgba(0,0,0,.28);
+      border: 1px solid var(--grigio-medio);
+      border-radius: 6px;
+      padding: 10px 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .formula-box b { color: var(--verde); }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      background: var(--grigio);
+      border-top: 1px solid var(--grigio-medio);
+      padding: 5px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.7rem;
+      color: #61617A;
+      flex-shrink: 0;
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 28px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); display: inline-block; margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+
+    /* ===== MODALI ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.78);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: var(--grigio);
+      border: 1px solid var(--verde-scuro);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      animation: fadeIn .22s ease;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--grigio-medio);
+      flex-shrink: 0;
+    }
+    .modal-head h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--verde);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--grigio-txt);
+      font-size: 1.7rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 8px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+    .modal-close:hover { color: var(--rosso); }
+    .modal-body { padding: 16px; overflow-y: auto; }
+
+    .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .preset {
+      background: var(--grigio-medio);
+      border: 1px solid var(--grigio-chiaro);
+      border-radius: 8px;
+      padding: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: left;
+    }
+    .preset:hover { border-color: var(--verde); background: rgba(0,212,170,.09); }
+    .preset b { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; color: var(--verde); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 3px; }
+    .preset .kwh { font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; color: var(--bianco); }
+    .preset .dsc { font-size: 0.68rem; color: var(--grigio-txt); margin-top: 5px; line-height: 1.35; }
+
+    .toast {
+      position: fixed;
+      bottom: calc(50px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--verde);
+      color: var(--nero);
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+      box-shadow: 0 8px 26px rgba(0,0,0,.5);
+      max-width: 88vw;
+      text-align: center;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.err { background: var(--rosso); color: #fff; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--grigio); }
+    ::-webkit-scrollbar-thumb { background: var(--grigio-chiaro); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--verde-scuro); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1180px) {
+      .panel-left { width: 310px; }
+      .panel-right { width: 280px; }
+    }
+
+    @media (max-width: 1024px) {
+      .main-container { flex-direction: column; overflow-y: auto; }
+      .panel-left, .panel-right {
+        width: 100%;
+        max-height: 78vh;
+        border-right: none;
+        border-left: none;
+        border-bottom: 1px solid var(--grigio-medio);
+      }
+      .panel-center { order: -1; max-height: none; }
+      .panel-center .panel-body { overflow: visible; }
+      .panel-head { display: flex; }
+      input[type="number"], input[type="text"], select, textarea { min-height: 46px; font-size: 1rem; }
+      .seg-btn { min-height: 46px; }
+      .btn { min-height: 48px; }
+      .topbar-btn { min-height: 40px; }
+      .center-inner { padding: 12px; }
+    }
+
+    @media (max-width: 700px) {
+      .topbar { padding: 8px 10px; flex-wrap: wrap; }
+      .topbar-title { font-size: 1rem; }
+      .topbar-sub { display: none; }
+      .topbar-btn span { display: none; }
+      .topbar-btn { padding: 8px 11px; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      .grid3 { grid-template-columns: 1fr 1fr; }
+      .quick-models { grid-template-columns: 1fr 1fr; }
+      .hero-kpi { font-size: 2.4rem; }
+      .hero { padding: 14px; }
+      .preset-grid { grid-template-columns: 1fr; }
+      .status-bar { font-size: 0.6rem; }
+      .status-bar .hide-sm { display: none; }
+    }
+
+    @media (max-width: 420px) {
+      .row { flex-direction: column; gap: 0; }
+      .row .field { margin-bottom: 9px; }
+    }
+
+    @media print {
+      .topbar, .status-bar, .panel-head, .modal { display: none !important; }
+      body, html { overflow: visible; height: auto; background: #fff; color: #000; }
+      .main-container { display: block; overflow: visible; }
+      .panel { max-height: none !important; overflow: visible; width: 100% !important; border: none; }
+      .panel-body { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOPBAR ================= -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <circle cx="16" cy="9" r="5.5" fill="#00D4AA"/>
+        <path d="M3 16 h9 l2 12 H1 Z" fill="#008F6E"/>
+        <path d="M14 16 h9 l2 12 H12 Z" fill="#4A8EC2"/>
+        <path d="M25 16 h4 l1 12 h-6 Z" fill="#00D4AA" opacity=".7"/>
+      </svg>
+      <div class="topbar-title">
+        Dimensionamento Solare
+        <span class="topbar-sub">Valve Electronics™ · Calcolatore impianto FV</span>
+      </div>
+    </div>
+    <div class="topbar-tools">
+      <button class="topbar-btn" onclick="togglePannelli()" titleEspansione pannelli" title="Espandi/comprimi pannelli" aria-label="Espandi o comprimi i pannelli">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <span>Pannelli</span>
+      </button>
+      <button class="topbar-btn" onclick="apriModelli()" title="Modelli precaricati">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Modelli</span>
+      </button>
+      <button class="topbar-btn" onclick="salvaJSON()" title="Salva dati in JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span>Salva</span>
+      </button>
+      <button class="topbar-btn" onclick="apriCarica()" title="Carica dati da JSON">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><path d="M12 3v12"/></svg>
+        <span>Carica</span>
+      </button>
+      <button class="topbar-btn accent" onclick="generaPDF()" title="Esporta report PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= LAYOUT ================= -->
+  <div class="main-container">
+
+    <!-- ---------- INPUT ---------- -->
+    <section class="panel panel-left" id="panel-input">
+      <button class="panel-head" onclick="togglePanel('panel-input')" aria-expanded="true">
+        <span>1 · Dati di consumi e sito</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="panel-body">
+
+        <div class="sec">
+          <div class="sec-title">Modelli precaricati</div>
+          <div class="quick-models" id="quick-models"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">1 · Consumi annui <span class="num">kWh/a</span></div>
+
+          <div class="field">
+            <label for="illuminazione">Illuminazione</label>
+            <div class="input-wrap has-unit"><input type="number" id="illuminazione" inputmode="numeric" min="0" step="50" value="700"><span class="input-unit">kWh</span></div>
+          </div>
+          <div class="field">
+            <label for="elettrodomestici">Elettrodomestici</label>
+            <div class="input-wrap has-unit"><input type="number" id="elettrodomestici" inputmode="numeric" min="0" step="50" value="1900"><span class="input-unit">kWh</span></div>
+          </div>
+          <div class="field">
+            <label for="climatizzazione">Climatizzazione</label>
+            <div class="input-wrap has-unit"><input type="number" id="climatizzazione" inputmode="numeric" min="0" step="50" value="1000"><span class="input-unit">kWh</span></div>
+          </div>
+          <div class="field">
+            <label for="altri">Altri consumi</label>
+            <div class="input-wrap has-unit"><input type="number" id="altri" inputmode="numeric" min="0" step="50" value="1400"><span class="input-unit">kWh</span></div>
+          </div>
+
+          <div class="field" style="margin-top:12px;padding-top:11px;border-top:1px solid var(--grigio-medio)">
+            <label>Consumo totale annuo</label>
+            <div class="formula-box" id="out-consumo-tot" style="text-align:center;padding:8px">5.000 kWh/a · 1.400 €/a</div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="tariffa">Tariffa elettrica</label>
+              <div class="input-wrap has-unit"><input type="number" id="tariffa" inputmode="decimal" min="0.01" step="0.01" value="0.28"><span class="input-unit">€/kWh</span></div>
+            </div>
+            <div class="field">
+              <label for="esistente">Autoconsumo già installato</label>
+              <div class="input-wrap has-unit"><input type="number" id="esistente" inputmode="decimal" min="0" step="0.1" value="0"><span class="input-unit">kWp</span></div>
+            </div>
+          </div>
+          <div class="hint">L'impianto già esistente viene sottratto dal fabbisogno da coprire e conteggiato nel bilancio energetico.</div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">2 · Dati di sito</div>
+
+          <div class="field">
+            <label for="citta">Città / località</label>
+            <select id="citta"></select>
+            <div class="hint" id="hint-citta">—</div>
+          </div>
+
+          <div class="field">
+            <label for="inclinazione">Inclinazione tetto</label>
+            <div class="input-wrap has-unit"><input type="number" id="inclinazione" inputmode="numeric" min="0" max="90" step="1" value="30"><span class="input-unit">°</span></div>
+            <div class="hint">Ottimale per l'Italia: 25°–35°. L'errore costa circa 0,35%/° sopra i 30°.</div>
+          </div>
+
+          <div class="field">
+            <label>Orientamento / azimut</label>
+            <div class="seg" id="seg-azimut"></div>
+            <div class="hint">Sud = 0°. Nord = 180°. Ovest = -90°.</div>
+          </div>
+
+          <div class="field">
+            <label for="tetto">Tipo di copertura</label>
+            <select id="tetto">
+              <option value="falda">Tetto a falda (ottimale)</option>
+              <option value="piano">Tetto piano / pensilina</option>
+              <option value="verde">Tetto verde (manto vegetale)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="area">Area disponibile in copertura</label>
+            <div class="input-wrap has-unit"><input type="number" id="area" inputmode="decimal" min="0" step="1" value="0"><span class="input-unit">m²</span></div>
+            <div class="hint">0 = non specificata. Riferimento: circa 5 m² ogni 1 kWp.</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-title">3 · Configurazione impianto</div>
+
+          <div class="field">
+            <label for="profilo">Tipologia di consumo (quota consuma diurna)</label>
+            <select id="profilo">
+              <option value="residenziale">Residenziale — 45% diurno</option>
+              <option value="ufficio">Ufficio — 58% diurno</option>
+              <option value="commerciale">Commerciale — 55% diurno</option>
+              <option value="agricolo">Agricolo — 62% diurno</option>
+              <option value="industria">Industria / officina — 72% diurno</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="moduloW">Potenza unitaria modulo</label>
+            <div class="seg" id="seg-modulo"></div>
+          </div>
+
+          <div class="field">
+            <label for="copertura">Obiettivo di copertura dei consumi</label>
+            <div class="input-wrap has-unit"><input type="number" id="copertura" inputmode="numeric" min="10" max="200" step="5" value="100"><span class="input-unit">%</span></div>
+            <div class="hint">100% = l'impianto produce quanto consumi in un anno. &gt;100% per accumulo in rete.</div>
+          </div>
+
+          <div class="field">
+            <label for="dcAc">Rapporto DC/AC inverter</label>
+            <div class="input-wrap has-unit"><input type="number" id="dcAc" inputmode="decimal" min="1" max="1.6" step="0.01" value="1.15"><span class="input-unit">×</span></div>
+            <div class="hint">Margine di potenza dell'inverter rispetto ai moduli: 1,10–1,20 tipico.</div>
+          </div>
+
+          <details class="adv" style="margin-top:12px">
+            <summary>Parametri avanzati</summary>
+            <div class="adv-body">
+              <div class="field">
+                <label for="perdite">Perdita di sistema</label>
+                <div class="input-wrap has-unit"><input type="number" id="perdite" inputmode="decimal" min="0" max="45" step="0.5" value="14"><span class="input-unit">%</span></div>
+                <div class="hint">Cavi, inverter, sporco, mismatch termico. Riferimento: 14%.</div>
+              </div>
+              <div class="field">
+                <label for="ombre">Ombreggiamento aggiuntivo</label>
+                <div class="input-wrap has-unit"><input type="number" id="ombre" inputmode="decimal" min="0" max="40" step="1" value="0"><span class="input-unit">%</span></div>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label for="cModulo">Costo moduli</label>
+                  <div class="input-wrap has-unit"><input type="number" id="cModulo" inputmode="decimal" min="0" step="0.01" value="0.09"><span class="input-unit">€/W</span></div>
+                </div>
+                <div class="field">
+                  <label for="cInverter">Costo inverter</label>
+                  <div class="input-wrap has-unit"><input type="number" id="cInverter" inputmode="decimal" min="0" step="0.01" value="0.12"><span class="input-unit">€/W</span></div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="cInstall">Costo installazione</label>
+                <div class="input-wrap has-unit"><input type="number" id="cInstall" inputmode="decimal" min="0" step="0.01" value="0.35"><span class="input-unit">€/W</span></div>
+                <div class="hint">Totale indicativo 0,56 €/W = 560 €/kWp.</div>
+              </div>
+              <div class="field">
+                <label for="cExtra">Costi extra (pratiche, strutture, allaccio)</label>
+                <div class="input-wrap has-unit"><input type="number" id="cExtra" inputmode="numeric" min="0" step="50" value="0"><span class="input-unit">€</span></div>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label for="valoreRete">Valore energia immessa</label>
+                  <div class="input-wrap has-unit"><input type="number" id="valoreRete" inputmode="decimal" min="0" step="0.01" value="0.08"><span class="input-unit">€/kWh</span></div>
+                </div>
+                <div class="field">
+                  <label for="om">Manutenzione</label>
+                  <div class="input-wrap has-unit"><input type="number" id="om" inputmode="decimal" min="0" step="0.1" value="1.5"><span class="input-unit">%/a</span></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="field">
+                  <label for="co2">Fattore emissioni rete</label>
+                  <div class="input-wrap has-unit"><input type="number" id="co2" inputmode="decimal" min="0" step="0.01" value="0.21"><span class="input-unit">kg/kWh</span></div>
+                </div>
+                <div class="field">
+                  <label for="detrazione">Detrazione fiscale</label>
+                  <div class="input-wrap has-unit"><input type="number" id="detrazione" inputmode="numeric" min="0" max="100" step="5" value="50"><span class="input-unit">%</span></div>
+                </div>
+              </div>
+              <div class="hint">La detrazione fiscale riportata è un'<b>indicazione</b> (50% in 10 anni per le abitazioni): non è una garanzia e va verificata con un consulente fiscale.</div>
+            </div>
+          </details>
+
+          <div class="row" style="margin-top:12px">
+            <button class="btn ghost" onclick="resetDati()">Azzera</button>
+            <button class="btn" onclick="calcola(); toast('Calcolo aggiornato')">Calcola</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- RISULTATI ---------- -->
+    <section class="panel panel-center" id="panel-risultati">
+      <button class="panel-head" onclick="togglePanel('panel-risultati')" aria-expanded="true">
+        <span>2 · Risultati e grafici</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="panel-body">
+        <div class="center-inner">
+
+          <div class="disclaimer">
+            <b>⚠ Avvertenza:</b> i valori calcolati sono <b>indicativi e orientativi</b>, basati su medie climatiche italiane e dati medi di mercato.
+            Non costituiscono un progetto esecutivo né una proposta commerciale: <b>verifica sempre con un installatore qualificato</b> e con un tecnico abilitato alla connessione in rete ( GSE / distributore locale).
+          </div>
+
+          <div class="alerts" id="alerts"></div>
+
+          <div class="hero">
+            <div class="hero-main">
+              <div class="hero-label">Potenza di picco consigliata</div>
+              <div class="hero-kpi" id="hero-kwp">0,00 <small>kWp</small></div>
+              <div class="hero-sub" id="hero-sub">Inserisci i consumi per iniziare il dimensionamento</div>
+            </div>
+            <div class="hero-side">
+              <div class="hero-pill"><span class="v" id="hero-moduli">0</span><span class="l">Moduli</span></div>
+              <div class="hero-pill"><span class="v" id="hero-inv">0</span><span class="l">Inverter kW</span></div>
+              <div class="hero-pill"><span class="v" id="hero-prod">0</span><span class="l">kWh/anno</span></div>
+              <div class="hero-pill"><span class="v" id="hero-pb">—</span><span class="l">Payback anni</span></div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Risultati del dimensionamento <span class="tag" id="tag-sito">—</span></div>
+            <div class="cards" id="cards-risultati"></div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Bilancio energetico annuo <span class="tag">kWh/anno</span></div>
+            <div class="cards" id="cards-bilancio"></div>
+          </div>
+
+          <div class="charts-2">
+            <div class="chart-card">
+              <div class="card-title">Consumi per categoria <span class="tag">kWh/a</span></div>
+              <div class="chart-box" id="chart-cat"></div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Ripartizione della produzione <span class="tag">autoconsumo / rete</span></div>
+              <div class="chart-box" id="chart-pie"></div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Produzione mensile vs consumi <span class="tag">12 mesi</span></div>
+            <div class="chart-box" id="chart-mensile"></div>
+          </div>
+
+          <div class="charts-2">
+            <div class="chart-card">
+              <div class="card-title">Cumulativo risparmio 25 anni <span class="tag">€</span></div>
+              <div class="chart-box" id="chart-cumulativo"></div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Curva energetica mensile</div>
+              <div class="chart-box" id="chart-bilancio-mensile"></div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Confronto moduli FV <span class="tag">3 scenari</span></div>
+            <div class="table-wrap" id="tabella-wrap"></div>
+            <div class="hint" style="margin-top:9px">Gli scenari sono calcolati con lo stesso profilo di consumo, la stessa tariffa e gli stessi costi. “Miglior” evidenzia il valore migliore per ciascuna riga.</div>
+          </div>
+
+          <div class="chart-card">
+            <div class="card-title">Ipotesi di calcolo e formule</div>
+            <div class="formula-box" id="box-formule"></div>
+            <div class="note-box" style="margin-top:10px">
+              <b>Fonti e criteri:</b>
+              <ul>
+                <li>Producibile specifico 1.000–1.400 kWh/kWp/anno per l'Italia, variabile per località (irraggiamento), inclinazione e azimut.</li>
+                <li>Perdita di sistema 14%: cavi, inverter, sporco, mismatch, dispersioni termiche.</li>
+                <li>Costi: modulo 0,09 €/W, inverter 0,12 €/W, installazione 0,35 €/W (560 €/kWp complessivi).</li>
+                <li>Autoconsumo stimato con profilo orario semplificato (quota consuma diurna per tipologia) ed efficienza di autoconsumo diretto 92%.</li>
+                <li>Valore energia immessa in rete indicato a 0,08 €/kWh (SSP medio); verifica il valore vigente GSE per la tua fascia.</li>
+                <li>Emissioni evitate con fattore di rete 0,21 kg CO₂/kWh.</li>
+                <li>Detrazione fiscale 50% in 10 anni: <b>indicazione</b>, da verificare con un consulente fiscale.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="disclaimer">
+            <b>Disclaimer finale:</b> questo strumento è un supporto di dimensionamento di primo livello.
+            Il progetto definitivo richiede sopralluogo, verifica strutturale del tetto, valutazione di ombreggiamento e vincoli urbanistici, verifica della potenza di connessione in rete e la connessione al GSE (o al Mercato Libero) per la vendita dell'energia eccedente.
+            <b>Rivolgiti a un installatore qualificato e a un perito iscritto all'albo.</b>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- RIEPILOGO ---------- -->
+    <section class="panel panel-right" id="panel-riepilogo">
+      <button class="panel-head" onclick="togglePanel('panel-riepilogo')" aria-expanded="true">
+        <span>3 · Riepilogo</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <div class="panel-body">
+
+        <div class="sum-group">
+          <div class="sum-item"><span class="k">Modello applicato</span><span class="v" id="sum-modello">—</span></div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Consumi</div>
+          <div class="sum-item"><span class="k">Illuminazione</span><span class="v" id="sum-ill">—</span></div>
+          <div class="sum-item"><span class="k">Elettrodomestici</span><span class="v" id="sum-eld">—</span></div>
+          <div class="sum-item"><span class="k">Climatizzazione</span><span class="v" id="sum-cli">—</span></div>
+          <div class="sum-item"><span class="k">Altri</span><span class="v" id="sum-alt">—</span></div>
+          <div class="sum-item strong"><span class="k">Consumo annuo</span><span class="v" id="sum-cons">—</span></div>
+          <div class="sum-item"><span class="k">Costo annuo attuale</span><span class="v blu" id="sum-costo">—</span></div>
+          <div class="sum-item"><span class="k">Tariffa</span><span class="v" id="sum-tariffa">—</span></div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Sito</div>
+          <div class="sum-item"><span class="k">Località</span><span class="v" id="sum-citta">—</span></div>
+          <div class="sum-item"><span class="k">Irraggiamento (ottimale)</span><span class="v" id="sum-irr">—</span></div>
+          <div class="sum-item"><span class="k">Inclinazione</span><span class="v" id="sum-incl">—</span></div>
+          <div class="sum-item"><span class="k">Azimut</span><span class="v" id="sum-azim">—</span></div>
+          <div class="sum-item"><span class="k">Tipo tetto</span><span class="v" id="sum-tetto">—</span></div>
+          <div class="sum-item"><span class="k">Fattore correttivo sito</span><span class="v" id="sum-fatt">—</span></div>
+          <div class="sum-item"><span class="k">Producibile specifico netto</span><span class="v" id="sum-spec">—</span></div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Impianto</div>
+          <div class="sum-item"><span class="k">Potenza di picco</span><span class="v" id="sum-kwp">—</span></div>
+          <div class="sum-item"><span class="k">Moduli</span><span class="v" id="sum-moduli">—</span></div>
+          <div class="sum-item"><span class="k">Potenza unitaria</span><span class="v" id="sum-modw">—</span></div>
+          <div class="sum-item"><span class="k">Inverter consigliato</span><span class="v" id="sum-inv">—</span></div>
+          <div class="sum-item"><span class="k">Rapporto DC/AC</span><span class="v" id="sum-dcac">—</span></div>
+          <div class="sum-item"><span class="k">Superficie in copertura</span><span class="v" id="sum-area">—</span></div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Energia</div>
+          <div class="sum-item"><span class="k">Produzione annua (nuovo)</span><span class="v" id="sum-prod">—</span></div>
+          <div class="sum-item"><span class="k">Produzione esistente</span><span class="v" id="sum-prodes">—</span></div>
+          <div class="sum-item"><span class="k">Autoconsumo</span><span class="v" id="sum-aut">—</span></div>
+          <div class="sum-item"><span class="k">Quota autosoddisfacimento</span><span class="v" id="sum-quota">—</span></div>
+          <div class="sum-item"><span class="k">Energia immessa in rete</span><span class="v blu" id="sum-exp">—</span></div>
+          <div class="sum-item"><span class="k">Prelievo dalla rete</span><span class="v blu" id="sum-grid">—</span></div>
+          <div class="sum-item"><span class="k">Copertura media mensile</span><span class="v" id="sum-cop">—</span></div>
+          <div style="margin-top:10px;text-align:center">
+            <span class="badge" id="sum-badge">—</span>
+          </div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Economia</div>
+          <div class="sum-item"><span class="k">Costo €/W installato</span><span class="v" id="sum-euw">—</span></div>
+          <div class="sum-item"><span class="k">Investimento stimato</span><span class="v" id="sum-invst">—</span></div>
+          <div class="sum-item"><span class="k">Detrazione fiscale (indicativa)</span><span class="v" id="sum-dett">—</span></div>
+          <div class="sum-item"><span class="k">Costo netto dopo detrazione</span><span class="v blu" id="sum-costo-netto">—</span></div>
+          <div class="sum-item"><span class="k">Risparmio annuo lordo</span><span class="v" id="sum-rislordo">—</span></div>
+          <div class="sum-item"><span class="k">Manutenzione annua</span><span class="v arancio" id="sum-om">—</span></div>
+          <div class="sum-item strong"><span class="k">Risparmio annuo netto</span><span class="v" id="sum-risnetto">—</span></div>
+          <div class="sum-item strong"><span class="k">Payback</span><span class="v" id="sum-payback">—</span></div>
+          <div class="sum-item"><span class="k">Payback con detrazione</span><span class="v" id="sum-payback2">—</span></div>
+          <div class="sum-item"><span class="k">ROI a 25 anni</span><span class="v" id="sum-roi">—</span></div>
+          <div class="sum-item"><span class="k">Rendimento medio annuo</span><span class="v blu" id="sum-rend">—</span></div>
+        </div>
+
+        <div class="sum-group">
+          <div class="sec-title">Impatto ambientale</div>
+          <div class="sum-item"><span class="k">CO₂ evitata</span><span class="v" id="sum-co2kg">—</span></div>
+          <div class="sum-item"><span class="k">CO₂ evitata</span><span class="v" id="sum-co2t">—</span></div>
+          <div class="sum-item"><span class="k">Equivalente auto (km/anno)</span><span class="v blu" id="sum-co2auto">—</span></div>
+        </div>
+
+        <div class="sum-group" style="border-bottom:none">
+          <div class="row">
+            <button class="btn" onclick="generaPDF()">Report PDF</button>
+            <button class="btn ghost" onclick="salvaJSON()">Salva JSON</button>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button class="btn ghost" onclick="stampa()">Stampa</button>
+            <button class="btn blue" onclick="apriCarica()">Carica JSON</button>
+          </div>
+          <div class="note-box" style="margin-top:12px">
+            <b>Verifica con un professionista.</b> Questo calcolo usa medie climatiche e di mercato: il risultato reale può differire.
+            Un installatore qualificato deve verificare ombreggiamento, tetto, struttura, vincoli e connessione in rete.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= STATUS BAR ================= -->
+  <footer class="status-bar">
+    <span><span class="status-dot"></span>Valve Electronics™ · Dimensionamento Solare v1.0</span>
+    <span class="hide-sm" id="status-info">Pronto</span>
+  </footer>
+
+  <!-- ================= MODALE MODELLI ================= -->
+  <div class="modal" id="modal-modelli">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Modelli precaricati</h3>
+        <button class="modal-close" onclick="chiudiModal('modal-modelli')" aria-label="Chiudi">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:.82rem;color:var(--grigio-txt);margin-bottom:14px">
+          Seleziona un profilo di consumo tipico: verranno caricati consumi per categoria, tariffa, tipologia di consumo e un orientamento tetto di partenza.
+          Tutti i valori restano modificabili.
+        </p>
+        <div class="preset-grid" id="preset-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODALE CARICA ================= -->
+  <div class="modal" id="modal-carica">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3>Carica dati (JSON)</h3>
+        <button class="modal-close" onclick="chiudiModal('modal-carica')" aria-label="Chiudi">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="file-json">1 · Scegli il file .json esportato</label>
+          <input type="file" id="file-json" accept="application/json,.json">
+        </div>
+        <div class="field">
+          <label for="txt-json">2 · Oppure incolla il contenuto JSON</label>
+          <textarea id="txt-json" rows="8" placeholder='{ "tipo": "dimensionamento-solare", "dati": { ... } }' style="font-size:.78rem"></textarea>
+        </div>
+        <button class="btn" onclick="caricaDaTesto()">Carica dati JSON</button>
+        <div class="hint" style="margin-top:10px">Formato generato dal pulsante “Salva”. Il file contiene solo i dati inseriti, non i risultati.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <input type="file" id="file-json-hidden" accept="application/json,.json" style="display:none" class="sr-only" tabindex="-1" aria-hidden="true">
+
+  <noscript>
+    <div style="padding:20px;font-family:sans-serif;color:#fff">
+      <h2>JavaScript richiesto</h2>
+      <p>Questo calcolatore ha bisogno di JavaScript attivo per funzionare.</p>
+    </div>
+  </noscript>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* =======================================================================
+       DATI DI RIFERIMENTO
+       ======================================================================= */
+
+    // Producibile specifico ottimale (kWh/kWp/anno) per località italiana
+    var CITTA = [
+      ['Aosta', 'Valle d’Aosta', 1080],
+      ['Bolzano', 'Trentino-Alto Adige', 1160],
+      ['Trento', 'Trentino-Alto Adige', 1180],
+      ['Trieste', 'Friuli-Venezia Giulia', 1250],
+      ['Milano', 'Lombardia', 1170],
+      ['Brescia', 'Lombardia', 1200],
+      ['Verona', 'Veneto', 1200],
+      ['Venezia', 'Veneto', 1240],
+      ['Genova', 'Liguria', 1170],
+      ['Torino', 'Piemonte', 1150],
+      ['Alessandria', 'Piemonte', 1180],
+      ['Parma', 'Emilia-Romagna', 1240],
+      ['Bologna', 'Emilia-Romagna', 1260],
+      ['Pisa', 'Toscana', 1300],
+      ['Firenze', 'Toscana', 1290],
+      ['Ancona', 'Marche', 1290],
+      ['Perugia', 'Umbria', 1250],
+      ['L’Aquila', 'Abruzzo', 1210],
+      ['Campobasso', 'Molise', 1260],
+      ['Roma', 'Lazio', 1310],
+      ['Pescara', 'Abruzzo', 1320],
+      ['Potenza', 'Basilicata', 1300],
+      ['Napoli', 'Campania', 1320],
+      ['Salerno', 'Campania', 1340],
+      ['Bari', 'Puglia', 1350],
+      ['Lecce', 'Puglia', 1370],
+      ['Catanzaro', 'Calabria', 1350],
+      ['Reggio Calabria', 'Calabria', 1370],
+      ['Palermo', 'Sicilia', 1370],
+      ['Catania', 'Sicilia', 1380],
+      ['Siracusa', 'Sicilia', 1360],
+      ['Cagliari', 'Sardegna', 1350],
+      ['Sassari', 'Sardegna', 1320]
+    ];
+
+    // Azimut in gradi: 0 = Sud, + = Ovest, - = Est
+    var AZIMUT = { N: 180, NE: 135, E: 90, SE: 45, S: 0, SO: -45, O: -90, NO: -135 };
+    var ORDINE_AZIMUT = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
+
+    var TETTI = {
+      falda: { label: 'Tetto a falda', f: 1.00 },
+      piano: { label: 'Tetto piano / pensilina', f: 0.97 },
+      verde: { label: 'Tetto verde', f: 1.02 }
+    };
+
+    var PROFILI = {
+      residenziale: { label: 'Residenziale', day: 0.45 },
+      ufficio: { label: 'Ufficio', day: 0.58 },
+      commerciale: { label: 'Commerciale', day: 0.55 },
+      agricolo: { label: 'Agricolo', day: 0.62 },
+      industria: { label: 'Industria / officina', day: 0.72 }
+    };
+
+    var MODULI_W = [400, 450, 500, 550];
+
+    // Taglie commerciali inverter (kW)
+    var INVERTER_KW = [1.5, 2, 2.5, 3, 3.68, 4, 5, 6, 7, 8, 10, 12, 15, 20, 25, 30, 33, 40, 50, 60, 75, 100];
+
+    var MESI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+
+    // Ripartizione mensile della produzione FV (quote, somma = 1)
+    var SHARE_PROD = [0.035, 0.055, 0.085, 0.105, 0.120, 0.125, 0.130, 0.115, 0.090, 0.070, 0.040, 0.030];
+
+    // Ripartizione mensile dei consumi per categoria (quote, somma = 1)
+    var SHARE_CONS = {
+      illuminazione:    [0.110, 0.095, 0.090, 0.075, 0.070, 0.065, 0.065, 0.070, 0.075, 0.090, 0.105, 0.090],
+      elettrodomestici: [0.080, 0.078, 0.085, 0.084, 0.086, 0.088, 0.090, 0.086, 0.085, 0.083, 0.080, 0.075],
+      climatizzazione:   [0.115, 0.100, 0.080, 0.060, 0.045, 0.045, 0.075, 0.080, 0.060, 0.075, 0.110, 0.155],
+      altri:            [0.090, 0.085, 0.085, 0.080, 0.080, 0.080, 0.082, 0.080, 0.082, 0.082, 0.088, 0.086]
+    };
+
+    var CATS = [
+      { k: 'illuminazione',    label: 'Illuminazione',    colore: '#00D4AA' },
+      { k: 'elettrodomestici', label: 'Elettrodomestici', colore: '#008F6E' },
+      { k: 'climatizzazione',   label: 'Climatizzazione',   colore: '#4A8EC2' },
+      { k: 'altri',            label: 'Altri consumi',      colore: '#FF6B35' }
+    ];
+
+    // Costi di default (€/W)
+    var COSTI_DEF = { cModulo: 0.09, cInverter: 0.12, cInstall: 0.35 };
+
+    // Efficienza di autoconsumo diretto (mismatch fra profilo carico e profilo FV)
+    var ETA_AUT = 0.92;
+
+    // Densità di potenza di un campo FV moderno (kWp per m²)
+    var DENSITA = 0.20;
+
+    // Vita utile considerata (anni)
+    var VITA = 25;
+
+    // Fattore di emissione medio della rete italiana per auto equivalente
+    var G_CO2_AUTO = 0.17; // kg CO2 per km (≈ 4,6 l/100km benzina)
+
+    var PRESET = [
+      {
+        id: 'famiglia', nome: 'Famiglia', kwh: 4000, tariffa: 0.28, profilo: 'residenziale',
+        dsc: 'Appartamento o villetta singola. Profilo di consumo domestico standard.',
+        dati: { illuminazione: 700, elettrodomestici: 1500, climatizzazione: 800, altri: 1000 },
+        sito: { citta: 12, inclinazione: 30, azimut: 'S', tetto: 'falda', area: 22 }
+      },
+      {
+        id: 'villetta', nome: 'Villetta', kwh: 8000, tariffa: 0.26, profilo: 'residenziale',
+        dsc: 'Abitazione bifamiliare con impianto di climatizzazione e maggiore dotazione.',
+        dati: { illuminazione: 1100, elettrodomestici: 2200, climatizzazione: 2100, altri: 2600 },
+        sito: { citta: 18, inclinazione: 28, azimut: 'S', tetto: 'falda', area: 40 }
+      },
+      {
+        id: 'azienda', nome: 'Azienda', kwh: 30000, tariffa: 0.22, profilo: 'ufficio',
+        dsc: 'Uffici, server, illuminazione e climatizzazione. Tariffa bassa in media tensione.',
+        dati: { illuminazione: 3000, elettrodomestici: 6000, climatizzazione: 6000, altri: 15000 },
+        sito: { citta: 18, inclinazione: 15, azimut: 'S', tetto: 'piano', area: 110 }
+      },
+      {
+        id: 'officina', nome: 'Officina', kwh: 60000, tariffa: 0.20, profilo: 'industria',
+        dsc: 'Capannone con lavorazione continuativa: profilo di carico molto piatto in fascia diurna.',
+        dati: { illuminazione: 6000, elettrodomestici: 10000, climatizzazione: 9000, altri: 35000 },
+        sito: { citta: 21, inclinazione: 10, azimut: 'SO', tetto: 'piano', area: 260 }
+      }
+    ];
+
+    /* =======================================================================
+       UTILITÀ
+       ======================================================================= */
+
+    var $ = function (id) { return document.getElementById(id); };
+    var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+    var isNum = function (v) { return typeof v === 'number' && isFinite(v); };
+
+    function nf(v, d) {
+      if (!isNum(v)) return '—';
+      d = (d === undefined) ? 0 : d;
+      return v.toLocaleString('it-IT', { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+    function num(id, def) {
+      var el = $(id);
+      if (!el) return def;
+      var v = parseFloat(el.value);
+      return isNum(v) ? v : def;
+    }
+    function esc(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function niceCeil(v) {
+      if (!isNum(v) || v <= 0) return 1;
+      var exp = Math.pow(10, Math.floor(Math.log(v) / Math.LN10));
+      var f = v / exp;
+      var n;
+      if (f <= 1) n = 1;
+      else if (f <= 2) n = 2;
+      else if (f <= 2.5) n = 2.5;
+      else if (f <= 5) n = 5;
+      else n = 10;
+      return n * exp;
+    }
+
+    var toastTimer = null;
+    function toast(msg, err) {
+      var t = $('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (err ? ' err' : '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.className = 'toast'; }, 2600);
+    }
+
+    function apriModal(id) { $(id).classList.add('active'); }
+    function chiudiModal(id) { $(id).classList.remove('active'); }
+
+    /* =======================================================================
+       FATTORI DI CORREZIONE
+       ======================================================================= */
+
+    // Fattore rispetto all'inclinazione ottimale di 30°
+    function fattInclinazione(beta) {
+      var f = 1
+        - 0.0009 * Math.max(0, 30 - beta)     // sotto i 30°: perdita ridotta
+        - 0.0035 * Math.max(0, beta - 30);    // sopra i 30°: perdita ~0,35%/°
+      return clamp(f, 0.70, 1.00);
+    }
+
+    // Fattore rispetto all'orientamento ottimale (Sud = 0°)
+    function fattAzimut(az) {
+      var d = Math.abs(az);
+      var f = 1 - 0.0010 * d - 0.0000022 * d * d;
+      return clamp(f, 0.65, 1.00);
+    }
+
+    function snapInverter(kwTarget) {
+      if (!isNum(kwTarget) || kwTarget <= 0) return 0;
+      for (var i = 0; i < INVERTER_KW.length; i++) {
+        if (INVERTER_KW[i] >= kwTarget - 0.001) return INVERTER_KW[i];
+      }
+      return INVERTER_KW[INVERTER_KW.length - 1] * Math.ceil(kwTarget / INVERTER_KW[INVERTER_KW.length - 1]);
+    }
+
+    /* =======================================================================
+       LETTURA INPUT
+       ======================================================================= */
+
+    function leggiInput() {
+      var cats = {
+        illuminazione: Math.max(0, num('illuminazione', 0)),
+        elettrodomestici: Math.max(0, num('elettrodomestici', 0)),
+        climatizzazione: Math.max(0, num('climatizzazione', 0)),
+        altri: Math.max(0, num('altri', 0))
+      };
+      var totale = cats.illuminazione + cats.elettrodomestici + cats.climatizzazione + cats.altri;
+
+      var idx = parseInt($('citta').value, 10);
+      var c = CITTA[isNum(idx) ? idx : 0];
+
+      var tettoKey = $('tetto').value;
+      var profiloKey = $('profilo').value;
+      var moduloW = num('moduloW', 450);
+      if (MODULI_W.indexOf(moduloW) === -1) moduloW = 450;
+
+      var fTetto = (TETTI[tettoKey] || TETTI.falda).f;
+
+      var inp = {
+        cats: cats,
+        totale: totale,
+        tariffa: clamp(num('tariffa', 0.28), 0.01, 2),
+        esistente: Math.max(0, num('esistente', 0)),
+
+        citta: c[0],
+        regione: c[1],
+        yieldCity: c[2],
+        cittaIdx: isNum(idx) ? idx : 0,
+
+        inclinazione: clamp(num('inclinazione', 30), 0, 90),
+        azimutKey: $('seg-azimut').getAttribute('data-valore') || 'S',
+        azimut: AZIMUT[$('seg-azimut').getAttribute('data-valore') || 'S'],
+        tettoKey: tettoKey,
+        tettoLabel: (TETTI[tettoKey] || TETTI.falda).label,
+        fTetto: fTetto,
+        area: Math.max(0, num('area', 0)),
+
+        profiloKey: profiloKey,
+        fDay: (PROFILI[profiloKey] || PROFILI.residenziale).day,
+        moduloW: moduloW,
+        copertura: clamp(num('copertura', 100), 10, 200),
+        dcAc: clamp(num('dcAc', 1.15), 1.0, 1.6),
+
+        perdite: clamp(num('perdite', 14), 0, 45),
+        ombre: clamp(num('ombre', 0), 0, 40),
+        valoreRete: Math.max(0, num('valoreRete', 0.08)),
+        co2: Math.max(0, num('co2', 0.21)),
+        cModulo: Math.max(0, num('cModulo', COSTI_DEF.cModulo)),
+        cInverter: Math.max(0, num('cInverter', COSTI_DEF.cInverter)),
+        cInstall: Math.max(0, num('cInstall', COSTI_DEF.cInstall)),
+        cExtra: Math.max(0, num('cExtra', 0)),
+        om: Math.max(0, num('om', 1.5)),
+        detrazione: clamp(num('detrazione', 50), 0, 100)
+      };
+
+      inp.costoTotaleWp = inp.cModulo + inp.cInverter + inp.cInstall;
+      inp.costoAnnuoAttuale = totale * inp.tariffa;
+
+      // Fattori di correzione del sito
+      inp.fInclinazione = fattInclinazione(inp.inclinazione);
+      inp.fAzimut = fattAzimut(inp.azimut);
+      inp.fSito = clamp(inp.fInclinazione * inp.fAzimut * inp.fTetto, 0.55, 1.00);
+
+      // Producibile specifico lordo e netto
+      inp.specLordo = inp.yieldCity * inp.fSito;
+      inp.fPerdita = 1 - (1 - inp.perdite / 100) * (1 - inp.ombre / 100);
+      inp.specNetto = inp.specLordo * (1 - inp.fPerdita);
+
+      return inp;
+    }
+
+    /* =======================================================================
+       ANALISI DI UN GENERICO IMPIANTO DI POTENZA kWp
+       ======================================================================= */
+
+    function analizzaScenario(kwp, inp) {
+      kwp = Math.max(0, kwp);
+
+      var moduli = Math.round(kwp * 1000 / inp.moduloW);
+      var inverterKw = snapInverter(kwp * inp.dcAc);
+
+      var prodNuova = kwp * inp.specNetto;
+      var prodEsistente = inp.esistente * inp.specNetto;
+      var produzione = prodNuova + prodEsistente;
+
+      // Consumi mensili
+      var consM = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      CATS.forEach(function (c) {
+        var q = SHARE_CONS[c.k];
+        for (var m = 0; m < 12; m++) consM[m] += inp.cats[c.k] * q[m];
+      });
+
+      // Bilancio mensile
+      var prodM = [], autM = [], expM = [], gridM = [], mesCoperti = 0;
+      var aut = 0, exp = 0, grid = 0;
+      for (var i = 0; i < 12; i++) {
+        var pm = produzione * SHARE_PROD[i];
+        var consGiorno = consM[i] * inp.fDay;
+        var diretto = Math.min(pm, consGiorno);
+        var a = diretto * ETA_AUT;
+        var e = pm - a;
+        var g = Math.max(0, consM[i] - a);
+        prodM.push(pm); autM.push(a); expM.push(e); gridM.push(g);
+        aut += a; exp += e; grid += g;
+        if (pm >= consM[i]) mesCoperti++;
+      }
+
+      // Energia
+      var quotaAut = inp.totale > 0 ? (aut / inp.totale) * 100 : 0;
+      var autSuProd = produzione > 0 ? (aut / produzione) * 100 : 0;
+
+      // Investimento
+      var invest = kwp * 1000 * inp.costoTotaleWp + inp.cExtra;
+      var detrazione = invest * inp.detrazione / 100;
+      var costoNetto = invest - detrazione;
+
+      // Economia
+      var risLordo = aut * inp.tariffa + exp * inp.valoreRete;
+      var omAnnuo = invest * inp.om / 100;
+      var risNetto = risLordo - omAnnuo;
+      var risparmioAnnuo = risNetto;
+      var costoResiduo = grid * inp.tariffa;
+      var risparmioPotenziale = inp.costoAnnuoAttuale - costoResiduo;
+
+      var payback = risNetto > 0 ? invest / risNetto : Infinity;
+      var paybackNetto = risNetto > 0 ? costoNetto / risNetto : Infinity;
+      var valore25 = risNetto * VITA;
+      var roi = invest > 0 ? ((valore25 - invest) / invest) * 100 : 0;
+      var roiNetto = costoNetto > 0 ? ((valore25 - costoNetto) / costoNetto) * 100 : 0;
+      var rendAnnuo = invest > 0 ? (risNetto / invest) * 100 : 0;
+
+      // Ambiente e ingombro
+      var co2kg = produzione * inp.co2;
+      var area = kwp / DENSITA;
+
+      return {
+        kwp: kwp,
+        moduli: moduli,
+        inverterKw: inverterKw,
+        inverterRapporto: kwp > 0 ? inverterKw / kwp : 0,
+        prodNuova: prodNuova,
+        prodEsistente: prodEsistente,
+        produzione: produzione,
+        specifico: kwp > 0 ? produzione / kwp : 0,
+        consM: consM, prodM: prodM, autM: autM, expM: expM, gridM: gridM,
+        aut: aut, exp: exp, grid: grid,
+        quotaAut: quotaAut,
+        autSuProd: autSuProd,
+        mesCoperti: mesCoperti,
+        invest: invest,
+        euroPerWp: kwp > 0 ? invest / (kwp * 1000) : 0,
+        detrazione: detrazione,
+        costoNetto: costoNetto,
+        risLordo: risLordo,
+        omAnnuo: omAnnuo,
+        risNetto: risNetto,
+        risparmioAnnuo: risparmioAnnuo,
+        risparmioPotenziale: risparmioPotenziale,
+        costoResiduo: costoResiduo,
+        payback: payback,
+        paybackNetto: paybackNetto,
+        roi: roi,
+        roiNetto: roiNetto,
+        rendAnnuo: rendAnnuo,
+        co2kg: co2kg,
+        co2t: co2kg / 1000,
+        area: area
+      };
+    }
+
+    /* =======================================================================
+       DIMENSIONAMENTO
+       ======================================================================= */
+
+    function dimensiona(inp) {
+      var prodEsistente = inp.esistente * inp.specNetto;
+      var daCoprire = Math.max(0, inp.totale - prodEsistente);
+      var target = daCoprire * (inp.copertura / 100);
+
+      var kwpTeorico = inp.specNetto > 0 ? target / inp.specNetto : 0;
+      var moduli = 0;
+      if (target > 0 && inp.specNetto > 0) {
+        moduli = Math.max(1, Math.ceil((kwpTeorico * 1000 / inp.moduloW) - 1e-9));
+      }
+      var kwp = moduli * inp.moduloW / 1000;
+
+      return { kwpTeorico: kwpTeorico, kwp: kwp, moduli: moduli, daCoprire: daCoprire, target: target };
+    }
+
+    var CURRENT = null; // { inp, dim, ris }
+
+    function calcola() {
+      var inp = leggiInput();
+      var dim = dimensiona(inp);
+      var ris = analizzaScenario(dim.kwp, inp);
+      CURRENT = { inp: inp, dim: dim, ris: ris };
+      disegnaTutto();
+    }
+
+    /* =======================================================================
+       AGGIORNAMENTO UI
+       ======================================================================= */
+
+    function setText(id, txt) { var e = $(id); if (e) e.textContent = txt; }
+
+    function card(v, l, u, cls) {
+      return '<div class="card ' + (cls || '') + '">' +
+        '<div class="l">' + l + '</div>' +
+        '<div class="v">' + v + '</div>' +
+        '<div class="u">' + (u || '') + '</div></div>';
+    }
+
+    function disegnaTutto() {
+      if (!CURRENT) return;
+      var inp = CURRENT.inp, dim = CURRENT.dim, r = CURRENT.ris;
+
+      /* ---- consumo totale ---- */
+      $('out-consumo-tot').innerHTML =
+        '<b>' + nf(inp.totale) + '</b> kWh/a &nbsp;·&nbsp; <b>' + nf(inp.costoAnnuoAttuale) + ' €</b>/a';
+
+      /* ---- hint città ---- */
+      $('hint-citta').innerHTML = nf(inp.yieldCity) + ' kWh/kWp/a in posizione ottimale · ' + inp.regione;
+
+      /* ---- HERO ---- */
+      $('hero-kwp').innerHTML = nf(r.kwp, 2) + ' <small>kWp</small>';
+      $('hero-sub').innerHTML = r.moduli + ' moduli da ' + inp.moduloW + ' W · inverter ' +
+        nf(r.inverterKw, 2) + ' kW (DC/AC ' + nf(r.inverterRapporto, 2) + ') · ' +
+        nf(r.area, 1) + ' m² in copertura';
+      setText('hero-moduli', String(r.moduli));
+      setText('hero-inv', nf(r.inverterKw, 2));
+      setText('hero-prod', nf(r.produzione));
+      setText('hero-pb', isFinite(r.payback) ? nf(r.payback, 1) : '—');
+
+      setText('tag-sito', inp.citta + ' · ' + inp.azimutKey + ' ' + inp.inclinazione + '° · ' + inp.tettoKey);
+
+      /* ---- CARDS RISULTATI ---- */
+      var clsAut = r.quotaAut >= 70 ? '' : (r.quotaAut >= 40 ? 'blue' : 'arancio');
+      var clsPb = r.payback <= 7 ? '' : (r.payback <= 12 ? 'giallo' : 'rosso');
+      var cards = '';
+      cards += card(nf(r.kwp, 2) + ' <span style="font-size:.75em">kWp</span>', 'Potenza di picco', dim.kwpTeorico > 0 ? 'Teorico ' + nf(dim.kwpTeorico, 2) + ' kWp' : '', '');
+      cards += card(String(r.moduli), 'Numero di pannelli', inp.moduloW + ' W ciascuno', '');
+      cards += card(nf(r.inverterKw, 2) + ' kW', 'Inverter consigliato', 'Rapporto DC/AC ' + nf(r.inverterRapporto, 2), 'blue');
+      cards += card(nf(r.produzione), 'Producibile annuo', 'kWh/anno', '');
+      cards += card(nf(r.aut), 'Autoconsumo stimato', 'kWh/anno · ' + nf(r.autSuProd, 0) + '% della produzione', clsAut);
+      cards += card(nf(r.quotaAut, 1) + ' %', 'Quota autosoddisfacimento', 'Consumi coperti', clsAut);
+      cards += card(nf(r.risNetto) + ' €', 'Risparmio annuo netto', 'Lordo ' + nf(r.risLordo) + ' € · OM ' + nf(r.omAnnuo) + ' €', '');
+      cards += card(nf(r.invest), 'Investimento stimato', nf(r.euroPerWp, 3) + ' €/W · ' + nf(inp.costoTotaleWp, 2) + ' €/W', '');
+      cards += card(isFinite(r.payback) ? nf(r.payback, 1) + ' anni' : '—', 'Payback', isFinite(r.paybackNetto) ? 'Con detrazione ' + nf(r.paybackNetto, 1) + ' anni' : 'Su costo intero', clsPb);
+      cards += card(nf(r.roi, 0) + ' %', 'ROI a 25 anni', 'Rendimento ' + nf(r.rendAnnuo, 1) + '%/anno', r.roi > 0 ? '' : 'arancio');
+      cards += card(nf(r.co2t, 2) + ' t', 'Emissioni evitate', nf(r.co2kg) + ' kg CO₂/anno', '');
+      cards += card(nf(r.area, 1) + ' m²', 'Superficie in copertura', '≈ ' + nf(5 * r.kwp, 1) + ' m² per kWp', inp.area > 0 && inp.area < r.area ? 'rosso' : 'vuoto');
+      $('cards-risultati').innerHTML = cards;
+
+      /* ---- CARDS BILANCIO ---- */
+      var b = '';
+      b += card(nf(inp.totale), 'Consumo annuo', 'kWh/anno', '');
+      b += card(nf(r.aut), 'Autoconsumato', 'kWh/anno', '');
+      b += card(nf(r.exp), 'Immesso in rete', 'kWh/anno', 'blue');
+      b += card(nf(r.grid), 'Prelevato dalla rete', 'kWh/anno', 'blue');
+      b += card(nf(inp.totale - r.grid), 'Energia risparmiata', 'kWh/anno', '');
+      b += card(nf(r.costoResiduo) + ' €', 'Costo annuo residuo', 'Era ' + nf(inp.costoAnnuoAttuale) + ' €', 'blue');
+      b += card(nf(r.risparmioPotenziale) + ' €', 'Risparmio potenziale', 'Sul consumo di rete', '');
+      b += card(r.mesCoperti + '/12', 'Mesi a copertura', 'Produzione ≥ consumi', r.mesCoperti >= 6 ? '' : 'arancio');
+      $('cards-bilancio').innerHTML = b;
+
+      /* ---- GRAFICI ---- */
+      $('chart-cat').innerHTML = chartCategorie(inp.cats, inp.totale);
+      $('chart-pie').innerHTML = chartTorta(r.aut, r.exp);
+      $('chart-mensile').innerHTML = chartMensile(r.prodM, r.consM);
+      $('chart-cumulativo').innerHTML = chartCumulativo(r);
+      $('chart-bilancio-mensile').innerHTML = chartBilancioMensile(r);
+
+      /* ---- ALERT ---- */
+      $('alerts').innerHTML = costruisciAlert(inp, dim, r);
+
+      /* ---- TABELLA CONFRONTO ---- */
+      $('tabella-wrap').innerHTML = tabellaConfronto(inp, r);
+
+      /* ---- RIEPILOGO ---- */
+      disegnaRiepilogo(inp, dim, r);
+
+      /* ---- STATUS ---- */
+      setText('status-info', nf(r.kwp, 2) + ' kWp · ' + nf(r.produzione) + ' kWh/a · risparmio ' + nf(r.risNetto) + ' €/a · ' + r.moduli + ' moduli');
+    }
+
+    function costruisciAlert(inp, dim, r) {
+      var out = [];
+      var ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>';
+      var ICON_W = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>';
+      var ICON_I = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>';
+
+      if (inp.totale <= 0) {
+        out.push('<div class="alert warn">' + ICON_W + '<div><b>Nessun consumo inserito.</b> Inserisci i consumi annui per ottenere il dimensionamento.</div></div>');
+        return out.join('');
+      }
+
+      if (inp.fSito < 0.80) {
+        out.push('<div class="alert warn">' + ICON_W + '<div><b>Orientamento penalizzante.</b> Il fattore correttivo del sito è ' +
+          nf(inp.fSito * 100, 0) + '%: a ' + inp.azimutKey + ' ' + inp.inclinazione + '° conviene valutare l\'uso di <b>inverter con ottimizzatori</b> o un tetto ausiliario più esposto.</div></div>');
+      }
+
+      if (inp.area > 0 && inp.area < r.area) {
+        out.push('<div class="alert warn">' + ICON_W + '<div><b>Area insufficiente.</b> Servono circa <b>' + nf(r.area, 1) +
+          ' m²</b> ma ne hai indicati <b>' + nf(inp.area, 1) + ' m²</b>. L\'impianto va ridimensionato a circa ' +
+          nf(inp.area * DENSITA, 2) + ' kWp.</div></div>');
+      }
+
+      if (r.quotaAut < 35) {
+        out.push('<div class="alert info">' + ICON_I + '<div><b>Autoconsumo basso.</b> Solo il ' + nf(r.quotaAut, 0) +
+          '% dei consumi è coperto direttamente. Valuta l\'accumulo (batteria) o riduci la copertura attesa al ' +
+          nf(Math.max(20, inp.copertura * 0.7), 0) + '% per abbassare l\'investimento.</div></div>');
+      } else if (r.quotaAut >= 70) {
+        out.push('<div class="alert ok">' + ICON_OK + '<div><b>Ottimo equilibrio.</b> Il ' + nf(r.quotaAut, 0) +
+          '% dei consumi è autosoddisfatto, ' + nf(r.mesCoperti, 0) + ' mesi su 12 sono a copertura completa.</div></div>');
+      }
+
+      if (isFinite(r.payback) && r.payback > 12) {
+        out.push('<div class="alert warn">' + ICON_W + '<div><b>Payback elevato (' + nf(r.payback, 1) +
+          ' anni).</b> Il modello è redditizio nel lungo periodo (ROI a 25 anni ' + nf(r.roi, 0) +
+          '%) ma l\'investimento iniziale è significativo. Verifica le detrazioni fiscalivigenti.</div></div>');
+      }
+
+      if (r.exp > r.aut * 0.9 && r.exp > 0) {
+        out.push('<div class="alert info">' + ICON_I + '<div><b>Tanta energia in rete.</b> ' + nf(r.exp) +
+          ' kWh/anno finiscono in rete (valore indicato ' + inp.valoreRete + ' €/kWh). Una batteria o un autoconsumo maggiore aumenterebbero la redditività.</div></div>');
+      }
+
+      if (inp.ombre >= 10) {
+        out.push('<div class="alert info">' + ICON_I + '<div><b>Ombreggiamento importante (' + nf(inp.ombre, 0) +
+          '%).</b> Verifica con uno studio di ombreggiamento (3D o drone) il posizionamento dei moduli.</div></div>');
+      }
+
+      if (!out.length) {
+        out.push('<div class="alert ok">' + ICON_OK + '<div><b>Configurazione equilibrata.</b> Impianto ben dimensionato: copertura, risparmio e payback tutti coerenti.</div></div>');
+      }
+      return out.join('');
+    }
+
+    /* =======================================================================
+       GRAFICI SVG
+       ======================================================================= */
+
+    var F_MONO = "'Share Tech Mono', 'Courier New', monospace";
+    var F_SANS = "'Barlow', 'Helvetica Neue', Arial, sans-serif";
+
+    function chartCategorie(cats, totale) {
+      var W = 520, H = 250, padL = 56, padR = 16, padT = 26, padB = 52;
+      var iw = W - padL - padR, ih = H - padT - padB;
+      var vals = CATS.map(function (c) { return cats[c.k]; });
+      var max = niceCeil(Math.max.apply(null, vals.concat([1])));
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Consumi per categoria">';
+
+      for (var g = 0; g <= 4; g++) {
+        var y = padT + ih - ih * g / 4;
+        s += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#2A2A3E" stroke-width="1"/>';
+        s += '<text x="' + (padL - 7) + '" y="' + (y + 4) + '" text-anchor="end" font-family="' + F_MONO + '" font-size="11" fill="#7A7A96">' + nf(max * g / 4) + '</text>';
+      }
+
+      var bw = iw / 4;
+      var barW = bw * 0.5;
+      for (var i = 0; i < CATS.length; i++) {
+        var c = CATS[i];
+        var v = vals[i];
+        var h = max > 0 ? (v / max) * ih : 0;
+        var x = padL + bw * i + (bw - barW) / 2;
+        var y = padT + ih - h;
+        s += '<g><title>' + esc(c.label) + ': ' + nf(v) + ' kWh/a (' + (totale > 0 ? nf(v / totale * 100, 1) : 0) + '%)</title>';
+        s += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + Math.max(h, 1) + '" rx="3" fill="' + c.colore + '"/>';
+        if (h > 2) s += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="3" rx="1.5" fill="#ffffff" opacity=".45"/>';
+        s += '<text x="' + (x + barW / 2) + '" y="' + (y - 7) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="12" fill="#FFFFFF" font-weight="bold">' + nf(v) + '</text>';
+        s += '<text x="' + (padL + bw * i + bw / 2) + '" y="' + (H - padB + 17) + '" text-anchor="middle" font-family="' + F_SANS + '" font-size="11" fill="#A0A0B8">' + esc(c.label) + '</text>';
+        s += '<text x="' + (padL + bw * i + bw / 2) + '" y="' + (H - padB + 32) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="10" fill="' + c.colore + '">' + (totale > 0 ? nf(v / totale * 100, 1) : '0,0') + '%</text>';
+        s += '</g>';
+      }
+      s += '<text x="' + padL + '" y="15" font-family="' + F_SANS + '" font-size="11" fill="#8A8AA0">kWh/anno</text>';
+      s += '</svg>';
+      return s;
+    }
+
+    function chartMensile(prodM, consM) {
+      var W = 780, H = 300, padL = 58, padR = 14, padT = 30, padB = 42;
+      var iw = W - padL - padR, ih = H - padT - padB;
+      var max = niceCeil(Math.max.apply(null, prodM.concat(consM).concat([1])));
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Produzione e consumi mensili">';
+
+      for (var g = 0; g <= 5; g++) {
+        var y = padT + ih - ih * g / 5;
+        s += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#2A2A3E" stroke-width="1"/>';
+        s += '<text x="' + (padL - 7) + '" y="' + (y + 4) + '" text-anchor="end" font-family="' + F_MONO + '" font-size="11" fill="#7A7A96">' + nf(max * g / 5) + '</text>';
+      }
+
+      var gw = iw / 12;
+      var bw = gw * 0.30;
+      for (var m = 0; m < 12; m++) {
+        var x0 = padL + gw * m;
+        var hp = max > 0 ? (prodM[m] / max) * ih : 0;
+        var hc = max > 0 ? (consM[m] / max) * ih : 0;
+        var yp = padT + ih - hp, yc = padT + ih - hc;
+        s += '<g><title>' + MESI[m] + ': produzione ' + nf(prodM[m]) + ' kWh · consumi ' + nf(consM[m]) + ' kWh</title>';
+        s += '<rect x="' + (x0 + gw / 2 - bw - 2) + '" y="' + yc + '" width="' + bw + '" height="' + Math.max(hc, 1) + '" rx="2" fill="#4A8EC2" opacity=".85"/>';
+        s += '<rect x="' + (x0 + gw / 2 + 2) + '" y="' + yp + '" width="' + bw + '" height="' + Math.max(hp, 1) + '" rx="2" fill="#00D4AA"/>';
+        s += '<text x="' + (x0 + gw / 2) + '" y="' + (H - padB + 16) + '" text-anchor="middle" font-family="' + F_SANS + '" font-size="11" fill="#A0A0B8">' + MESI[m] + '</text>';
+        s += '<text x="' + (x0 + gw / 2) + '" y="' + (H - padB + 30) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="9" fill="#00D4AA">' + nf(prodM[m]) + '</text>';
+        s += '</g>';
+      }
+
+      s += '<rect x="' + padL + '" y="8" width="11" height="11" rx="2" fill="#00D4AA"/>';
+      s += '<text x="' + (padL + 16) + '" y="18" font-family="' + F_SANS + '" font-size="12" fill="#D6D6E6">Produzione FV</text>';
+      s += '<rect x="' + (padL + 120) + '" y="8" width="11" height="11" rx="2" fill="#4A8EC2"/>';
+      s += '<text x="' + (padL + 136) + '" y="18" font-family="' + F_SANS + '" font-size="12" fill="#D6D6E6">Consumi</text>';
+      s += '<text x="' + (W - padR) + '" y="18" text-anchor="end" font-family="' + F_SANS + '" font-size="11" fill="#8A8AA0">kWh/mese</text>';
+      s += '</svg>';
+      return s;
+    }
+
+    function chartTorta(aut, exp) {
+      var W = 440, H = 250;
+      var cx = 118, cy = 128, R = 78, SW = 30;
+      var tot = aut + exp;
+      var circ = 2 * Math.PI * R;
+      var pAut = tot > 0 ? aut / tot : 0;
+      var lAut = circ * pAut;
+
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ripartizione autoconsumo e rete">';
+      s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#2A2A3E" stroke-width="' + SW + '"/>';
+
+      if (tot > 0) {
+        s += '<g transform="rotate(-90 ' + cx + ' ' + cy + ')">';
+        s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="#00D4AA" stroke-width="' + SW +
+          '" stroke-dasharray="' + lAut.toFixed(2) + ' ' + (circ - lAut).toFixed(2) + '"><title>Autoconsumo: ' + nf(aut) + ' kWh/a (' + nf(pAut * 100, 1) + '%)</title></circle>';
+        s += '</g>';
+      }
+
+      s += '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="24" font-weight="bold" fill="#00D4AA">' + (tot > 0 ? nf(pAut * 100, 0) : '—') + '%</text>';
+      s += '<text x="' + cx + '" y="' + (cy + 15) + '" text-anchor="middle" font-family="' + F_SANS + '" font-size="11" fill="#8A8AA0">autoconsumato</text>';
+
+      var lx = 232;
+      var rows = [
+        { c: '#00D4AA', t: 'Autoconsumo diretto', v: aut, p: pAut * 100 },
+        { c: '#4A8EC2', t: 'Immesso in rete', v: exp, p: (100 - pAut * 100) }
+      ];
+      rows.forEach(function (r, i) {
+        var y = 74 + i * 62;
+        s += '<rect x="' + lx + '" y="' + y + '" width="13" height="13" rx="3" fill="' + r.c + '"/>';
+        s += '<text x="' + (lx + 20) + '" y="' + (y + 11) + '" font-family="' + F_SANS + '" font-size="12.5" fill="#D6D6E6">' + r.t + '</text>';
+        s += '<text x="' + (lx + 20) + '" y="' + (y + 30) + '" font-family="' + F_MONO + '" font-size="15" font-weight="bold" fill="' + r.c + '">' + nf(r.v) + ' kWh</text>';
+        s += '<text x="' + (lx + 130) + '" y="' + (y + 30) + '" font-family="' + F_MONO + '" font-size="12" fill="#8A8AA0">' + nf(r.p, 1) + '%</text>';
+      });
+      s += '<text x="' + lx + '" y="212" font-family="' + F_SANS + '" font-size="10.5" fill="#6E6E88">Totale produzione: ' + nf(tot) + ' kWh/anno</text>';
+      s += '</svg>';
+      return s;
+    }
+
+    function chartCumulativo(r) {
+      var W = 520, H = 260, padL = 58, padR = 16, padT = 26, padB = 40;
+      var iw = W - padL - padR, ih = H - padT - padB;
+      var annuoLordo = r.risLordo;
+      var valsL = [], valsN = [];
+      for (var y = 0; y <= VITA; y++) {
+        valsL.push(y * r.risLordo - r.invest);
+        valsN.push(y * r.risNetto - r.costoNetto);
+      }
+      var all = valsL.concat(valsN, [0]);
+      var mn = Math.min.apply(null, all), mx = Math.max.apply(null, all);
+      var pad = (mx - mn) * 0.12 || 1;
+      mn = mn - pad; mx = mx + pad;
+
+      var X = function (y) { return padL + (y / VITA) * iw; };
+      var Y = function (v) { return padT + ih - ((v - mn) / (mx - mn)) * ih; };
+
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cumulativo risparmio">';
+      for (var g = 0; g <= 4; g++) {
+        var yy = padT + ih - ih * g / 4;
+        s += '<line x1="' + padL + '" y1="' + yy + '" x2="' + (W - padR) + '" y2="' + yy + '" stroke="#2A2A3E" stroke-width="1"/>';
+        s += '<text x="' + (padL - 6) + '" y="' + (yy + 4) + '" text-anchor="end" font-family="' + F_MONO + '" font-size="10" fill="#7A7A96">' + nf(mn + (mx - mn) * g / 4) + '</text>';
+      }
+
+      function poly(vals) {
+        var p = '';
+        for (var i = 0; i <= VITA; i++) p += X(i).toFixed(1) + ',' + Y(vals[i]).toFixed(1) + ' ';
+        return p.trim();
+      }
+
+      s += '<line x1="' + padL + '" y1="' + Y(0).toFixed(1) + '" x2="' + (W - padR) + '" y2="' + Y(0).toFixed(1) + '" stroke="#4A4A64" stroke-width="1" stroke-dasharray="4 3"/>';
+      s += '<polyline points="' + poly(valsL) + '" fill="none" stroke="#4A8EC2" stroke-width="2" stroke-dasharray="5 3"/>';
+      s += '<polyline points="' + poly(valsN) + '" fill="none" stroke="#00D4AA" stroke-width="2.5" stroke-linejoin="round"/>';
+
+      if (isFinite(r.payback) && r.payback <= VITA) {
+        s += '<circle cx="' + X(r.payback).toFixed(1) + '" cy="' + Y(0).toFixed(1) + '" r="4.5" fill="#FF6B35"/>';
+        s += '<text x="' + X(r.payback).toFixed(1) + '" y="' + (Y(0) - 10).toFixed(1) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="11" font-weight="bold" fill="#FF6B35">PB ' + nf(r.payback, 1) + ' a</text>';
+      }
+
+      [0, 5, 10, 15, 20, 25].forEach(function (y) {
+        s += '<text x="' + X(y).toFixed(1) + '" y="' + (H - padB + 16) + '" text-anchor="middle" font-family="' + F_MONO + '" font-size="10" fill="#7A7A96">' + y + '</text>';
+      });
+      s += '<text x="' + (W - padR) + '" y="' + (H - 6) + '" text-anchor="end" font-family="' + F_SANS + '" font-size="10" fill="#6E6E88">anni</text>';
+      s += '<rect x="' + padL + '" y="6" width="11" height="11" rx="2" fill="#00D4AA"/>';
+      s += '<text x="' + (padL + 16) + '" y="16" font-family="' + F_SANS + '" font-size="11" fill="#D6D6E6">Netto con detrazione</text>';
+      s += '<rect x="' + (padL + 170) + '" y="6" width="11" height="11" rx="2" fill="#4A8EC2"/>';
+      s += '<text x="' + (padL + 186) + '" y="16" font-family="' + F_SANS + '" font-size="11" fill="#D6D6E6">Lordo</text>';
+      s += '</svg>';
+      return s;
+    }
+
+    function chartBilancioMensile(r) {
+      var W = 520, H = 260, padL = 52, padR = 14, padT = 30, padB = 40;
+      var iw = W - padL - padR, ih = H - padT - padB;
+      var max = niceCeil(Math.max.apply(null, r.autM.concat(r.expM).concat(r.gridM).concat([1])));
+
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bilancio mensile">';
+      for (var g = 0; g <= 4; g++) {
+        var y = padT + ih - ih * g / 4;
+        s += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#2A2A3E" stroke-width="1"/>';
+        s += '<text x="' + (padL - 6) + '" y="' + (y + 4) + '" text-anchor="end" font-family="' + F_MONO + '" font-size="10" fill="#7A7A96">' + nf(max * g / 4) + '</text>';
+      }
+
+      var gw = iw / 12;
+      var bw = gw * 0.56;
+      var segs = [
+        { d: r.autM, c: '#00D4AA' },
+        { d: r.expM, c: '#008F6E' },
+        { d: r.gridM, c: '#4A8EC2' }
+      ];
+      for (var m = 0; m < 12; m++) {
+        var x = padL + gw * m + (gw - bw) / 2;
+        var acc = 0;
+        s += '<g><title>' + MESI[m] + ': autoconsumo ' + nf(r.autM[m]) + ' · rete ' + nf(r.expM[m]) + ' · prelievo ' + nf(r.gridM[m]) + ' kWh</title>';
+        for (var k = 0; k < segs.length; k++) {
+          var h = max > 0 ? (segs[k].d[m] / max) * ih : 0;
+          if (h > 0.5) {
+            var yb = padT + ih - acc - h;
+            s += '<rect x="' + x.toFixed(1) + '" y="' + yb.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + segs[k].c + '"/>';
+            acc += h;
+          }
+        }
+        s += '<text x="' + (padL + gw * m + gw / 2).toFixed(1) + '" y="' + (H - padB + 15) + '" text-anchor="middle" font-family="' + F_SANS + '" font-size="9.5" fill="#A0A0B8">' + MESI[m] + '</text>';
+        s += '</g>';
+      }
+
+      var lg = [['#00D4AA', 'Autoconsumo'], ['#008F6E', 'In rete'], ['#4A8EC2', 'Dalla rete']];
+      lg.forEach(function (l, i) {
+        var lx = padL + i * 118;
+        s += '<rect x="' + lx + '" y="6" width="10" height="10" rx="2" fill="' + l[0] + '"/>';
+        s += '<text x="' + (lx + 15) + '" y="15" font-family="' + F_SANS + '" font-size="10.5" fill="#D6D6E6">' + l[1] + '</text>';
+      });
+      s += '<text x="' + (W - padR) + '" y="15" text-anchor="end" font-family="' + F_SANS + '" font-size="10" fill="#6E6E88">kWh/mese</text>';
+      s += '</svg>';
+      return s;
+    }
+
+    /* =======================================================================
+       TABELLA CONFRONTO MODULI
+       ======================================================================= */
+
+    function scenari(inp, r) {
+      var set;
+      if (r.kwp <= 2.2) set = [1.5, 2.5, 4];
+      else if (r.kwp <= 4.5) set = [2, 3.5, 5];
+      else if (r.kwp <= 9) set = [3, 5, 8];
+      else if (r.kwp <= 22) set = [8, 15, 25];
+      else set = [25, 50, 75];
+      return set;
+    }
+
+    function tabellaConfronto(inp, r) {
+      var set = scenari(inp, r);
+      var sc = set.map(function (k) { return analizzaScenario(k, inp); });
+
+      var bestPb = Math.min.apply(null, sc.map(function (s) { return isFinite(s.payback) ? s.payback : 1e9; }));
+      var bestRoi = Math.max.apply(null, sc.map(function (s) { return s.roi; }));
+      var bestInv = Math.min.apply(null, sc.map(function (s) { return s.invest; }));
+      var bestQuota = Math.max.apply(null, sc.map(function (s) { return s.quotaAut; }));
+
+      var s = '<table class="tbl"><thead><tr><th>Parametro</th>';
+      sc.forEach(function (x, i) {
+        var isRec = Math.abs(x.kwp - r.kwp) < 0.01;
+        s += '<th' + (isRec ? ' class="col-hi"' : '') + '>' + nf(x.kwp, x.kwp < 10 ? 1 : 0) + ' kWp' +
+          (isRec ? '<span class="best-pill">SCELTO</span>' : '') + '</th>';
+      });
+      s += '</tr></thead><tbody>';
+
+      function row(label, fn, cmp) {
+        var vals = sc.map(fn);
+        var bi = cmp === 'min' ? vals.indexOf(Math.min.apply(null, vals))
+          : cmp === 'max' ? vals.indexOf(Math.max.apply(null, vals)) : -1;
+        s += '<tr><td>' + label + '</td>';
+        vals.forEach(function (v, i) {
+          s += '<td' + (i === bi ? ' class="best"' : '') + '>' + v + '</td>';
+        });
+        s += '</tr>';
+      }
+
+      row('Moduli installati', function (x) { return nf(x.moduli); }, null);
+      row('Inverter (kW)', function (x) { return nf(x.inverterKw, 2); }, null);
+      row('Superficie (m²)', function (x) { return nf(x.area, 1); }, null);
+      row('Produzione annua (kWh)', function (x) { return nf(x.produzione); }, 'max');
+      row('Producibile specifico (kWh/kWp)', function (x) { return nf(x.specifico); }, null);
+      row('Autoconsumo (kWh/a)', function (x) { return nf(x.aut); }, 'max');
+      row('Quota autosoddisfacimento (%)', function (x) { return nf(x.quotaAut, 1); }, 'max');
+      row('Energia immessa in rete (kWh/a)', function (x) { return nf(x.exp); }, null);
+      row('Mesi a copertura', function (x) { return x.mesCoperti + '/12'; }, 'max');
+      row('Risparmio annuo lordo (€)', function (x) { return nf(x.risLordo); }, 'max');
+      row('Risparmio annuo netto (€)', function (x) { return nf(x.risNetto); }, 'max');
+      row('Investimento (€)', function (x) { return nf(x.invest); }, 'min');
+      row('Costo specifico (€/W)', function (x) { return nf(x.euroPerWp, 3); }, 'min');
+      row('Detrazione fiscale (€)', function (x) { return nf(x.detrazione); }, null);
+      row('Costo netto dopo detrazione (€)', function (x) { return nf(x.costoNetto); }, 'min');
+      row('Payback (anni)', function (x) { return isFinite(x.payback) ? nf(x.payback, 1) : '—'; }, 'min');
+      row('Payback con detrazione (anni)', function (x) { return isFinite(x.paybackNetto) ? nf(x.paybackNetto, 1) : '—'; }, 'min');
+      row('ROI a 25 anni (%)', function (x) { return nf(x.roi, 0); }, 'max');
+      row('Rendimento annuo (%)', function (x) { return nf(x.rendAnnuo, 1); }, 'max');
+      row('CO₂ evitata (t/anno)', function (x) { return nf(x.co2t, 2); }, 'max');
+
+      s += '</tbody></table>';
+      return s;
+    }
+
+    /* =======================================================================
+       RIEPILOGO LATERALE
+       ======================================================================= */
+
+    function disegnaRiepilogo(inp, dim, r) {
+      setText('sum-modello', CURRENT.modelName || 'Personalizzato');
+      setText('sum-ill', nf(inp.cats.illuminazione) + ' kWh');
+      setText('sum-eld', nf(inp.cats.elettrodomestici) + ' kWh');
+      setText('sum-cli', nf(inp.cats.climatizzazione) + ' kWh');
+      setText('sum-alt', nf(inp.cats.altri) + ' kWh');
+      setText('sum-cons', nf(inp.totale) + ' kWh');
+      setText('sum-costo', nf(inp.costoAnnuoAttuale) + ' €');
+      setText('sum-tariffa', nf(inp.tariffa, 3) + ' €/kWh');
+
+      setText('sum-citta', inp.citta);
+      setText('sum-irr', nf(inp.yieldCity) + ' kWh/kWp');
+      setText('sum-incl', nf(inp.inclinazione) + '°');
+      setText('sum-azimut', inp.azimutKey + ' (' + inp.azimut + '°)');
+      setText('sum-tetto', inp.tettoLabel);
+      setText('sum-fatt', nf(inp.fSito * 100, 1) + ' %');
+      setText('sum-spec', nf(inp.specNetto) + ' kWh/kWp');
+
+      setText('sum-kwp', nf(r.kwp, 2) + ' kWp');
+      setText('sum-moduli', r.moduli + ' × ' + inp.moduloW + ' W');
+      setText('sum-modw', inp.moduloW + ' W');
+      setText('sum-inv', nf(r.inverterKw, 2) + ' kW');
+      setText('sum-dcac', nf(r.inverterRapporto, 2));
+      setText('sum-area', nf(r.area, 1) + ' m²');
+
+      setText('sum-prod', nf(r.prodNuova) + ' kWh');
+      setText('sum-prodes', nf(r.prodEsistente) + ' kWh');
+      setText('sum-aut', nf(r.aut) + ' kWh');
+      setText('sum-quota', nf(r.quotaAut, 1) + ' %');
+      setText('sum-exp', nf(r.exp) + ' kWh');
+      setText('sum-grid', nf(r.grid) + ' kWh');
+      setText('sum-cop', r.mesCoperti + '/12 mesi');
+
+      var badge = $('sum-badge');
+      if (inp.totale <= 0) { badge.className = 'badge badge-bad'; badge.textContent = 'Dati mancanti'; }
+      else if (!isFinite(r.payback)) { badge.className = 'badge badge-bad'; badge.textContent = 'Non rientra'; }
+      else if (r.payback <= 7 && r.quotaAut >= 60) { badge.className = 'badge badge-ok'; badge.textContent = 'Ottimo'; }
+      else if (r.payback <= 11) { badge.className = 'badge badge-info'; badge.textContent = 'Buono'; }
+      else { badge.className = 'badge badge-warn'; badge.textContent = 'Da valutare'; }
+
+      setText('sum-euw', nf(r.euroPerWp, 3) + ' €/W');
+      setText('sum-invst', nf(r.invest) + ' €');
+      setText('sum-dett', '− ' + nf(r.detrazione) + ' € (' + nf(inp.detrazione, 0) + '%)');
+      setText('sum-costo-netto', nf(r.costoNetto) + ' €');
+      setText('sum-rislordo', nf(r.risLordo) + ' €');
+      setText('sum-om', '− ' + nf(r.omAnnuo) + ' €');
+      setText('sum-risnetto', nf(r.risNetto) + ' €');
+      setText('sum-payback', isFinite(r.payback) ? nf(r.payback, 1) + ' anni' : '—');
+      setText('sum-payback2', isFinite(r.paybackNetto) ? nf(r.paybackNetto, 1) + ' anni' : '—');
+      setText('sum-roi', nf(r.roi, 0) + ' %');
+      setText('sum-rend', nf(r.rendAnnuo, 1) + ' %');
+
+      setText('sum-co2kg', nf(r.co2kg) + ' kg/anno');
+      setText('sum-co2t', nf(r.co2t, 2) + ' t/anno');
+      setText('sum-co2auto', nf(r.co2kg / G_CO2_AUTO) + ' km/anno');
+
+      $('box-formule').innerHTML =
+        '<b>1. Producibile specifico lordo</b>\n' +
+        '   Y_lordo = Y_città × f(inclinazione) × f(azimut) × f(tetto)\n' +
+        '   f(inclinazione) = 1 − 0,0009·(30 − β)⁺ − 0,0035·(β − 30)⁺\n' +
+        '   f(azimut) = 1 − 0,0010·|az| − 0,0000022·az²   (az = 0° Sud)\n\n' +
+        '<b>2. Producibile specifico netto</b>\n' +
+        '   Y_netto = Y_lordo × (1 − p_sistema) × (1 − p_ombre) = ' + nf(inp.specNetto) + ' kWh/kWp/a\n\n' +
+        '<b>3. Potenza consigliata</b>\n' +
+        '   P = [(Consumo − Produzione esistente) × copertura%] / Y_netto = ' + nf(dim.kwpTeorico, 2) + ' kWp\n' +
+        '   P_reale = N_moduli × ' + inp.moduloW + ' W = ' + nf(r.kwp, 2) + ' kWp (' + r.moduli + ' moduli)\n\n' +
+        '<b>4. Inverter</b>\n' +
+        '   P_inv = P_reale × DC/AC (' + nf(inp.dcAc, 2) + ') arrotondato alla taglia commerciale → ' + nf(r.inverterKw, 2) + ' kW\n\n' +
+        '<b>5. Bilancio mensile</b>\n' +
+        '   cons_mese = Consumo_anno × quota_mese(categoria)\n' +
+        '   aut_mese = min(prod_mese, cons_mese × f_diurno) × 0,92\n' +
+        '   rete_mese = prod_mese − aut_mese   ·   prelievo_mese = cons_mese − aut_mese\n\n' +
+        '<b>6. Investimento</b>\n' +
+        '   C = P[W] × (' + nf(inp.cModulo, 2) + ' + ' + nf(inp.cInverter, 2) + ' + ' + nf(inp.cInstall, 2) + ') € + extra = ' + nf(r.invest) + ' €\n' +
+        '   (' + nf(inp.costoTotaleWp, 2) + ' €/W → ' + nf(inp.costoTotaleWp * 1000) + ' €/kWp)\n\n' +
+        '<b>7. Risparmio e payback</b>\n' +
+        '   Ris_lordo = Autoconsumo × ' + nf(inp.tariffa, 3) + ' €/kWh + Imesso × ' + nf(inp.valoreRete, 2) + ' €/kWh\n' +
+        '   Ris_net = Ris_lordo − Manutenzione (' + nf(inp.om, 1) + '%/a)\n' +
+        '   Payback = Costo / Ris_net = ' + (isFinite(r.payback) ? nf(r.payback, 2) + ' anni' : '—') + '\n' +
+        '   Detrazione indicativa ' + nf(inp.detrazione, 0) + '% → costo netto ' + nf(r.costoNetto) + ' €\n' +
+        '   ROI₂₅ = (Ris_net × ' + VITA + ' − Costo) / Costo × 100 = ' + nf(r.roi, 1) + ' %\n\n' +
+        '<b>8. Ambiente</b>\n' +
+        '   CO₂ = Produzione × ' + nf(inp.co2, 2) + ' kg/kWh = ' + nf(r.co2kg) + ' kg/a = ' + nf(r.co2t, 2) + ' t/a\n' +
+        '   Superficie = P[kWp] / ' + nf(DENSITA, 2) + ' = ' + nf(r.area, 1) + ' m²';
+    }
+
+    /* =======================================================================
+       UI: SELETTORI, MODELLI, PANNELLI
+       ======================================================================= */
+
+    function costruisciSelectCity() {
+      var sel = $('citta');
+      var html = '';
+      CITTA.forEach(function (c, i) {
+        html += '<option value="' + i + '">' + esc(c[0]) + ' — ' + esc(c[1]) + '</option>';
+      });
+      sel.innerHTML = html;
+    }
+
+    function costruisciSegmenti() {
+      var seg = $('seg-azimut');
+      seg.setAttribute('data-valore', 'S');
+      var h = '';
+      ORDINE_AZIMUT.forEach(function (k) {
+        h += '<button type="button" class="seg-btn' + (k === 'S' ? ' active' : '') + '" data-k="' + k + '">' + k + '</button>';
+      });
+      seg.innerHTML = h;
+      seg.addEventListener('click', function (e) {
+        var b = e.target.closest('.seg-btn');
+        if (!b) return;
+        seg.setAttribute('data-valore', b.getAttribute('data-k'));
+        Array.prototype.forEach.call(seg.querySelectorAll('.seg-btn'), function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        calcola();
+      });
+
+      var sm = $('seg-modulo');
+      var h2 = '';
+      MODULI_W.forEach(function (w) {
+        h2 += '<button type="button" class="seg-btn' + (w === 450 ? ' active' : '') + '" data-w="' + w + '">' + w + '</button>';
+      });
+      sm.innerHTML = h2;
+      sm.addEventListener('click', function (e) {
+        var b = e.target.closest('.seg-btn');
+        if (!b) return;
+        Array.prototype.forEach.call(sm.querySelectorAll('.seg-btn'), function (x) { x.classList.remove('active'); });
+        b.classList.add('active');
+        var w = parseInt(b.getAttribute('data-w'), 10);
+        var hid = $('moduloW');
+        if (!hid) {
+          hid = document.createElement('input');
+          hid.type = 'hidden';
+          hid.id = 'moduloW';
+          document.body.appendChild(hid);
+        }
+        hid.value = w;
+        calcola();
+      });
+      // input nascosto per la potenza unitaria
+      var hid = document.createElement('input');
+      hid.type = 'hidden';
+      hid.id = 'moduloW';
+      hid.value = 450;
+      document.body.appendChild(hid);
+    }
+
+    function costruisciModelli() {
+      var q = $('quick-models');
+      var h = '';
+      PRESET.forEach(function (p) {
+        h += '<div class="qm" data-id="' + p.id + '" role="button" tabindex="0"><b>' + esc(p.nome) + '</b><span>' + nf(p.kwh) + ' kWh/a</span></div>';
+      });
+      q.innerHTML = h;
+      q.addEventListener('click', function (e) {
+        var el = e.target.closest('.qm');
+        if (el) applicaPreset(el.getAttribute('data-id'));
+      });
+
+      var pg = $('preset-grid');
+      var h2 = '';
+      PRESET.forEach(function (p) {
+        h2 += '<button type="button" class="preset" data-id="' + p.id + '">' +
+          '<b>' + esc(p.nome) + ' · ' + nf(p.kwh) + ' kWh/a</b>' +
+          '<span class="kwh">' + nf(p.kwh * 0.28, 0) + ' €/a · ' + esc(p.profilo) + '</span>' +
+          '<span class="dsc">' + esc(p.dsc) + '</span>' +
+          '</button>';
+      });
+      pg.innerHTML = h2;
+      pg.addEventListener('click', function (e) {
+        var b = e.target.closest('.preset');
+        if (!b) return;
+        applicaPreset(b.getAttribute('data-id'));
+        chiudiModal('modal-modelli');
+      });
+    }
+
+    function applicaPreset(id) {
+      var p = null;
+      PRESET.forEach(function (x) { if (x.id === id) p = x; });
+      if (!p) return;
+
+      $('illuminazione').value = p.dati.illuminazione;
+      $('elettrodomestici').value = p.dati.elettrodomestici;
+      $('climatizzazione').value = p.dati.climatizzazione;
+      $('altri').value = p.dati.altri;
+      $('tariffa').value = p.tariffa;
+      $('esistente').value = 0;
+      $('profilo').value = p.profilo;
+      $('copertura').value = 100;
+
+      $('citta').value = p.sito.citta;
+      $('inclinazione').value = p.sito.inclinazione;
+      $('tetto').value = p.sito.tetto;
+      $('area').value = p.sito.area;
+
+      var seg = $('seg-azimut');
+      seg.setAttribute('data-valore', p.sito.azimut);
+      Array.prototype.forEach.call(seg.querySelectorAll('.seg-btn'), function (x) {
+        x.classList.toggle('active', x.getAttribute('data-k') === p.sito.azimut);
+      });
+
+      CURRENT.modelName = p.nome;
+      Array.prototype.forEach.call($('quick-models').querySelectorAll('.qm'), function (x) {
+        x.classList.toggle('active', x.getAttribute('data-id') === id);
+      });
+
+      calcola();
+      toast('Modello "' + p.nome + '" applicato');
+    }
+
+    function resetDati() {
+      $('illuminazione').value = 700;
+      $('elettrodomestici').value = 1900;
+      $('climatizzazione').value = 1000;
+      $('altri').value = 1400;
+      $('tariffa').value = 0.28;
+      $('esistente').value = 0;
+      $('citta').value = 12;
+      $('inclinazione').value = 30;
+      $('tetto').value = 'falda';
+      $('area').value = 0;
+      $('profilo').value = 'residenziale';
+      $('copertura').value = 100;
+      $('dcAc').value = 1.15;
+      $('perdite').value = 14;
+      $('ombre').value = 0;
+      $('cModulo').value = COSTI_DEF.cModulo;
+      $('cInverter').value = COSTI_DEF.cInverter;
+      $('cInstall').value = COSTI_DEF.cInstall;
+      $('cExtra').value = 0;
+      $('valoreRete').value = 0.08;
+      $('om').value = 1.5;
+      $('co2').value = 0.21;
+      $('detrazione').value = 50;
+
+      var seg = $('seg-azimut');
+      seg.setAttribute('data-valore', 'S');
+      Array.prototype.forEach.call(seg.querySelectorAll('.seg-btn'), function (x) {
+        x.classList.toggle('active', x.getAttribute('data-k') === 'S');
+      });
+      var sm = $('seg-modulo');
+      $('moduloW').value = 450;
+      Array.prototype.forEach.call(sm.querySelectorAll('.seg-btn'), function (x) {
+        x.classList.toggle('active', x.getAttribute('data-w') === '450');
+      });
+
+      CURRENT = null;
+      CURRENT_MODEL = null;
+      Array.prototype.forEach.call($('quick-models').querySelectorAll('.qm'), function (x) { x.classList.remove('active'); });
+      calcola();
+      CURRENT = { inp: CURRENT.inp, dim: CURRENT.dim, ris: CURRENT.ris, modelName: '' };
+      setText('sum-modello', 'Personalizzato');
+      toast('Dati azzerati');
+    }
+
+    function apriModelli() { apriModal('modal-modelli'); }
+    function apriCarica() { apriModal('modal-carica'); }
+
+    function togglePanel(id) {
+      var p = $(id);
+      var c = p.classList.toggle('collapsed');
+      var h = p.querySelector('.panel-head');
+      if (h) h.setAttribute('aria-expanded', String(!c));
+    }
+
+    var pannelliOk = false;
+    function togglePannelli() {
+      var ids = ['panel-input', 'panel-risultati', 'panel-riepilogo'];
+      pannelliOk = !pannelliOk;
+      ids.forEach(function (id) { $(id).classList.toggle('collapsed', !pannelliOk); });
+      toast(pannelliOk ? 'Pannelli aperti' : 'Pannelli compatti');
+    }
+
+    var CURRENT_MODEL = null;
+
+    /* =======================================================================
+       SALVA / CARICA JSON
+       ======================================================================= */
+
+    function raccogliDati() {
+      var d = {};
+      ['illuminazione', 'elettrodomestici', 'climatizzazione', 'altri', 'tariffa', 'esistente',
+        'citta', 'inclinazione', 'tetto', 'area', 'profilo', 'copertura', 'dcAc',
+        'perdite', 'ombre', 'cModulo', 'cInverter', 'cInstall', 'cExtra',
+        'valoreRete', 'om', 'co2', 'detrazione', 'moduloW'].forEach(function (id) {
+          var el = $(id);
+          if (el) d[id] = (el.type === 'hidden') ? el.value : (el.value !== '' ? el.value : '');
+        });
+      d.azimut = $('seg-azimut').getAttribute('data-valore') || 'S';
+      return d;
+    }
+
+    function applicaDati(d) {
+      if (!d || typeof d !== 'object') return false;
+      var keys = Object.keys(d);
+      if (!keys.length) return false;
+      keys.forEach(function (k) {
+        if (k === 'azimut') return;
+        var el = $(k);
+        if (el && d[k] !== null && d[k] !== undefined) el.value = d[k];
+      });
+
+      var az = d.azimut;
+      if (az) {
+        var seg = $('seg-azimut');
+        seg.setAttribute('data-valore', az);
+        Array.prototype.forEach.call(seg.querySelectorAll('.seg-btn'), function (x) {
+          x.classList.toggle('active', x.getAttribute('data-k') === az);
+        });
+      }
+
+      var mw = parseInt($('moduloW').value, 10);
+      if (isNum(mw)) {
+        Array.prototype.forEach.call($('seg-modulo').querySelectorAll('.seg-btn'), function (x) {
+          x.classList.toggle('active', parseInt(x.getAttribute('data-w'), 10) === mw);
+        });
+      }
+
+      Array.prototype.forEach.call($('quick-models').querySelectorAll('.qm'), function (x) { x.classList.remove('active'); });
+      CURRENT = { inp: null, dim: null, ris: null, modelName: 'Caricato da file' };
+      calcola();
+      CURRENT.modelName = 'Caricato da file';
+      setText('sum-modello', 'Caricato da file');
+      return true;
+    }
+
+    function salvaJSON() {
+      var payload = {
+        tipo: 'dimensionamento-solare',
+        versione: 1,
+        applicazione: 'Valve Electronics — Dimensionamento Solare',
+        data: new Date().toISOString(),
+        dati: raccogliDati()
+      };
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      var d = new Date();
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+      a.href = url;
+      a.download = 'dimensionamento-solare-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      toast('File JSON salvato');
+    }
+
+    function gestisciFile(file) {
+      if (!file) return;
+      var r = new FileReader();
+      r.onload = function () {
+        try {
+          var j = JSON.parse(r.result);
+          var ok = applicaDati(j.dati || j);
+          if (ok) { toast('Dati caricati'); chiudiModal('modal-carica'); }
+          else toast('File non valido', true);
+        } catch (err) {
+          toast('JSON non valido: ' + err.message, true);
+        }
+      };
+      r.readAsText(file);
+    }
+
+    function caricaDaTesto() {
+      var t = $('txt-json').value.trim();
+      if (!t) { toast('Incolla prima il contenuto JSON', true); return; }
+      try {
+        var j = JSON.parse(t);
+        var ok = applicaDati(j.dati || j);
+        if (ok) { toast('Dati caricati'); chiudiModal('modal-carica'); }
+        else toast('Contenuto non riconosciuto', true);
+      } catch (err) {
+        toast('JSON non valido: ' + err.message, true);
+      }
+    }
+
+    /* =======================================================================
+       EXPORT PDF
+       ======================================================================= */
+
+    function svgToPng(svgEl, scale) {
+      return new Promise(function (resolve, reject) {
+        try {
+          scale = scale || 2;
+          var xml = new XMLSerializer().serializeToString(svgEl);
+          var data = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+          var img = new Image();
+          img.onload = function () {
+            var vb = svgEl.viewBox && svgEl.viewBox.baseVal;
+            var w = vb && vb.width ? vb.width : svgEl.clientWidth || 500;
+            var h = vb && vb.height ? vb.height : svgEl.clientHeight || 250;
+            var c = document.createElement('canvas');
+            c.width = Math.round(w * scale);
+            c.height = Math.round(h * scale);
+            var ctx = c.getContext('2d');
+            ctx.fillStyle = '#1A1A2E';
+            ctx.fillRect(0, 0, c.width, c.height);
+            ctx.drawImage(img, 0, 0, c.width, c.height);
+            resolve(c.toDataURL('image/png'));
+          };
+          img.onerror = function (e) { reject(e); };
+          img.src = data;
+        } catch (e) { reject(e); }
+      });
+    }
+
+    function generaPDF() {
+      if (!CURRENT) calcola();
+      if (!window.jspdf) { toast('jsPDF non disponibile (connessione?)', true); return; }
+      var inp = CURRENT.inp, dim = CURRENT.dim, r = CURRENT.ris;
+
+      var ids = ['chart-cat', 'chart-mensile', 'chart-pie', 'chart-cumulativo', 'chart-bilancio-mensile'];
+      var promises = ids.map(function (id) {
+        var svg = $(id) ? $(id).querySelector('svg') : null;
+        if (!svg) return Promise.resolve(null);
+        return svgToPng(svg, 2).catch(function () { return null; });
+      });
+
+      Promise.all(promises).then(function (imgs) {
+        try {
+          var jsPDFCtor = window.jspdf.jsPDF;
+          var doc = new jsPDFCtor({ unit: 'mm', format: 'a4' });
+          var pw = doc.internal.pageSize.getWidth();
+          var ph = doc.internal.pageSize.getHeight();
+          var M = 14;
+
+          function header(sub) {
+            doc.setFillColor(26, 26, 46);
+            doc.rect(0, 0, pw, 22, 'F');
+            doc.setFillColor(0, 212, 170);
+            doc.rect(0, 21, pw, 1.5, 'F');
+            doc.setTextColor(0, 212, 170);
+            doc.setFontSize(15);
+            doc.text('Valve Electronics\u2122 — Dimensionamento Solare', M, 10.5);
+            doc.setTextColor(150, 150, 175);
+            doc.setFontSize(9);
+            doc.text(sub, M, 16.5);
+            doc.setTextColor(120);
+            doc.text('Generato il ' + new Date().toLocaleString('it-IT'), pw - M, 16.5, { align: 'right' });
+          }
+
+          function footer(page) {
+            doc.setDrawColor(210, 210, 215);
+            doc.line(M, ph - 14, pw - M, ph - 14);
+            doc.setFontSize(7.5);
+            doc.setTextColor(140, 140, 150);
+            doc.text('Valori indicativi basati su medie climatiche e di mercato. Verificare con un installatore qualificato.', M, ph - 10);
+            doc.text('Pagina ' + page, pw - M, ph - 10, { align: 'right' });
+          }
+
+          function sectionTitle(txt, y) {
+            doc.setFillColor(0, 143, 110);
+            doc.rect(M, y - 3.6, 2, 5, 'F');
+            doc.setTextColor(0, 140, 115);
+            doc.setFontSize(11.5);
+            doc.text(txt, M + 4, y);
+            return y + 5;
+          }
+
+          function rows(list, x, y, w, lw) {
+            lw = lw || 52;
+            list.forEach(function (r) {
+              doc.setFontSize(9);
+              doc.setTextColor(125, 125, 145);
+              doc.text(r[0] + ':', x, y);
+              doc.setTextColor(40, 40, 55);
+              doc.text(String(r[1]), x + lw, y);
+              y += 5.1;
+            });
+            return y;
+          }
+
+          /* === PAGINA 1 === */
+          header('Report di dimensionamento impianto fotovoltaico');
+
+          var y = 32;
+          y = sectionTitle('1. Dati di consumi', y);
+          y = rows([
+            ['Illuminazione', nf(inp.cats.illuminazione) + ' kWh/a (' + nf(inp.cats.illuminazione * inp.tariffa) + ' \u20AC/a)'],
+            ['Elettrodomestici', nf(inp.cats.elettrodomestici) + ' kWh/a (' + nf(inp.cats.elettrodomestici * inp.tariffa) + ' \u20AC/a)'],
+            ['Climatizzazione', nf(inp.cats.climatizzazione) + ' kWh/a (' + nf(inp.cats.climatizzazione * inp.tariffa) + ' \u20AC/a)'],
+            ['Altri consumi', nf(inp.cats.altri) + ' kWh/a (' + nf(inp.cats.altri * inp.tariffa) + ' \u20AC/a)'],
+            ['Consumo totale annuo', nf(inp.totale) + ' kWh/a'],
+            ['Costo annuo attuale', nf(inp.costoAnnuoAttuale) + ' \u20AC/a'],
+            ['Tariffa elettrica', nf(inp.tariffa, 3) + ' \u20AC/kWh'],
+            ['Tipologia di consumo', (PROFILI[inp.profiloKey] || PROFILI.residenziale).label + ' (' + nf(inp.fDay * 100, 0) + '% diurno)'],
+            ['Autoconsumo gi\u00E0 installato', nf(inp.esistente, 2) + ' kWp']
+          ], M, y);
+          y += 5;
+
+          y = sectionTitle('2. Dati di sito', y);
+          y = rows([
+            ['Localit\u00E0', inp.citta + ' (' + inp.regione + ')'],
+            ['Irraggiamento ottimale', nf(inp.yieldCity) + ' kWh/kWp/a'],
+            ['Inclinazione tetto', nf(inp.inclinazione) + ' gradi'],
+            ['Orientamento / azimut', inp.azimutKey + ' (' + inp.azimut + ' gradi dal Sud)'],
+            ['Tipo di copertura', inp.tettoLabel],
+            ['Area disponibile', inp.area > 0 ? nf(inp.area, 1) + ' m\u00B2' : 'non specificata'],
+            ['Fattore correttivo sito', nf(inp.fSito * 100, 1) + '%'],
+            ['Producibile specifico netto', nf(inp.specNetto) + ' kWh/kWp/a']
+          ], M, y);
+          y += 5;
+
+          y = sectionTitle('3. Risultati del dimensionamento', y);
+          y = rows([
+            ['Potenza di picco consigliata', nf(r.kwp, 2) + ' kWp (teorica ' + nf(dim.kwpTeorico, 2) + ' kWp)'],
+            ['Numero di pannelli', r.moduli + ' moduli da ' + inp.moduloW + ' W'],
+            ['Inverter consigliato', nf(r.inverterKw, 2) + ' kW (DC/AC ' + nf(r.inverterRapporto, 2) + ')'],
+            ['Producibile annuo', nf(r.produzione) + ' kWh/a'],
+            ['Autoconsumo stimato', nf(r.aut) + ' kWh/a (' + nf(r.autSuProd, 0) + '% della produzione)'],
+            ['Quota autosoddisfacimento', nf(r.quotaAut, 1) + '%'],
+            ['Energia immessa in rete', nf(r.exp) + ' kWh/a'],
+            ['Prelievo dalla rete', nf(r.grid) + ' kWh/a'],
+            ['Mesi a copertura completa', r.mesCoperti + ' su 12']
+          ], M, y);
+
+          // colonna destra: economia
+          var y2 = 32;
+          y2 = sectionTitle('4. Economia e ambiente', y2 + 130);
+          y2 = rows([
+            ['Costo specifico', nf(r.euroPerWp, 3) + ' \u20AC/W'],
+            ['Investimento stimato', nf(r.invest) + ' \u20AC'],
+            ['Detrazione fiscale (indic.)', '\u2212 ' + nf(r.detrazione) + ' \u20AC (' + nf(inp.detrazione, 0) + '%)'],
+            ['Costo netto dopo detrazione', nf(r.costoNetto) + ' \u20AC'],
+            ['Risparmio annuo lordo', nf(r.risLordo) + ' \u20AC/a'],
+            ['Manutenzione annua', '\u2212 ' + nf(r.omAnnuo) + ' \u20AC/a'],
+            ['Risparmio annuo netto', nf(r.risNetto) + ' \u20AC/a'],
+            ['Costo annuo residuo consumi', nf(r.costoResiduo) + ' \u20AC/a'],
+            ['Payback', isFinite(r.payback) ? nf(r.payback, 1) + ' anni' : 'non rientra'],
+            ['Payback con detrazione', isFinite(r.paybackNetto) ? nf(r.paybackNetto, 1) + ' anni' : '\u2014'],
+            ['ROI a ' + VITA + ' anni', nf(r.roi, 1) + '%'],
+            ['Rendimento annuo', nf(r.rendAnnuo, 2) + '%/a'],
+            ['CO\u2082 evitata', nf(r.co2kg) + ' kg/a = ' + nf(r.co2t, 2) + ' t/a'],
+            ['Superficie in copertura', nf(r.area, 1) + ' m\u00B2']
+          ], 112, y2, 84, 48);
+
+          // box evidenza
+          doc.setDrawColor(0, 143, 110);
+          doc.setFillColor(242, 252, 250);
+          doc.rect(M, Math.max(y, y2) + 4, pw - 2 * M, 22, 'FD');
+          doc.setFontSize(13);
+          doc.setTextColor(0, 143, 110);
+          doc.text('Impianto consigliato: ' + nf(r.kwp, 2) + ' kWp  \u2014  ' + r.moduli + ' moduli  \u2014  inverter ' + nf(r.inverterKw, 2) + ' kW', M + 5, Math.max(y, y2) + 13);
+          doc.setFontSize(9);
+          doc.setTextColor(60, 60, 75);
+          doc.text('Produzione ' + nf(r.produzione) + ' kWh/a  \u00B7  autoconsumo ' + nf(r.quotaAut, 1) + '%  \u00B7  risparmio netto ' + nf(r.risNetto) + ' \u20AC/a  \u00B7  payback ' + (isFinite(r.payback) ? nf(r.payback, 1) + ' anni' : 'n.d.') + '  \u00B7  ROI ' + nf(r.roi, 0) + '%', M + 5, Math.max(y, y2) + 20);
+
+          footer(1);
+
+          /* === PAGINA 2: GRAFICI === */
+          doc.addPage();
+          header('Grafici e profilo energetico');
+
+          function putImg(idx, x, y, w) {
+            if (!imgs[idx]) return y + 2;
+            var vb = { 0: [520, 250], 1: [780, 300], 2: [440, 250], 3: [520, 260], 4: [520, 260] }[idx] || [500, 250];
+            var hh = w * vb[1] / vb[0];
+            if (y + hh > ph - 20) { doc.addPage(); header('Grafici e profilo energetico'); y = 32; }
+            doc.addImage(imgs[idx], 'PNG', x, y, w, hh);
+            return y + hh;
+          }
+
+          var gw = (pw - 2 * M - 8) / 2;
+          var gy = 30;
+          gy = putImg(0, M, gy, gw);
+          gy = putImg(2, M + gw + 8, 30, gw);
+          gy = putImg(3, M, gy + 8, gw);
+          gy = putImg(4, M + gw + 8, Math.max(gy, 30) * 0 + (30 + gw * 260 / 520) + 8, gw);
+
+          // mensile a piena larghezza
+          var hm = (pw - 2 * M) * 300 / 780;
+          var ym = Math.max(gy, 30 + gw * 260 / 520 + 8) + 6;
+          if (ym + hm > ph - 20) { doc.addPage(); header('Grafici e profilo energetico'); ym = 32; }
+          doc.addImage(imgs[1], 'PNG', M, ym, pw - 2 * M, hm);
+
+          footer(2);
+
+          /* === PAGINA 3: CONFRONTO MODULI === */
+          doc.addPage();
+          header('Confronto moduli FV \u2014 3 scenari');
+
+          var set = scenari(inp, r);
+          var sc = set.map(function (k) { return analizzaScenario(k, inp); });
+
+          y = 32;
+          var colW = (pw - 2 * M - 50) / 3;
+          var trows = [
+            ['Potenza', function (x) { return nf(x.kwp, x.kwp < 10 ? 1 : 0) + ' kWp'; }],
+            ['Moduli', function (x) { return nf(x.moduli); }],
+            ['Inverter', function (x) { return nf(x.inverterKw, 2) + ' kW'; }],
+            ['Produzione annua', function (x) { return nf(x.produzione) + ' kWh'; }],
+            ['Producibile specifico', function (x) { return nf(x.specifico) + ' kWh/kWp'; }],
+            ['Autoconsumo', function (x) { return nf(x.aut) + ' kWh'; }],
+            ['Quota autosoddisf.', function (x) { return nf(x.quotaAut, 1) + '%'; }],
+            ['Immesso in rete', function (x) { return nf(x.exp) + ' kWh'; }],
+            ['Risparmio annuo lordo', function (x) { return nf(x.risLordo) + ' \u20AC'; }],
+            ['Risparmio annuo netto', function (x) { return nf(x.risNetto) + ' \u20AC'; }],
+            ['Investimento', function (x) { return nf(x.invest) + ' \u20AC'; }],
+            ['Costo specifico', function (x) { return nf(x.euroPerWp, 3) + ' \u20AC/W'; }],
+            ['Costo netto post-detrazione', function (x) { return nf(x.costoNetto) + ' \u20AC'; }],
+            ['Payback', function (x) { return isFinite(x.payback) ? nf(x.payback, 1) + ' anni' : '\u2014'; }],
+            ['Payback post-detrazione', function (x) { return isFinite(x.paybackNetto) ? nf(x.paybackNetto, 1) + ' anni' : '\u2014'; }],
+            ['ROI a ' + VITA + ' anni', function (x) { return nf(x.roi, 0) + '%'; }],
+            ['CO\u2082 evitata', function (x) { return nf(x.co2t, 2) + ' t/a'; }],
+            ['Superficie', function (x) { return nf(x.area, 1) + ' m\u00B2'; }]
+          ];
+
+          // intestazione
+          doc.setFillColor(26, 26, 46);
+          doc.rect(M, y - 4, pw - 2 * M, 8, 'F');
+          doc.setFontSize(9.5);
+          doc.setTextColor(0, 212, 170);
+          doc.text('Parametro', M + 2, y + 1);
+          sc.forEach(function (x, i) {
+            doc.text(nf(x.kwp, x.kwp < 10 ? 1 : 0) + ' kWp', M + 50 + colW * i + colW / 2, y + 1, { align: 'center' });
+          });
+          y += 8;
+
+          doc.setFontSize(8.6);
+          trows.forEach(function (tr, ri) {
+            if (y > ph - 22) {
+              doc.addPage();
+              header('Confronto moduli FV \u2014 3 scenari');
+              y = 32;
+              doc.setFillColor(26, 26, 46);
+              doc.rect(M, y - 4, pw - 2 * M, 8, 'F');
+              doc.setFontSize(9.5);
+              doc.setTextColor(0, 212, 170);
+              doc.text('Parametro', M + 2, y + 1);
+              sc.forEach(function (x, i) {
+                doc.text(nf(x.kwp, x.kwp < 10 ? 1 : 0) + ' kWp', M + 50 + colW * i + colW / 2, y + 1, { align: 'center' });
+              });
+              y += 8;
+              doc.setFontSize(8.6);
+            }
+            if (ri % 2 === 1) {
+              doc.setFillColor(246, 248, 252);
+              doc.rect(M, y - 3.4, pw - 2 * M, 6.6, 'F');
+            }
+            doc.setTextColor(125, 125, 145);
+            doc.text(tr[0], M + 2, y);
+            doc.setTextColor(40, 40, 55);
+            sc.forEach(function (x, i) {
+              doc.text(tr[1](x), M + 50 + colW * i + colW / 2, y, { align: 'center' });
+            });
+            y += 6.2;
+          });
+
+          y += 6;
+          y = sectionTitle('Ipotesi di calcolo', y);
+          var ipotesi = [
+            'Producibile specifico di partenza per localit\u00E0: ' + nf(inp.yieldCity) + ' kWh/kWp/anno (posizione ottimale: Sud 30\u00B0).',
+            'Fattore inclinazione: 1 \u2212 0,0009\u00B7(30 \u2212 \u03B2)\u207A \u2212 0,0035\u00B7(\u03B2 \u2212 30)\u207A.',
+            'Fattore azimut: 1 \u2212 0,0010\u00B7|az| \u2212 0,0000022\u00B7az\u00B2 (az = 0\u00B0 al Sud).',
+            'Fattore copertura: falda 1,00 \u00B7 piano 0,97 \u00B7 tetto verde 1,02.',
+            'Perdita di sistema ' + nf(inp.perdite, 1) + '% (cavi, inverter, sporco, mismatch) + ombreggiamento ' + nf(inp.ombre, 1) + '%.',
+            'Costi: modulo ' + nf(inp.cModulo, 2) + ' \u20AC/W, inverter ' + nf(inp.cInverter, 2) + ' \u20AC/W, installazione ' + nf(inp.cInstall, 2) + ' \u20AC/W (totale ' + nf(inp.costoTotaleWp, 2) + ' \u20AC/W).',
+            'Inverter: potenza moduli \u00D7 rapporto DC/AC ' + nf(inp.dcAc, 2) + ', arrotondata alla taglia commerciale superiore.',
+            'Autoconsumo stimato con profilo mensile per categoria e quota di consumo diurno ' + nf(inp.fDay * 100, 0) + '%, efficienza di abbinamento 92%.',
+            'Valore energia immessa in rete: ' + nf(inp.valoreRete, 2) + ' \u20AC/kWh; fattore di emissione rete: ' + nf(inp.co2, 2) + ' kg CO\u2082/kWh.',
+            'Manutenzione: ' + nf(inp.om, 1) + '%/anno dell\u2019investimento; vita utile considerata ' + VITA + ' anni.',
+            'Detrazione fiscale ' + nf(inp.detrazione, 0) + '% in 10 anni: indicazione di mercato, NON \u00E8 una garanzia e va verificata con un consulente fiscale.',
+            'Area in copertura stimata con densit\u00E0 di ' + nf(DENSITA, 2) + ' kWp/m\u00B2 (5 m\u00B2 per kWp).'
+          ];
+          doc.setFontSize(8);
+          ipotesi.forEach(function (t) {
+            if (y > ph - 24) { doc.addPage(); header('Ipotesi di calcolo'); y = 32; }
+            var lines = doc.splitTextToSize('\u2022 ' + t, pw - 2 * M);
+            doc.setTextColor(70, 70, 88);
+            doc.text(lines, M, y);
+            y += lines.length * 4 + 1.4;
+          });
+
+          y += 4;
+          if (y > ph - 34) { doc.addPage(); header('Disclaimer'); y = 32; }
+          doc.setDrawColor(255, 107, 53);
+          doc.setFillColor(255, 246, 240);
+          doc.rect(M, y, pw - 2 * M, 30, 'FD');
+          doc.setFontSize(9);
+          doc.setTextColor(180, 70, 30);
+          var dl = doc.splitTextToSize(
+            'DISCLAIMER — I valori di questo report sono indicativi e si basano su dati climatici medi e medie di mercato. ' +
+            'Non costituiscono un progetto esecutivo, una valutazione tecnica certificata n\u00E9 un\u2019offerta commerciale. ' +
+            'Prima di installare l\u2019impianto \u00E8 necessario: sopralluogo e verifica della struttura del tetto, studio di ombreggiamento, ' +
+            'verifica dei vincoli urbanistici, verifica della potenza di connessione e della conformit\u00E0 tecnica con il distributore, ' +
+            'e tutte le pratiche presso il GSE (autoconsumo e vendita dell\u2019eneria eccedente). ' +
+            'Rivolgetevi a un installatore qualificato e a un perito iscritto all\u2019albo.', pw - 2 * M - 8);
+          doc.text(dl, M + 4, y + 6);
+
+          footer(3);
+
+          var d = new Date();
+          var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+          doc.save('report-dimensionamento-solare-' + d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + '.pdf');
+          toast('Report PDF generato');
+        } catch (e) {
+          toast('Errore generazione PDF: ' + e.message, true);
+        }
+      });
+    }
+
+    function stampa() { window.print(); }
+
+    /* =======================================================================
+       INIT
+       ======================================================================= */
+
+    function init() {
+      costruisciSelectCity();
+      costruisciSegmenti();
+      costruisciModelli();
+
+      var ids = ['illuminazione', 'elettrodomestici', 'climatizzazione', 'altri', 'tariffa', 'esistente',
+        'citta', 'inclinazione', 'tetto', 'area', 'profilo', 'copertura', 'dcAc',
+        'perdite', 'ombre', 'cModulo', 'cInverter', 'cInstall', 'cExtra',
+        'valoreRete', 'om', 'co2', 'detrazione'];
+      ids.forEach(function (id) {
+        var el = $(id);
+        if (!el) return;
+        el.addEventListener('input', calcola);
+        el.addEventListener('change', calcola);
+      });
+
+      $('file-json').addEventListener('change', function () { gestisciFile(this.files[0]); });
+      $('file-json-hidden').addEventListener('change', function () { gestisciFile(this.files[0]); });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          Array.prototype.forEach.call(document.querySelectorAll('.modal.active'), function (m) { m.classList.remove('active'); });
+        }
+      });
+
+      // Adatta il layout a schermi stretti
+      function adatta() {
+        if (window.innerWidth <= 1024) {
+          var ids2 = ['panel-risultati', 'panel-riepilogo'];
+          var tuttiChiusi = ids2.every(function (i) { return !$(i).classList.contains('collapsed'); });
+          if (tuttiChiusi) {
+            ids2.forEach(function (i) {
+              $(i).classList.add('collapsed');
+              var h = $(i).querySelector('.panel-head');
+              if (h) h.setAttribute('aria-expanded', 'false');
+            });
+          }
+          pannelliOk = false;
+        }
+      }
+      window.addEventListener('resize', adatta);
+
+      calcola();
+      adatta();
+
+      setText('sum-modello', 'Personalizzato');
+      setText('status-info', 'Pronto · ' + nf(CURRENT.ris.kwp, 2) + ' kWp');
+
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+  </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

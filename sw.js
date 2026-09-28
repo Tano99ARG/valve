@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valve-v3';
+const CACHE_NAME = 'valve-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './calculadora.html',
   './carico-termico.html',
   './checklist.html',
+  './dimensionamento-solare.html',
   './informe.html',
   './instrumentos.html',
   './interno.html',

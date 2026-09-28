@@ -451,17 +451,21 @@ body {
             📷 Apri editor
           </label>
         </div>
-        <div class="tool-card disabled">
+        <div class="tool-card">
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">☀️</span><div class="tool-name">Dimensionamento solare</div></div>
-          <p class="tool-desc">Calcolatrice FV: consumo, irraggiamento, pannelli, inverter, batterie e cablaggio. Esporta calcolo.</p>
-          <div class="status"><span class="status-dot warn"></span><span class="status-warn">Prossimamente</span></div>
-          <button class="btn btn-blue" disabled>In sviluppo</button>
+          <p class="tool-desc">Calcolatrice FV: consumi, sito, pannelli, inverter, autoconsumo, payback e detrazione. Confronto fra 3 scenari ed export PDF.</p>
+          <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('dimensionamento-solare.html','Dimensionamento solare');return false;">
+            ☀️ Apri calcolatrice
+          </label>
         </div>
-        <div class="tool-card disabled">
+        <div class="tool-card">
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">❄️</span><div class="tool-name">Carico termico</div></div>
-          <p class="tool-desc">Dimensionamento apparecchi di climatizzazione per locale: orientamento, superficie, altezza, occupanti e carichi interni.</p>
-          <div class="status"><span class="status-dot off"></span><span class="status-off">Pianificato</span></div>
-          <button class="btn btn-blue" disabled>Pianificato</button>
+          <p class="tool-desc">Carico termico per locale: perdite, guadagni, finestre e carichi interni. Stima split necessario e consumo annuo, con export PDF.</p>
+          <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('carico-termico.html','Carico termico');return false;">
+            ❄️ Apri calcolatrice
+          </label>
         </div>
         <div class="tool-card disabled">
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">🛰️</span><div class="tool-name">Checklist Starlink</div></div>
