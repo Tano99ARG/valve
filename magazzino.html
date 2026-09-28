@@ -238,7 +238,9 @@ ol.steps li{margin-bottom:7px}
 <section class="view on" id="v-scan">
   <div id="camwrap">
     <video id="cam" playsinline muted autoplay></video>
-    <div class="reticle" id="ret"></div>
+    <div class="reticle" id="ret">
+      <div class="hint" id="hintScan">Inquadra il codice a barre</div>
+    </div>
     <div id="camerr" class="camerr" style="display:none">
       <div style="font-size:38px">📷</div>
       <div id="camerrtxt" style="font-size:.92rem"></div>
@@ -617,58 +619,115 @@ function beep(){
 }
 function buzz(ms){ try{ navigator.vibrate && navigator.vibrate(ms || 60); }catch(e){} }
 
+let scanStart = 0, lastFrame = 0, watchdog = null, wasScanning = false, sugTimer = null;
+
 async function startScan(){
-  const v = $('cam'), err = $('camerr');
-  err.style.display = 'none';
+  const v = $('cam'), box = $('camerr');
+  box.style.display = 'none';
+  $('ret').style.display = 'none';
+
   if(!window.ZXing){
-    err.style.display = 'flex';
-    $('camerrtxt').textContent = 'Lettore di codici non caricato. Sei offline? Ricarica la pagina con la rete.';
+    box.style.display = 'flex';
+    $('camerrtxt').textContent = 'Lettore di codici non caricato. Sei offline? Ricarica la pagina con la rete attiva.';
     return;
   }
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    err.style.display = 'flex';
-    $('camerrtxt').textContent = 'Questo browser non permette l\'accesso alla fotocamera. Usa l\'inserimento manuale del codice.';
+    box.style.display = 'flex';
+    $('camerrtxt').textContent = 'Questo browser non apre la fotocamera. Usa l\'inserimento manuale del codice qui sotto.';
     return;
   }
+
+  stopScan();
   try{
-    stopScan();
     const reader = new ZXing.BrowserMultiFormatReader();
-    // ZXing apre il flusso e lo aggancia al <video>: non chiedere il permesso
-    // anche qui, altrimenti due getUserMedia sullo stesso dispositivo si scontrano.
+    // ZXing apre il flusso e lo aggancia al <video>: chiedere anche qui il
+    // permesso aprirebbe due getUserMedia sullo stesso dispositivo.
     controls = reader.decodeFromConstraints(
       { video: { facingMode:{ ideal:'environment' }, width:{ideal:1280}, height:{ideal:720} } },
       v,
       (result, errx) => {
-        if(result){
-          const code = result.getText();
-          const t = Date.now();
-          if(code === lastCode && (t - lastCodeT) < 1800) return;   // evita doppie letture
-          lastCode = code; lastCodeT = t;
-          onScan(code);
+        // Qualsiasi callback aggiorna il battito: il loop e' vivo.
+        lastFrame = Date.now();
+        if(!result){
+          // Nessun codice inquadrato, oppure codice illeggibile oChecksum
+          // non valido. Sono condizioni normali di ogni fotogramma: NON
+          // interrompono lo scanner (prima lo facevano e su iPhone bastava
+          // un fotogramma ambiguo per chiudere la fotocamera).
+          if(errx && errx.name && errx.name !== 'NotFoundException' && errx.name !== 'ChecksumException'
+             && errx.name !== 'FormatException'){
+            console.warn('[scanner]', errx.name, errx.message);
+          }
           return;
         }
-        // NotFoundException = semplicemente nessun codice inquadrato: normale
-        if(errx && errx.name && errx.name !== 'NotFoundException'){
-          stopScan();
-          err.style.display = 'flex';
-          $('camerrtxt').textContent = 'Lettura interrotta (' + errx.name + '). ' +
-            'Puoi riprovare o inserire il codice a mano.';
-        }
+        const code = result.getText();
+        const now = Date.now();
+        if(code === lastCode && (now - lastCodeT) < 1800) return;   // evita doppie letture
+        lastCode = code; lastCodeT = now;
+        onScan(code);
       }
     );
     scanning = true;
+    scanStart = lastFrame = Date.now();
     $('ret').style.display = 'block';
     $('btnScan').innerHTML = '⏸ Ferma scanner';
+    avviaWatchdog();
+    azzeraSuggerimento();
+    avviaSuggerimento();
   }catch(e){
     stopScan();
-    err.style.display = 'flex';
-    $('camerrtxt').textContent = 'Fotocamera non disponibile: ' + ((e && e.name) || e) +
-      '. Puoi comunque inserire il codice a mano.';
+    box.style.display = 'flex';
+    const n = (e && e.name) || '';
+    $('camerrtxt').textContent =
+      (n === 'NotAllowedError' || n === 'SecurityError')
+        ? 'Permesso fotocamera negato. Riattivalo dalle impostazioni del browser, o inserisci il codice a mano.'
+        : (n === 'NotFoundError' || n === 'OverconstrainedError')
+          ? 'Nessuna fotocamera posteriore disponibile. Inserisci il codice a mano.'
+          : 'Fotocamera non avviata (' + (n || 'errore') + '). Riprova o inserisci il codice a mano.';
+  }
+}
+
+/* Se il loop di decodifica muore in silenzio — cosa che iOS fa
+   mandando l'app in secondo piano — lo riavvio da solo. */
+function avviaWatchdog(){
+  clearTimeout(watchdog);
+  watchdog = setTimeout(function(){
+    if(!scanning) return;
+    if(Date.now() - lastFrame > 6000){
+      console.warn('[scanner] nessun fotogramma da 6s, riavvio');
+      startScan();
+    } else {
+      avviaWatchdog();
+    }
+  }, 2500);
+}
+
+/* Se non si legge nulla per un po', quasi sempre e' la luce:
+   il magazzino e' spesso male illuminato e il codice resta troppo piccolo. */
+function avviaSuggerimento(){
+  clearTimeout(sugTimer);
+  sugTimer = setTimeout(function(){
+    const h = $('hintScan');
+    if(scanning && h){ h.textContent = 'Luce scarsa? Avvicinati e inquadra solo il codice'; }
+  }, 9000);
+}
+function azzeraSuggerimento(){
+  clearTimeout(sugTimer);
+  const h = $('hintScan');
+  if(h) h.textContent = 'Inquadra il codice a barre';
+}
+
+/* iOS chiude lo stream quando l'app va in secondo piano */
+function scanRiprendi(){
+  if(!document.hidden && wasScanning && !scanning){
+    wasScanning = false;
+    startScan();
   }
 }
 
 function stopScan(){
   if(controls && controls.stop){ try{ controls.stop(); }catch(e){} }
+  clearTimeout(watchdog);
+  azzeraSuggerimento();
   controls = null; scanning = false;
   const v = $('cam');
   if(v && v.srcObject){ v.srcObject.getTracks().forEach(t => t.stop()); v.srcObject = null; }
@@ -1367,7 +1426,12 @@ async function init(){
   window.addEventListener('online',  () => { toast('Rete tornata: sincronizzo'); syncNow(false); });
   window.addEventListener('offline', () => renderSyncState());
   document.addEventListener('visibilitychange', () => {
-    if(!document.hidden && navigator.onLine && CFG.endpoint) syncNow(false);
+    if(document.hidden){
+      if(scanning){ wasScanning = true; stopScan(); }
+    } else {
+      scanRiprendi();
+      if(navigator.onLine && CFG.endpoint) syncNow(false);
+    }
   });
   setTimeout(() => syncNow(false), 1200);
 }
