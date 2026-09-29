@@ -169,7 +169,7 @@ body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:13px
 .wire-hit{stroke:transparent;stroke-width:12;fill:none;cursor:pointer;pointer-events:stroke}
 
 /* DIN rail */
-.din{position:absolute;height:22px;cursor:move;z-index:1;border-radius:2px;
+.din{position:absolute;cursor:move;z-index:1;border-radius:2px;
   background:
     repeating-linear-gradient(90deg,transparent 0,transparent 14px,rgba(0,0,0,.35) 14px,rgba(0,0,0,.35) 22px,transparent 22px,transparent 40px),
     linear-gradient(180deg,#8089a8 0%,#6a7290 18%,#4a5070 45%,#3a4058 55%,#2a2e42 82%,#1e2232 100%);
@@ -1620,6 +1620,12 @@ const CATALOG=[
 // ═══════════════════════════════════════════════════════════════
 //  ESTADO
 // ═══════════════════════════════════════════════════════════════
+// La guida DIN ha un'altezza precisa: sta nel modello dei dati, non solo
+// nel CSS. Prima era 22px solo nel CSS, e tutto il resto (PDF, inquadratura,
+// aggancio dei componenti) leggeva r.h che non esisteva.
+const ALTEZZA_GUIDA = 22;
+// Il passo di un modulo DIN in questo disegno: 22, 40, 58, 76 per 1P, 2P, 3P, 4P.
+const PASSO_MODULO = 18;
 const S={
   tab:'layout', tool:'sel', zoom:1, tx:0, ty:0,
   placed:[], wires:[], rails:[],
@@ -2133,9 +2139,10 @@ function addDinRail(){
   const baseY = S.rails.length ? Math.max(...S.rails.map(r=>r.y)) + 90 : snap(120 + cscroll.scrollTop/S.zoom);
   const baseX = snap(60 + cscroll.scrollLeft/S.zoom);
   const rid=`r${S.nextId++}`;
-  S.rails.push({id:rid,y:snap(baseY),x:baseX,w:900,label:`Riel ${S.rails.length+1}`});
+  S.rails.push({id:rid, y:snap(baseY), x:baseX, w:900, h:ALTEZZA_GUIDA, label:`Guida ${S.rails.length+1}`});
   renderRails();
-  toast('Riel DIN agregado — arrastralo para ubicarlo');
+  fitView();
+  toast('Guida DIN aggiunta — trascinala per metterla a posto');
 }
 
 function renderRails(){
@@ -2147,8 +2154,12 @@ function renderRails(){
     el.style.left=r.x+'px';
     el.style.top=r.y+'px';
     el.style.width=r.w+'px';
+    el.style.height=r.h+'px';
+    // Il numero di moduli e' la misura che serve all'installatore: i pixel
+    // del foglio non dicono nulla (22, 40, 58, 76 per 1P, 2P, 3P, 4P).
+    const moduli=Math.max(1,Math.round((r.w-4)/PASSO_MODULO));
     el.innerHTML=`
-      <div class="din-label">⎓ ${esc(r.label||'Riel DIN')} · ${Math.round(r.w/1)*1}px</div>
+      <div class="din-label">⎓ ${esc(r.label||'Guida DIN')} · ${moduli} moduli</div>
       <div class="din-handle l" data-edge="l"></div>
       <div class="din-handle r" data-edge="r"></div>
       <button class="din-del" title="Elimina binario">✕</button>`;
@@ -2181,7 +2192,7 @@ function delRail(id){
   S.rails=S.rails.filter(r=>r.id!==id);
   S.selRail=null;
   renderRails();
-  toast('Riel eliminado');
+  toast('Guida eliminata');
 }
 
 // Snap a component vertically onto the nearest rail and clip-mount it
@@ -2191,14 +2202,17 @@ function snapToRail(p){
   let best=null,bestD=46;
   // Mounting point: component is "clipped" so its vertical center sits on the rail line
   S.rails.forEach(r=>{
-    const railLine=r.y+11; // center of rail
+    const railLine=r.y+(r.h||ALTEZZA_GUIDA)/2;   // meta' della guida
     const compCenter=p.y+comp.h/2;
     const d=Math.abs(compCenter-railLine);
     // only snap if horizontally within rail span (with margin)
     if(p.x+comp.w>r.x-20 && p.x<r.x+r.w+20 && d<bestD){bestD=d;best=r}
   });
   if(best){
-    p.y=snap(best.y+11-comp.h/2);
+    // Solo la x va agganciata alla griglia: la y deve stare esattamente
+    // sulla linea della guida, e la guida e' alta 22px. Arrotondando
+    // anche la y, il componente restava fuori centro fino a 9px.
+    p.y=best.y+(best.h||ALTEZZA_GUIDA)/2-comp.h/2;
     p.railId=best.id;
     renderP(p);
     return true;
@@ -2405,7 +2419,7 @@ function saveProj(){
   a.href=URL.createObjectURL(new Blob([data],{type:'application/json'}));
   a.download=`Valve_Tablero_${Date.now()}.json`;
   a.click();URL.revokeObjectURL(a.href);
-  toast('Proyecto guardado');
+  toast('Progetto salvato');
 }
 function loadProj(e){
   const f=e.target.files[0];if(!f)return;
@@ -2413,13 +2427,17 @@ function loadProj(e){
   r.onload=ev=>{
     try{
       const d=JSON.parse(ev.target.result);
-      S.placed=d.placed||[];S.wires=d.wires||[];S.rails=d.rails||[];
+      S.placed=d.placed||[];S.wires=d.wires||[];
+      S.rails=d.rails||[];
+      // I quadri salvati prima dell'altezza esplicita non hanno h:
+      // senza questo l'inquadratura va a NaN e la vista si blocca.
+      S.rails.forEach(r=>{ if(!r.h) r.h=ALTEZZA_GUIDA; });
       S.nextId=Math.max(...[...S.placed,...S.wires].map(x=>parseInt((x.id||'0').replace(/\D/g,''))||0),1)+1;
       if(d.meta){document.getElementById('p-nom').value=d.meta.nom||'';document.getElementById('p-obra').value=d.meta.obra||'';document.getElementById('p-tec').value=d.meta.tec||'';}
       renderAll();renderWires();renderBridges();renderRails();updateSB();
       setTimeout(()=>{refreshAllPortCaches();renderWires();},200);
-      toast('Proyecto cargado');
-    }catch{toast('Error al cargar');}
+      toast('Progetto caricato');
+    }catch{toast('Errore nel caricamento');}
   };
   r.readAsText(f);e.target.value='';
 }
@@ -2513,7 +2531,7 @@ function closeTplModal(){document.getElementById('mtpl').classList.remove('open'
 
 function loadTemplate(key){
   const tpl=TEMPLATES.find(t=>t.key===key);if(!tpl)return;
-  if(S.placed.length&&!confirm('Esto va a reemplazar el diseño actual. ¿Continuar?'))return;
+  if(S.placed.length&&!confirm('Questo sostituisce il disegno attuale. Continuare?'))return;
   resetCanvas();
 
   // Calcular larghezza total necesario según los componentes reales del catálogo
@@ -2526,13 +2544,13 @@ function loadTemplate(key){
 
   const railY=140, railX=60;
   const rid=`r${S.nextId++}`;
-  S.rails.push({id:rid, y:railY, x:railX, w:Math.max(300,totalW), label:tpl.name});
+  S.rails.push({id:rid, y:railY, x:railX, w:Math.max(300,totalW), h:ALTEZZA_GUIDA, label:tpl.name});
   renderRails();
 
   let cx=railX+marginX;
   tpl.items.forEach(it=>{
     const c=CATALOG.find(c=>c.id===it.cid);if(!c)return;
-    const y=railY+11-c.h/2; // centrado exacto sobre la linea del riel
+    const y=railY+ALTEZZA_GUIDA/2-c.h/2;   // centrato sulla linea della guida
     const p=place(it.cid,cx,y,true);
     if(p){
       p.tag=it.tag||'';
