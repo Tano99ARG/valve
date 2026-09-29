@@ -1533,6 +1533,13 @@ function copyGS(){
 }
 function showSheet2(id){ const d = document.getElementById(id); d.scrollIntoView({behavior:'smooth'}); }
 
+// schede aperte da un link esterno: magazzino.html#stock, #cat, #scan, #set
+const SCHEDE = ['scan', 'cat', 'stock', 'set'];
+function schedaDaHash(){
+  const h = (location.hash || '').replace(/^#/, '');
+  return SCHEDE.indexOf(h) > -1 ? h : null;
+}
+
 function go(v){
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.v === v));
@@ -1567,6 +1574,14 @@ async function init(){
   renderAll();
   renderSyncState();
   loadGS();
+
+  // se si arriva con un hash, apre direttamente quella scheda
+  const h0 = schedaDaHash();
+  if (h0) go(h0);
+  window.addEventListener('hashchange', () => {
+    const h = schedaDaHash();
+    if (h) go(h);
+  });
 
   // si sincronizza da soli: all'avvio, tornando online, e riaprendo l'app
   window.addEventListener('online',  () => { toast('Rete tornata: sincronizzo'); syncNow(false); });

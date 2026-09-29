@@ -271,6 +271,7 @@ body {
     <button class="nav-item" data-view="informe"><span class="nav-icon" aria-hidden="true">🗒️</span> Relazione tecnica di visita</button>
     <button class="nav-item" data-view="checklist"><span class="nav-icon" aria-hidden="true">✅</span> Checklist di manutenzione</button>
     <button class="nav-item" data-view="planos"><span class="nav-icon" aria-hidden="true">📐</span> Planimetrie e quadri</button>
+    <button class="nav-item" data-view="magazzino"><span class="nav-icon" aria-hidden="true">📦</span> Magazzino</button>
     <div class="sidebar-section">Conoscenza</div>
     <button class="nav-item" data-view="normativa"><span class="nav-icon" aria-hidden="true">📜</span> Scheda di normativa</button>
     <button class="nav-item" data-view="manuales"><span class="nav-icon" aria-hidden="true">📚</span> Manuali</button>
@@ -431,7 +432,50 @@ body {
     </div>
 
     <!-- PLANOS -->
-    <div class="view" id="view-planos">
+    <div class="view" id="view-magazzino">
+    <div class="view-eyebrow">Gestione</div>
+    <div class="view-title" style="margin-bottom:8px;">Magazzino</div>
+    <p class="tool-desc" style="margin-bottom:24px;max-width:640px;">
+      Giacenze e prezzi. Scansiona i codici a barre con la fotocamera, lavora anche senza rete
+      e si sincronizza con il foglio Google. Scegli da dove vuoi partire:
+    </p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Scansiona</div></div>
+        <p class="tool-desc">Fotocamera e codici a barre. Il punto di partenza per contare le giacenze.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#scan','Magazzino — Scansiona');return false;">
+          📷 Apri lo scanner
+        </label>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">📚</span><div class="tool-name">Catalogo</div></div>
+        <p class="tool-desc">Tutti gli articoli con ricerca e filtri. Modifica prezzi, giacenze e scorte minime.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#cat','Magazzino — Catalogo');return false;">
+          📚 Apri il catalogo
+        </label>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">📉</span><div class="tool-name">Scorte</div></div>
+        <p class="tool-desc">Valore del magazzino, articoli sotto il minimo da riordinare ed esauriti.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#stock','Magazzino — Scorte');return false;">
+          📉 Vedi le scorte
+        </label>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">⚙️</span><div class="tool-name">Impostazioni</div></div>
+        <p class="tool-desc">Sincronizzazione con il foglio Google, soglia di allerta scorte e listino insumi.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#set','Magazzino — Impostazioni');return false;">
+          ⚙️ Apri le impostazioni
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="view-planos">
       <div class="view-eyebrow">Strumenti</div>
       <div class="view-title" style="margin-bottom:24px;">Planimimetrie e quadri</div>
       <div class="tools-grid">
@@ -465,14 +509,6 @@ body {
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
           <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('carico-termico.html','Carico termico');return false;">
             ❄️ Apri calcolatrice
-          </label>
-        </div>
-        <div class="tool-card">
-          <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Magazzino</div></div>
-          <p class="tool-desc">Giacenze e prezzi di magazzino. Scansiona i codici a barre con la fotocamera, lavora anche senza rete e si sincronizza con il foglio Google quando torni online.</p>
-          <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html','Magazzino');return false;">
-            📷 Apri magazzino
           </label>
         </div>
         <div class="tool-card">
@@ -572,7 +608,7 @@ body {
 'use strict';
 
 // ── CONSTANTES ──────────────────────────────────────────────
-const VIEWS = { dashboard:'Pannello principale', presupuestador:'Preventivatore', calculadora:'Calcolatrice tecnica', instrumentos:'Strumenti di misura', informe:'Relazione tecnica di visita', checklist:'Checklist di manutenzione', normativa:'Scheda di normativa', planos:'Planimimetrie e quadri', manuales:'Manuali', tips:'Consigli e tutorial' };
+const VIEWS = { dashboard:'Pannello principale', presupuestador:'Preventivatore', calculadora:'Calcolatrice tecnica', instrumentos:'Strumenti di misura', informe:'Relazione tecnica di visita', checklist:'Checklist di manutenzione', normativa:'Scheda di normativa', planos:'Planimimetrie e quadri', magazzino:'Magazzino', manuales:'Manuali', tips:'Consigli e tutorial' };
 const CAT_LABELS = { AA:'Aria cond.', ELE:'Elettrico', SOL:'Solare', SEC:'Sicurezza', NET:'Reti', PLO:'Idraulica', GEN:'Generale' };
 const TIPO_LABELS = { tip:'💡 CONSIGLIO', tuto:'🎥 TUTORIAL', alerta:'⚠️ ALLARME' };
 
