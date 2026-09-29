@@ -282,6 +282,44 @@ body {
 .torna-dash.on{display:inline-flex}
 .torna-dash:hover{color:var(--ora);border-color:var(--ora)}
 @media print{.torna-dash{display:none !important}}
+
+/* ── pannello di verifica del quadro ── */
+.mbox.ver{width:min(760px,94vw);max-width:760px}
+.vavviso{background:rgba(244,183,32,.07);border:1px solid rgba(244,183,32,.22);border-radius:6px;padding:9px 11px;font-size:.74rem;color:var(--dim);line-height:1.5;margin-bottom:16px}
+.vres{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;margin-bottom:14px}
+.vres-c{background:var(--card);border:1px solid var(--b1);border-radius:6px;padding:9px 10px;text-align:center}
+.vres-c b{display:block;font-family:var(--fd);font-size:1.02rem;color:var(--ver);line-height:1.2}
+.vres-c span{display:block;font-size:.62rem;color:var(--dim);margin-top:2px;letter-spacing:.04em}
+.vfasi{margin-bottom:14px}
+.vf{display:flex;align-items:center;gap:8px;font-size:.7rem;color:var(--dim);margin-bottom:5px}
+.vf span{width:20px;flex-shrink:0;font-family:var(--fd);color:var(--w)}
+.vf i{flex:1;height:8px;background:rgba(0,212,170,.14);border-radius:4px;display:block;overflow:hidden}
+.vf i u{display:block;height:100%;background:var(--ver);border-radius:4px}
+.vf b{width:64px;text-align:right;font-weight:600;color:var(--w);flex-shrink:0}
+.vgrp{margin-bottom:14px}
+.vgrp-h{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid var(--b1)}
+.vgrp-h b{background:var(--b2);color:var(--w);border-radius:9px;padding:1px 8px;font-size:.68rem;letter-spacing:0}
+.vgrp.err .vgrp-h{color:#e0645a} .vgrp.err .vgrp-h b{background:rgba(224,100,90,.2);color:#e0645a}
+.vgrp.avv .vgrp-h{color:#f4b720} .vgrp.avv .vgrp-h b{background:rgba(244,183,32,.2);color:#f4b720}
+.vgrp.inf .vgrp-h{color:var(--ver)}  .vgrp.inf .vgrp-h b{background:rgba(0,212,170,.18);color:var(--ver)}
+.vitem{background:var(--card);border:1px solid var(--b1);border-left-width:3px;border-radius:5px;padding:9px 11px;margin-bottom:6px}
+.vgrp.err .vitem{border-left-color:#e0645a}
+.vgrp.avv .vitem{border-left-color:#f4b720}
+.vgrp.inf .vitem{border-left-color:var(--ver)}
+.vitem-t{font-family:var(--fd);font-size:.83rem;font-weight:700;color:var(--w);margin-bottom:3px}
+.vitem-x{font-size:.76rem;color:var(--dim);line-height:1.55}
+.vitem-a{margin-top:7px;display:flex;flex-wrap:wrap;gap:5px}
+.vitem-a button{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:var(--ver);font-family:var(--fd);font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:4px;cursor:pointer}
+.vitem-a button:hover{background:rgba(0,212,170,.2)}
+.vok{background:rgba(0,212,170,.07);border:1px solid rgba(0,212,170,.25);border-radius:6px;padding:12px 14px;margin-bottom:14px}
+.vok b{display:block;font-family:var(--fd);font-size:.9rem;color:var(--ver);margin-bottom:4px}
+.vok span{font-size:.75rem;color:var(--dim);line-height:1.55}
+.vfoot{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;padding-top:13px;border-top:1px solid var(--b1)}
+.mbtn{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.35);color:var(--ver);font-family:var(--fd);font-size:.78rem;font-weight:700;padding:8px 15px;border-radius:5px;cursor:pointer}
+.mbtn:hover{background:rgba(0,212,170,.22)}
+
+.pbtn{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.32);color:var(--ver);font-family:var(--fd);font-size:.72rem;font-weight:700;padding:8px 10px;border-radius:5px;cursor:pointer}
+.pbtn:hover{background:rgba(0,212,170,.22)}
 </style>
 </head>
 <body>
@@ -300,8 +338,7 @@ body {
   </div>
   <div class="tb-sep"></div>
   <div class="tb-tabs">
-    <button class="tb-tab active" id="tab-layout" onclick="switchTab('layout')">▦ Vista fisica</button>
-    <button class="tb-tab" id="tab-uni" onclick="switchTab('uni')">⚡ Unifilare</button>
+    <button class="tb-tab active" id="tab-layout" onclick="fitView(.6)">▦ Vista fisica</button>
   </div>
   <div class="tb-spacer"></div>
   <div class="tb-right">
@@ -328,6 +365,7 @@ body {
 <div class="ca">
   <div class="ctb">
     <button class="tb-btn on" id="tb-sel" title="Seleziona (S)" onclick="setTool('sel')">↖</button>
+    <button class="tb-btn" id="btnVerifica" title="Verifica elettrica del quadro (V)" onclick="apriVerifica()">⚡</button>
     <button class="tb-btn" id="tb-pan" title="Pan (P)" onclick="setTool('pan')">✋</button>
     <button class="tb-btn" id="tb-wire" title="Traccia conduttore (W)" onclick="setTool('wire')">✏</button>
     <div class="tsep"></div>
@@ -337,7 +375,7 @@ body {
     <button class="tb-btn" onclick="fitView()" title="Inquadra">⊡</button>
     <div class="tsep"></div>
     <!-- Wire type row (visible in uni tab) -->
-    <div class="wire-row" id="wire-row" style="display:none">
+    <div class="wire-row" id="wire-row">
       <button class="wire-btn wire-L1 on" id="wt-L1" onclick="setWT('L1')">L1</button>
       <button class="wire-btn wire-L2" id="wt-L2" onclick="setWT('L2')">L2</button>
       <button class="wire-btn wire-L3" id="wt-L3" onclick="setWT('L3')">L3</button>
@@ -389,6 +427,11 @@ body {
   <div class="sti" id="st-wire">Conduttori: 0</div>
   <div class="sti" id="st-tab">Vista: Fisica</div>
   <div class="sti" id="st-tool">Strumento: Seleziona</div>
+</div>
+
+<!-- MODAL VERIFICA -->
+<div class="mbg" id="mver">
+  <div class="mbox ver" id="mver-box"></div>
 </div>
 
 <!-- MODAL PDF -->
@@ -822,14 +865,14 @@ const CATALOG=[
      <circle cx="14" cy="14" r="7" fill="#27ae60" opacity=".9"/>
      <circle cx="11" cy="11" r="3" fill="#7dff9e" opacity=".5"/>
    </svg>`},
-  {id:'pl-r',cat:'Segnaletica',name:'Piloto LED rojo',sub:'Señal paro / falla',w:28,h:28,
+  {id:'pl-r',cat:'Segnaletica',name:'Pilota LED rosso',sub:'Segnale fermo / guasto',w:28,h:28,
    ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
    svg:`<svg viewBox="0 0 28 28" width="28" height="28">
      <circle cx="14" cy="14" r="12" fill="#301a1a" stroke="#e74c3c" stroke-width="1.5"/>
      <circle cx="14" cy="14" r="7" fill="#e74c3c" opacity=".9"/>
      <circle cx="11" cy="11" r="3" fill="#ff9f9f" opacity=".5"/>
    </svg>`},
-  {id:'pl-o',cat:'Segnalazione',name:'Spia LED arancione',sub:'Standby / avviso',w:28,h:28,
+  {id:'pl-o',cat:'Segnalazione',name:'Spia LED arancione',sub:'In attesa / avviso',w:28,h:28,
    ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
    svg:`<svg viewBox="0 0 28 28" width="28" height="28">
      <circle cx="14" cy="14" r="12" fill="#302010" stroke="#00D4AA" stroke-width="1.5"/>
@@ -1254,7 +1297,7 @@ const CATALOG=[
      <text x="36" y="44" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">IP55</text>
    </svg>`},
   {id:'tablero-mod',cat:'Gabineti',name:'Quadro da incasso',sub:'Scatola per moduli DIN (12-24 poli)',w:108,h:96,ports:[],
-   specs:['Embutir o aplicar','Capacidad: 8 – 54 modulos DIN','Puerta transparente','Rotaia e barretta di neutro/terra'],
+   specs:['Incassare o a parete','Capacità: 8 – 54 moduli DIN','Porta trasparente','Binario e traversa di neutro/terra'],
    svg:`<svg viewBox="0 0 108 96" width="108" height="96">
      <rect x="2" y="2" width="104" height="92" rx="3" fill="#1c202a" stroke="#555a72" stroke-width="2"/>
      <rect x="8" y="10" width="92" height="76" rx="2" fill="#12151d" stroke="#343a48"/>
@@ -1311,7 +1354,7 @@ const CATALOG=[
      <rect x="6" y="29" width="12" height="3" rx="1" fill="#0f1820"/>
      <line x1="12" y1="33" x2="12" y2="39" stroke="#6af" stroke-width="2"/>
    </svg>`},
-  {id:'born-doble',cat:'Morsetti',name:'Bornera doble piso',sub:'Borne dos niveles paso',w:24,h:38,
+  {id:'born-doble',cat:'Morsetti',name:'Morsetto a due livelli',sub:'Morsetto a due livelli passante',w:24,h:38,
    ports:[{id:'T1',t:'COM',pos:'t0'},{id:'T2',t:'COM',pos:'t1'},{id:'B1',t:'COM',pos:'b0'},{id:'B2',t:'COM',pos:'b1'}],
    specs:['Dos niveles independientes','Ahorro de espacio en riel','Sezione: 2.5 – 4mm²','Puenteable por nivel'],
    svg:`<svg viewBox="0 0 24 38" width="24" height="38">
@@ -1321,7 +1364,7 @@ const CATALOG=[
      <circle cx="8" cy="11" r="2" fill="#008F6E"/><circle cx="16" cy="11" r="2" fill="#008F6E"/>
      <circle cx="8" cy="27" r="2" fill="#008F6E"/><circle cx="16" cy="27" r="2" fill="#008F6E"/>
    </svg>`},
-  {id:'tope-riel',cat:'Morsetti',name:'Tope de riel',sub:'Freno/sujeción de borneras',w:12,h:34,ports:[],
+  {id:'tope-riel',cat:'Morsetti',name:'Tope di binario',sub:'Freno e fermamorsetti',w:12,h:34,ports:[],
    specs:['Fijación a riel con vite','Evita desplazamiento de borneras','Metálico o plástico','Universal DIN 35mm'],
    svg:`<svg viewBox="0 0 12 34" width="12" height="34">
      <rect x="2" y="2" width="8" height="30" rx="2" fill="#3a4050" stroke="#5a6078" stroke-width="1"/>
@@ -1329,13 +1372,13 @@ const CATALOG=[
      <circle cx="6" cy="8" r="2" fill="#6a7090"/>
      <line x1="6" y1="6" x2="6" y2="10" stroke="#2a2e3a"/><line x1="4" y1="8" x2="8" y2="8" stroke="#2a2e3a"/>
    </svg>`},
-  {id:'sep-borne',cat:'Morsetti',name:'Separador / tapa',sub:'Placa final de bornera',w:10,h:34,ports:[],
+  {id:'sep-borne',cat:'Morsetti',name:'Separatore / tappo',sub:'Piastra finale di morsetto',w:10,h:34,ports:[],
    specs:['Tapa de cierre lateral','Aísla el último borne','Mismo color que la serie','Evita contacto accidental'],
    svg:`<svg viewBox="0 0 10 34" width="10" height="34">
      <rect x="2" y="2" width="6" height="30" rx="1" fill="#2a3040" stroke="#454a68" stroke-width="1" stroke-dasharray="2,1.5"/>
      <line x1="5" y1="6" x2="5" y2="28" stroke="#454a68" stroke-width=".6"/>
    </svg>`},
-  {id:'born-pot',cat:'Morsetti',name:'Bornera de potencia',sub:'Borne de paso alta sección',w:30,h:40,
+  {id:'born-pot',cat:'Morsetti',name:'Morsetto di potenza',sub:'Morsetto passante alta sezione',w:30,h:40,
    ports:[{id:'T',t:'L1',pos:'top'},{id:'B',t:'L1',pos:'bot'}],
    specs:['Sezione: 16 – 95mm²','Para acometida / cargas grandes','Cuerpo poliamida reforzado','Tornillo M6/M8'],
    svg:`<svg viewBox="0 0 30 40" width="30" height="40">
@@ -1345,7 +1388,7 @@ const CATALOG=[
      <circle cx="15" cy="11.5" r="3.5" fill="#008F6E"/><circle cx="15" cy="28.5" r="3.5" fill="#008F6E"/>
      <text x="15" y="22" text-larghezzar="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">95mm²</text>
    </svg>`},
-  {id:'peine',cat:'Morsetti',name:'Peine de distribución',sub:'Barra peine para disyuntores',w:120,h:18,
+  {id:'peine',cat:'Morsetti',name:'Pettine di distribuzione',sub:'Barra peine para disyuntores',w:120,h:18,
    ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L1',pos:'t1'},{id:'P3',t:'L1',pos:'t2'},{id:'P4',t:'L1',pos:'t3'}],
    specs:['Distribución entre disyuntores','1P / 3P / 3P+N','Hasta 63A','Cobre aislado, paso 18mm'],
    svg:`<svg viewBox="0 0 120 18" width="120" height="18">
@@ -1353,7 +1396,7 @@ const CATALOG=[
      <rect x="16" y="9" width="4" height="7" fill="#b87333"/><rect x="40" y="9" width="4" height="7" fill="#b87333"/><rect x="64" y="9" width="4" height="7" fill="#b87333"/><rect x="88" y="9" width="4" height="7" fill="#b87333"/>
      <text x="60" y="7.5" text-larghezzar="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">PEINE DISTRIBUCIÓN</text>
    </svg>`},
-  {id:'term-puntera',cat:'Terminali',name:'Terminal puntera',sub:'Ferrule tubular aislado',w:40,h:16,
+  {id:'term-puntera',cat:'Terminali',name:'Terminale a puntale',sub:'Terminale a puntale isolato',w:40,h:16,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Sezione: 0.5 – 16mm²','Tubular de cobre estañado','Faldón aislado por color','Engaste con crimpadora'],
    svg:`<svg viewBox="0 0 40 16" width="40" height="16">
@@ -1362,7 +1405,7 @@ const CATALOG=[
      <line x1="36" y1="8" x2="40" y2="8" stroke="#7a82a8" stroke-width="1.5"/>
      <text x="9" y="3" text-larghezzar="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">aisl.</text>
    </svg>`},
-  {id:'term-ojal',cat:'Terminali',name:'Terminal ojal',sub:'Ring terminal a vite',w:40,h:20,
+  {id:'term-ojal',cat:'Terminali',name:'Terminale a occhello',sub:'Terminale a occhello con vite',w:40,h:20,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Ojal: M4 – M12','Cobre estañado','Engaste o soldadura','Para barra o bornera de vite'],
    svg:`<svg viewBox="0 0 40 20" width="40" height="20">
@@ -1371,7 +1414,7 @@ const CATALOG=[
      <circle cx="32" cy="10" r="7" fill="none" stroke="#c0c0c0" stroke-width="3"/>
      <circle cx="32" cy="10" r="3" fill="#1a1d28"/>
    </svg>`},
-  {id:'term-pala',cat:'Terminali',name:'Terminal pala',sub:'Fork / horquilla a vite',w:40,h:20,
+  {id:'term-pala',cat:'Terminali',name:'Terminale a forcella',sub:'Forcella con vite',w:40,h:20,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Horquilla: M3 – M6','Vite a rapida','Cobre estañado aislado','Sezione: 0.5 – 6mm²'],
    svg:`<svg viewBox="0 0 40 20" width="40" height="20">
@@ -1379,7 +1422,7 @@ const CATALOG=[
      <rect x="18" y="8" width="8" height="4" fill="#c0c0c0"/>
      <path d="M26,6 L38,6 L38,8 L30,8 L30,12 L38,12 L38,14 L26,14 Z" fill="#c0c0c0"/>
    </svg>`},
-  {id:'prensa',cat:'Terminali',name:'Prensacable',sub:'Glándula PG / métrica IP68',w:36,h:36,ports:[],
+  {id:'prensa',cat:'Terminali',name:'Pressacavo',sub:'Glanda PG / metrica IP68',w:36,h:36,ports:[],
    specs:['Rosca PG7 – PG48 / M12–M63','Grado: IP68','Sujeción y sellado de cable','Poliamida o latón'],
    svg:`<svg viewBox="0 0 36 36" width="36" height="36">
      <rect x="6" y="4" width="24" height="10" rx="2" fill="#2a2e3a" stroke="#454a68"/>
@@ -1442,7 +1485,7 @@ const CATALOG=[
      <text x="24" y="33" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">PT100</text>
      <line x1="18" y1="38" x2="18" y2="44" stroke="#7a82a8" stroke-width="1.5"/><line x1="30" y1="38" x2="30" y2="44" stroke="#7a82a8" stroke-width="1.5"/>
    </svg>`},
-  {id:'timer',cat:'Sensori',name:'Temporizador',sub:'Timer multifunzione a riel',w:40,h:56,
+  {id:'timer',cat:'Sensori',name:'Timer',sub:'Timer multifunzione a riel',w:40,h:56,
    ports:[{id:'A1',t:'A1',pos:'t0'},{id:'A2',t:'A2',pos:'t1'},{id:'C',t:'COM',pos:'b0'},{id:'NO',t:'OUT',pos:'b1'}],
    specs:['Rango: 0.1s – 100h','Multifunzione (ON/OFF delay)','Salida relé 8A','Alimentación 12–240V'],
    svg:`<svg viewBox="0 0 40 56" width="40" height="56">
@@ -1453,7 +1496,7 @@ const CATALOG=[
      <text x="20" y="40" text-larghezzar="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">TIMER</text>
      <line x1="14" y1="46" x2="14" y2="54" stroke="#7a82a8" stroke-width="2"/><line x1="26" y1="46" x2="26" y2="54" stroke="#7a82a8" stroke-width="2"/>
    </svg>`},
-  {id:'toma-din',cat:'Sensori',name:'Tomacorriente DIN',sub:'Toma de servicio a riel',w:40,h:44,
+  {id:'toma-din',cat:'Sensori',name:'Presa DIN',sub:'Presa di servizio a binario',w:40,h:44,
    ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'t2'}],
    specs:['Schuko 2P+T 16A','Montaje en riel DIN','220V servicio','Para mantenimiento de tablero'],
    svg:`<svg viewBox="0 0 40 44" width="40" height="44">
@@ -1465,7 +1508,7 @@ const CATALOG=[
    </svg>`},
 
   // ── DISTRIBUCIÓN: cables ──
-  {id:'cable-ref',cat:'Conductores',name:'Conductor / cable',sub:'Etiqueta de sección de cable',w:60,h:20,
+  {id:'cable-ref',cat:'Conductores',name:'Conductor / cable',sub:'Etichetta di sezione del cavo',w:60,h:20,
    ports:[{id:'A',t:'COM',pos:'lft'},{id:'B',t:'COM',pos:'rgt'}],
    specs:['Sezione: 1.5 – 240mm²','Cu aislación PVC/XLPE','Unipolar o multipolar','Ampacità secondo CEI 64-8'],
    svg:`<svg viewBox="0 0 60 20" width="60" height="20">
@@ -1476,18 +1519,18 @@ const CATALOG=[
    </svg>`},
 
   // ════ ANOTACIÓN ════
-  {id:'lbl',cat:'Annotazioni',name:'Etiqueta',sub:'Rótulo de texto libre',w:60,h:24,ports:[],
+  {id:'lbl',cat:'Annotazioni',name:'Etichetta',sub:'Testo libero',w:60,h:24,ports:[],
    svg:`<svg viewBox="0 0 60 24" width="60" height="24">
      <rect x="1" y="1" width="58" height="22" rx="2" fill="none" stroke="#353a58" stroke-width="1" stroke-dasharray="4,3"/>
      <text x="30" y="15" text-larghezzar="middle" font-family="Barlow Condensed" font-size="9" fill="#e8eaf4" font-weight="700">ETIQUETA</text>
    </svg>`},
-  {id:'flecha',cat:'Annotazioni',name:'Continuación',sub:'Flecha referencia de hoja',w:52,h:24,ports:[{id:'C',t:'COM',pos:'lft'}],
+  {id:'flecha',cat:'Annotazioni',name:'Continuazione',sub:'Freccia di rinvio al foglio',w:52,h:24,ports:[{id:'C',t:'COM',pos:'lft'}],
    svg:`<svg viewBox="0 0 52 24" width="52" height="24">
      <polygon points="2,12 28,4 28,9 50,9 50,15 28,15 28,20" fill="#1e2235" stroke="#f47920" stroke-width="1.2"/>
      <text x="36" y="14" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">/2</text>
    </svg>`},
   // ── COMPONENTI AGGIUNTI
-  {id:'trafo',cat:'Variatori/PLC',name:'Trasformatore',sub:'220/24V — 100VA',w:80,h:80,
+  {id:'trafo-aux',cat:'Variatori/PLC',name:'Trasformatore',sub:'220/24V — 100VA',w:80,h:80,
     ports:[{id:'L1',t:'L1',pos:'t0'},{id:'N1',t:'N',pos:'t1'},{id:'L2',t:'L1',pos:'b0'},{id:'N2',t:'N',pos:'b1'}],
     svg:`<svg viewBox="0 0 80 80" width="80" height="80">
       <rect x="10" y="10" width="60" height="60" rx="4" fill="#1a2030" stroke="#3a4560" stroke-width="1.5"/>
@@ -1496,7 +1539,7 @@ const CATALOG=[
       <text x="40" y="44" text-larghezzar="middle" font-family="Share Tech Mono" font-size="8" fill="#00D4AA">T</text>
       <text x="40" y="70" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">220/24V</text>
     </svg>`},
-  {id:'cond',cat:'Comando',name:'Condensatore',sub:'Motore — 25µF',w:40,h:50,
+  {id:'cond-aux',cat:'Comando',name:'Condensatore',sub:'Motore — 25µF',w:40,h:50,
     ports:[{id:'T1',t:'COM',pos:'top'},{id:'T2',t:'COM',pos:'bot'}],
     svg:`<svg viewBox="0 0 40 50" width="40" height="50">
       <rect x="8" y="8" width="24" height="34" rx="3" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
@@ -1537,7 +1580,7 @@ const CATALOG=[
       <line x1="34" y1="20" x2="38" y2="20" stroke="#6af" stroke-width="2"/>
       <text x="20" y="36" text-larghezzar="middle" font-family="Share Tech Mono" font-size="5" fill="#7a82a8">PROX</text>
     </svg>`},
-  {id:'timer',cat:'Comando',name:'Timer',sub:'Ritardo — 0.1-30s',w:50,h:50,
+  {id:'timer-aux',cat:'Comando',name:'Timer',sub:'Ritardo — 0.1-30s',w:50,h:50,
     ports:[{id:'A1',t:'A1',pos:'lft'},{id:'A2',t:'A2',pos:'rgt'},{id:'OUT',t:'OUT',pos:'top'}],
     svg:`<svg viewBox="0 0 50 50" width="50" height="50">
       <rect x="8" y="8" width="34" height="34" rx="4" fill="#1e2840" stroke="#3050a0" stroke-width="1.2"/>
@@ -1761,7 +1804,7 @@ function place(cid,x,y,silent){
   const p={
     id:`p${S.nextId++}`,cid,x,y,
     label:comp.name,tag:'',rot:0,
-    props:{In:'',Vn:'',curva:'',desc:'',cable:''},
+    props:{In:'',Vn:'',curva:'',desc:'',cable:'',pot:'',lung:'',uso:'',fase:'',sens:''},
     portPos:{} // cache of absolute port positions
   };
   S.placed.push(p);
@@ -2204,14 +2247,37 @@ function renderCompProps(id){
   <div class="rp-body">
     ${comp&&comp.specs&&comp.specs.length?`<div class="spec-block"><div class="spec-hdr">${esc(comp.name)}<span class="spec-cat">${esc(comp.cat)}</span></div>${comp.specs.map(s=>{const parts=s.split(':');return parts.length>1?`<div class="spec-line">▸ ${esc(parts[0])}: <b>${esc(parts.slice(1).join(':').trim())}</b></div>`:`<div class="spec-line">▸ ${esc(s)}</div>`}).join('')}</div>`:''}
     <div class="prow"><div class="plbl">Etichetta</div><input class="pinp" id="pr-lbl" value="${esc(p.label)}" oninput="upProp('label',this.value,'${id}')" aria-label="Etiqueta"></div>
-    <div class="prow"><div class="plbl">Tag / Referencia</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')" aria-label="Tag / Referencia"></div>
+    <div class="prow"><div class="plbl">Tag / Riferimento</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')" aria-label="Tag / Riferimento"></div>
     <div class="psep"></div>
     <div class="prow"><div class="plbl">Corriente nominal</div><input class="pinp" id="pr-in" value="${esc(p.props.In||'')}" placeholder="16A, 63A…" oninput="upNested('In',this.value,'${id}')" aria-label="Corriente nominal"></div>
     <div class="pgrid2">
       <div class="prow"><div class="plbl">Tensione</div><input class="pinp" id="pr-vn" value="${esc(p.props.Vn||'')}" placeholder="220V" oninput="upNested('Vn',this.value,'${id}')" aria-label="Tensione"></div>
       <div class="prow"><div class="plbl">Curva</div><input class="pinp" id="pr-cur" value="${esc(p.props.curva||'')}" placeholder="C / B / D" oninput="upNested('curva',this.value,'${id}')" aria-label="Curva"></div>
     </div>
-    <div class="prow"><div class="plbl">Sezione cavo</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')" aria-label="Sezione cavo"></div>
+    <div class="prow"><div class="plbl">Sezione cavo</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2,5 mm², 6 mm²…" oninput="upNested('cable',this.value,'${id}')" aria-label="Sezione cavo"></div>
+    <div class="pgrid2">
+      <div class="prow"><div class="plbl">Potenza (W)</div><input class="pinp" id="pr-pot" value="${esc(p.props.pot||'')}" placeholder="1000, 4000…" oninput="upNested('pot',this.value,'${id}')" aria-label="Potenza assorbita in watt"></div>
+      <div class="prow"><div class="plbl">Lunghezza (m)</div><input class="pinp" id="pr-lung" value="${esc(p.props.lung||'')}" placeholder="25" oninput="upNested('lung',this.value,'${id}')" aria-label="Lunghezza del circuito in metri"></div>
+    </div>
+    <div class="pgrid2">
+      <div class="prow"><div class="plbl">Uso</div><select class="pinp" id="pr-uso" onchange="upNested('uso',this.value,'${id}')" aria-label="Uso del circuito">
+        <option value=""${p.props.uso?'':' selected'}>—</option>
+        <option value="luce"${p.props.uso==='luce'?' selected':''}>Illuminazione</option>
+        <option value="presa"${p.props.uso==='presa'?' selected':''}>Prese</option>
+        <option value="motore"${p.props.uso==='motore'?' selected':''}>Motore</option>
+        <option value="altro"${p.props.uso==='altro'?' selected':''}>Altro</option>
+      </select></div>
+      <div class="prow"><div class="plbl">Fase</div><select class="pinp" id="pr-fase" onchange="upNested('fase',this.value,'${id}')" aria-label="Fase di alimentazione">
+        <option value=""${p.props.fase?'':' selected'}>—</option>
+        <option value="L1"${p.props.fase==='L1'?' selected':''}>L1</option>
+        <option value="L2"${p.props.fase==='L2'?' selected':''}>L2</option>
+        <option value="L3"${p.props.fase==='L3'?' selected':''}>L3</option>
+      </select></div>
+    </div>
+    <div class="pgrid2">
+      <div class="prow"><div class="plbl">Sensibilità (mA)</div><input class="pinp" id="pr-sens" value="${esc(p.props.sens||'')}" placeholder="30, 300…" oninput="upNested('sens',this.value,'${id}')" aria-label="Sensibilità del differenziale in milliampere"></div>
+      <div class="prow"><div class="plbl">&nbsp;</div><button class="pbtn" style="width:100%" onclick="apriVerifica()">Verifica quadro</button></div>
+    </div>
     <div class="prow"><div class="plbl">Circuito / Descrizione</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')" aria-label="Circuito / Descrizione"></div>
     <div class="psep"></div>
     <div class="prow"><div class="plbl">Ruota</div>
@@ -2250,13 +2316,14 @@ function setWT(t){
   S.wireType=t;
   ['L1','L2','L3','N','PE'].forEach(id=>document.getElementById('wt-'+id)?.classList.toggle('on',id===t));
 }
+// La scheda "Unifilare" e' stata tolta: S.tab veniva impostato e non letto
+// da nessuna parte, quindi cambiava solo la scritta di stato mentre il
+// disegno restava identico. Resta una sola vista, quella fisica.
 function switchTab(tab){
-  S.tab=tab;
-  document.getElementById('tab-layout').classList.toggle('active',tab==='layout');
-  document.getElementById('tab-uni').classList.toggle('active',tab==='uni');
-  document.getElementById('wire-row').style.display=tab==='uni'?'flex':'none';
-  document.getElementById('st-tab').textContent=`Vista: ${tab==='layout'?'Física':'Unifilar'}`;
-  if(tab==='layout'){S.wiring=null;}
+  S.tab='layout';
+  S.wiring=null;
+  document.getElementById('wire-row').style.display='flex';
+  document.getElementById('st-tab').textContent='Vista: fisica';
   renderAll();renderWires();renderBridges();renderRails();
 }
 
@@ -2504,8 +2571,11 @@ function setupKeys(){
     if(e.key==='+')doZoom(1.2);
     if(e.key==='-')doZoom(.83);
     if(e.key==='f'||e.key==='F')fitView();
+  if(e.key==='v'||e.key==='V')apriVerifica();
   });
   document.getElementById('mpdf').addEventListener('click',e=>{if(e.target===e.currentTarget)closePDF()});
+  document.getElementById('mver').addEventListener('click',e=>{if(e.target===e.currentTarget)chiudiVerifica()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')chiudiVerifica()});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closePDF()});
 }
 
@@ -2518,6 +2588,493 @@ function openPDF(){
   document.getElementById('mpdf').classList.add('open');
 }
 function closePDF(){document.getElementById('mpdf').classList.remove('open')}
+
+// ════════════════════════════════════════════════════════════════
+//  VERIFICA DEL QUADRO — vedi la nota «Verifica del quadro» nel vault
+// ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+//  VERIFICA DEL QUADRO
+//  Valuta il quadro electricalmente: protegge tutto? I cavi
+//  reggono la corrente? Manca un differenziale? La caduta di
+//  tensione e' accettabile? Le fasi sono equilibrate?
+//
+//  I valori di partenza sono quelli di progetto della norma. Sul
+//  posto vanno verificati con le condizioni reali di posa,
+//  temperatura e materiale: sono un controllo, non un certificato.
+// ════════════════════════════════════════════════════════════════
+
+const RIF = {
+  // Capacita' di portata Ib (A): PVC, 3 conduttori caricati, 30 °C,
+  // posa in tubo interrato nel muro. CEI 64-8 / IEC 60364-5-52.
+  portata: { 1.5:15.5, 2.5:21, 4:28, 6:36, 10:50, 16:68, 25:89, 35:110, 50:134, 70:171, 95:207 },
+  luceMaxA: 16,                 // 1,5 mm² ammesso fino a 16 A sui circuiti di luce
+  caduta: { luce:3, altro:5 },  // % — CEI 64-8: 3% per l'illuminazione, 5% altri usi
+  rho: 0.018,                   // ohm·mm²/m, rame a 20 °C
+  Un: { monofase:230, trifase:400 },
+  differenzialeVita: 30,       // mA: protezione delle persone (CEI 11-27)
+  differenzialeIncendio: 300,   // mA: solo protezione contro l'incendio
+  squilibrioMax: 0.30,          // 30% fra la fase piu' carica e la meno carica
+};
+
+// Ogni componente ha un ruolo nel circuito: e' questo che decide
+// cosa ci si aspetta da lui.
+function ruoloDi(c){
+  const n = (c.name||'').toLowerCase();
+  if (/differenziale/.test(n)) return 'differenziale';
+  if (/interruttore differenziale/.test(n)) return 'differenziale';
+  if (/guardamotore/.test(n)) return 'protezione';
+  if (/interruttore|fusibile|portafusibile|scaricatore/.test(n)) return 'protezione';
+  if (/sezionatore/.test(n)) return 'sezionatore';
+  if (/barra|morsa di passo/.test(n)) return 'barra';
+  if (/amperometro|voltmetro|contatore/.test(n)) return 'misura';
+  if (/contattore|relè|relè |teleinterruttore|avviatore|soft|timer|temporizz|finecorsa|prossimità|interruttore di posizione/.test(n)) return 'comando';
+  if (/pannello solare|batteria|aerogeneratore/.test(n)) return 'generatore';
+  if (/inverter|trasformatore|alimentatore|plc/.test(n)) return 'convertitore';
+  if (/compressore|evaporatore|valvola solenoide|resistenza/.test(n)) return 'carico';
+  if (['Gabineti','Morsetti','Terminali','Annotazioni','Ponti','Messa a terra','Conductores','Refrigerazione'].includes(c.cat)) return 'passivo';
+  if (c.cat==='Protezione') return 'protezione';
+  return 'carico';
+}
+
+// Valori tipici per componente: servono per provare la verifica
+// senza dover compilare ogni scheda a mano.
+const TIPICI = {
+  qf1:{In:'16A',curva:'C',cable:'2,5'},            qf2:{In:'16A',curva:'C',cable:'2,5'},
+  qf3:{In:'16A',curva:'C',cable:'4'},              qf4:{In:'16A',curva:'C',cable:'4'},
+  dpn:{In:'16A',curva:'C',cable:'2,5'},            idr:{In:'16A',curva:'C',cable:'2,5',sens:'30'},
+  id2:{In:'25A',cable:'6',sens:'30'},              id3:{In:'25A',cable:'6',sens:'30'},
+  id4:{In:'40A',cable:'10',sens:'30'},
+  fus:{In:'16A',cable:'2,5'},                      fus2:{In:'16A',cable:'2,5'},
+  mpcb:{In:'10A',curva:'D',cable:'2,5'},
+  spd:{In:'—',cable:'2,5'},                        'spd-dc':{In:'—',cable:'2,5'},
+  ica:{In:'—',cable:'4'},                          sec3:{In:'—',cable:'6'},
+  'sec-dc':{In:'—',cable:'4'},
+  km3:{In:'25A',cable:'6'},                        km4:{In:'25A',cable:'6'},
+  'km-mod':{In:'16A',cable:'2,5'},                   rt:{In:'16A',curva:'D',cable:'2,5'},
+  soft:{In:'25A',cable:'6'},                       vfd3:{In:'25A',cable:'6'},
+  mtr3:{pot:'4000',Vn:'400V',cable:'6',uso:'motore',fase:'L1'},
+  mtr1:{pot:'2200',Vn:'230V',cable:'4',uso:'motore',fase:'L1'},
+  compr:{pot:'750',Vn:'230V',cable:'2,5',uso:'motore'},
+  solenoide:{pot:'5',Vn:'230V',cable:'1,5',uso:'altro'},
+  'resist-calef':{pot:'150',Vn:'230V',cable:'1,5',uso:'altro'},
+  'pl-g':{pot:'3',Vn:'230V',cable:'0,5',uso:'altro'},  'pl-r':{pot:'3',Vn:'230V',cable:'0,5',uso:'altro'},
+  'pl-o':{pot:'3',Vn:'230V',cable:'0,5',uso:'altro'},
+  'toma-din':{pot:'0',Vn:'230V',cable:'2,5',uso:'presa',In:'16A',sens:'30'},
+  'inv-ongrid':{pot:'5000',Vn:'400V',cable:'10',uso:'altro'},
+  'inv-hibrido':{pot:'5000',Vn:'400V',cable:'10',uso:'altro'},
+  mppt:{pot:'0',Vn:'—',cable:'4'},                 bateria:{pot:'0',Vn:'48V',cable:'16'},
+  pv:{pot:'0',Vn:'—'},                             eolico:{pot:'0',Vn:'—'},
+  trafo:{pot:'0',Vn:'230V'},                       'trafo-aux':{pot:'100',Vn:'230V'},
+  psu:{pot:'0',Vn:'24V'},                          plc:{pot:'20',Vn:'24V'},
+  raux:{pot:'5',Vn:'230V',cable:'0,5',uso:'altro'}, telerr:{pot:'5',Vn:'230V',cable:'0,5'},
+  'timer-aux':{pot:'5',Vn:'230V',cable:'0,5'},     counter:{pot:'3',Vn:'230V',cable:'0,5'},
+  pt100:{pot:'1',Vn:'—',cable:'0,5'},              'rel-sic':{pot:'5',Vn:'230V',cable:'0,5'},
+  bus3:{In:'—'},                                   bpe:{In:'—'},
+};
+
+// La fase si legge dai conduttori collegati al componente: e' un dato
+// vero, disegnato dall'utente, non un valore da inventare.
+function fasiDi(idPlaced){
+  const f = new Set(); let terra=false, neutro=false;
+  S.wires.forEach(w=>{
+    if(w.fromId!==idPlaced && w.toId!==idPlaced) return;
+    if(['L1','L2','L3'].includes(w.type)) f.add(w.type);
+    if(w.type==='PE') terra=true;
+    if(w.type==='N') neutro=true;
+  });
+  return { fasi:[...f], terra, neutro };
+}
+
+// Il sezionamento in coppie: chi e' collegato a chi, in un solo verso.
+function reteComponenti(elenco){
+  const ad = new Map();
+  elenco.forEach(x=>ad.set(x.p.id, new Set()));
+  S.wires.forEach(w=>{
+    if(ad.has(w.fromId) && ad.has(w.toId) && w.fromId!==w.toId){
+      ad.get(w.fromId).add(w.toId);
+      ad.get(w.toId).add(w.fromId);
+    }
+  });
+  return ad;
+}
+
+// Il protettore piu' vicino a un carico: si cammina la rete e il primo
+// dispositivo di protezione che si incontra e' quello che lo protegge.
+function protettoreDi(partenza, elenco, ad){
+  const visti = new Set([partenza]); let frontiera = [partenza];
+  while(frontiera.length){
+    const prossima = [];
+    for(const id of frontiera){
+      const vicini = ad.get(id) || new Set();
+      for(const v of vicini){
+        if(visti.has(v)) continue;
+        visti.add(v);
+        const x = elenco.find(e=>e.p.id===v);
+        if(x && (x.ruolo==='protezione' || x.ruolo==='differenziale')) return x;
+        prossima.push(v);
+      }
+    }
+    frontiera = prossima;
+  }
+  return null;
+}
+
+// Il differenziale che copre un carico: puo' essere a monte, non a valle.
+function differenzialeDi(partenza, elenco, ad){
+  let prot = protettoreDi(partenza, elenco, ad);
+  if(prot && prot.ruolo==='differenziale') return prot;
+  // se il protettore vicino non e' un differenziale, si risale dalla sua parte
+  const visti = new Set(); let frontiera = prot ? [prot.p.id] : [partenza];
+  visti.add(partenza);
+  while(frontiera.length){
+    const prossima = [];
+    for(const id of frontiera){
+      for(const v of (ad.get(id) || new Set())){
+        if(visti.has(v)) continue;
+        visti.add(v);
+        const x = elenco.find(e=>e.p.id===v);
+        if(x && x.ruolo==='differenziale') return x;
+        if(x && x.ruolo!=='protezione' && x.ruolo!=='sezionatore') prossima.push(v);
+      }
+    }
+    frontiera = prossima;
+  }
+  return null;
+}
+
+// Un numero nel formato italiano: 2.5 diventa "2,5".
+function numIT(v){
+  if(v===null || v===undefined) return '—';
+  return String(v).replace('.', ',');
+}
+// Converte "2,5" o "2.5 mm²" in numero. Restituisce null se non e' una sezione.
+function sezioneNum(v){
+  if(v===null || v===undefined || v==='') return null;
+  const m = String(v).replace(',', '.').match(/\d+(\.\d+)?/);
+  return m ? parseFloat(m[0]) : null;
+}
+// Tensione nominale dichiarata sul componente, o quella di default.
+function tensioneDi(p){
+  const v = p.props.Vn||'';
+  if(/trifase|3P|3~|400/i.test(v)) return RIF.Un.trifase;
+  if(v) return RIF.Un.monofase;
+  return null;
+}
+function potenzaDi(p){
+  const n = parseFloat(String(p.props.pot||'').replace(',','.'));
+  return isFinite(n) ? n : null;
+}
+function inDi(p){
+  const n = parseFloat(String(p.props.In||'').replace(',','.'));
+  return isFinite(n) ? n : null;
+}
+// La sensibilita' del differenziale in mA, se dichiarata o deducibile.
+function sensibilitaDi(p, comp){
+  const s = parseFloat(String(p.props.sens||'').replace(',','.'));
+  if(isFinite(s)) return s;
+  const m = /(\d+)\s*mA/i.exec((comp.sub||'')+(comp.name||''));
+  if(m) return parseInt(m[1],10);
+  if(/differenziale/i.test(comp.name||'')) return RIF.differenzialeVita;   // 30 mA per difetto di progetto
+  return null;
+}
+
+// Sezione e lunghezza sono proprietà del CIRCUITO, non del singolo
+// componente: l'utente le mette dove gli pare, quindi si cercano sul
+// protettore e, se non ci sono, sui carichi collegati.
+function sezioneCircuito(g){
+  const s = sezioneNum(g.prot.p.props.cable);
+  if(s!==null) return s;
+  for(const c of g.carichi){ const v=sezioneNum(c.p.props.cable); if(v!==null) return v; }
+  return null;
+}
+function lunghezzaCircuito(g){
+  const leggi = p => { const n=parseFloat(String(p.props.lung||'').replace(',','.')); return isFinite(n)&&n>0 ? n : null; };
+  const a = leggi(g.prot.p); if(a!==null) return a;
+  for(const c of g.carichi){ const v=leggi(c.p); if(v!==null) return v; }
+  return null;
+}
+
+// ── La verifica vera ─────────────────────────────────────────
+function verificaQuadro(){
+  const E=[], A=[], I=[];                       // errori, avvisi, informazioni
+  const aggiungi=(lista,gravita,titolo,testo,ids)=>lista.push({gravita,titolo,testo,ids:ids||[]});
+
+  const elenco = [];
+  S.placed.forEach(p=>{
+    const c = CATALOG.find(x=>x.id===p.cid);
+    if(!c) return;
+    elenco.push({ p, c, ruolo:ruoloDi(c) });
+  });
+  if(!elenco.length){
+    aggiungi(I,'info','Quadro vuoto','Nessun componente da verificare.');
+    return {E,A,I,total:null};
+  }
+  const ad = reteComponenti(elenco);
+
+  const carichi = elenco.filter(x=>x.ruolo==='carico' || x.ruolo==='comando');
+  const protezioni = elenco.filter(x=>x.ruolo==='protezione' || x.ruolo==='differenziale');
+
+  // ── 1. ogni carico deve avere un protettore a monte ──
+  const perProtettore = new Map();     // protettore -> carichi che protegge
+  carichi.forEach(x=>{
+    const prot = protettoreDi(x.p.id, elenco, ad);
+    const pot = potenzaDi(x.p);
+    const uso = (x.p.props.uso||'').toLowerCase();
+    // un carico senza potenza dichiarata non puo' essere valutato
+    if(pot===null) return;
+    if(!prot){
+      aggiungi(E,'errore','Carico senza protezione',
+        `${x.c.name}${x.p.tag?' ('+x.p.tag+')':''} assorbe ${pot} W ma non risulta collegato ad alcun magnetotermico, fusibile o differenziale. Un corto circuito su questo circuito non avrebbe nulla che lo interrompa.`,
+        [x.p.id]);
+      return;
+    }
+    if(!perProtettore.has(prot.p.id)) perProtettore.set(prot.p.id,{prot,carichi:[],pot:0,amp:0});
+    const g = perProtettore.get(prot.p.id);
+    g.carichi.push(x);
+    g.pot += pot;
+  });
+
+  // ── 2. sovraccarico del protettore ──
+  const fasi = {};
+  perProtettore.forEach(g=>{
+    const In = inDi(g.prot.p);
+    if(In===null) return;
+    // corrente nominale consentita dal cavo, per confronto
+    const A1 = In;
+    if(g.pot > A1*1000){
+      aggiungi(E,'errore','Sovracarico del protettore',
+        `I carichi collegati a ${g.prot.c.name}${g.prot.p.tag?' ('+g.prot.p.tag+')':''} sommano ${g.pot} W, mentre il dispositivo e' da ${In} A (${A1*1000} W). Interverra' al sovraccarico, oppure il cablaggio non regge.`,
+        [g.prot.p.id, ...g.carichi.map(c=>c.p.id)]);
+    } else if(g.pot > A1*1000*0.85){
+      aggiungi(A,'avviso','Protezione al limite',
+        `I carichi su ${g.prot.c.name}${g.prot.p.tag?' ('+g.prot.p.tag+')':''} sono ${g.pot} W su ${A1*1000} W utili: siamo al ${Math.round(g.pot/(A1*1000)*100)}% del protettore.`,
+        [g.prot.p.id]);
+    }
+  });
+
+  // ── 3. sezione del cavo e capacita' di portata ──
+  perProtettore.forEach(g=>{
+    const sezProt = sezioneCircuito(g);
+    if(sezProt===null) return;
+    const cap = RIF.portata[sezProt];
+    if(cap===undefined){
+      aggiungi(A,'avviso','Sezione fuori tabella',
+        `Sezione ${numIT(sezProt)} mm² sul protettore ${g.prot.p.tag||g.prot.c.name}: non è fra quelle previste (1,5 fino a 95 mm²).`, [g.prot.p.id]);
+      return;
+    }
+    const In = inDi(g.prot.p);
+    if(In!==null && In > cap){
+      aggiungi(E,'errore','Cavo protetto male',
+        `Il cavo da ${numIT(sezProt)} mm² regge ${cap} A, ma il protettore è da ${In} A. In caso di sovraccarico il cavo si surriscalda e si danneggia PRIMA che l'interruttore intervenga: la protezione non serve a nulla. Serve un cavo da ${sezioneConsigliata(In)} mm² o un protettore da ${cap} A.`,
+        [g.prot.p.id]);
+    }
+    if(g.pot > cap*1000){
+      aggiungi(E,'errore','Sovracarico del cavo',
+        `Il cavo da ${numIT(sezProt)} mm² regge ${cap} A (${cap*1000} W) ma il circuito consuma ${g.pot} W.`,
+        [g.prot.p.id]);
+    }
+  });
+
+  // ── 4. differenziale: serve a 30 mA dove ci sono persone ──
+  carichi.forEach(x=>{
+    const pot = potenzaDi(x.p);
+    if(pot===null && !x.p.props.uso) return;
+    const uso = (x.p.props.uso||'').toLowerCase();
+    const f = fasiDi(x.p.id);
+    const serve = uso==='presa' || uso==='motore' || f.terra || /presa|tomacorriente|motore|tomasacorrente/i.test(x.c.name);
+    if(!serve) return;
+    const d = differenzialeDi(x.p.id, elenco, ad);
+    if(!d){
+      aggiungi(E,'errore','Differenziale mancante',
+        `${x.c.name}${x.p.tag?' ('+x.p.tag+')':''}${uso==='presa'?' serve una presa':''}${f.terra?' ed è collegato a terra':''}, ma non c'è nessun differenziale a monte. Una persona che tocca la massa resta in contatto con la terra.`,
+        [x.p.id]);
+      return;
+    }
+    const s = sensibilitaDi(d.p, d.c);
+    if(s!==null && s > RIF.differenzialeVita){
+      aggiungi(E,'errore','Differenziale da 300 mA su circuito di vita',
+        `${d.c.name}${d.p.tag?' ('+d.p.tag+')':''} è da ${s} mA: protegge solo dall'incendio, non le persone. Su circuiti con prese o masse accessibili serve 30 mA (CEI 11-27).`,
+        [d.p.id, x.p.id]);
+    }
+  });
+
+  // ── 5. caduta di tensione ──
+  perProtettore.forEach(g=>{
+    const L = lunghezzaCircuito(g);
+    if(L===null) return;
+    const sez = sezioneCircuito(g);
+    if(sez===null) return;
+    const trif = /trifase|3P|3~/.test((g.prot.c.name||'')+(g.prot.c.sub||''));
+    const U = trif ? RIF.Un.trifase : RIF.Un.monofase;
+    const I = g.pot/1000/(trif ? Math.sqrt(3)*U/1000 : U/1000);
+    const dU = trif
+      ? Math.sqrt(3)*RIF.rho*L*I*100/(sez*U)
+      : 2*RIF.rho*L*I*100/(sez*U);
+    // 3% per l'illuminazione, 5% per gli altri usi: se nel circuito c'e'
+    // anche un carico diverso dall'illuminazione vale il limite piu' alto
+    const soloLuce = g.carichi.length && g.carichi.every(c=>(c.p.props.uso||'').toLowerCase()==='luce');
+    const limite = soloLuce ? RIF.caduta.luce : RIF.caduta.altro;
+    if(dU > limite){
+      aggiungi(A,'avviso','Caduta di tensione',
+        `Su ${numIT(L)} m di cavo da ${numIT(sez)} mm² la caduta è ${numIT(dU.toFixed(1))}%, oltre il ${limite}% ammesso. Servono almeno ${sezionePerCaduta(L,I,U,trif,limite)} mm².`,
+        [g.prot.p.id, ...g.carichi.map(c=>c.p.id)]);
+    }
+  });
+
+  // ── 6. fasi e squilibrio ──
+  const perFase = {L1:0, L2:0, L3:0};
+  let fasiUsate = new Set(), potTot=0;
+  carichi.forEach(x=>{
+    const pot = potenzaDi(x.p);
+    const f = fasiDi(x.p.id);
+    if(x.p.props.fase && /L[123]/.test(x.p.props.fase)) fasiUsate.add(x.p.props.fase);
+    else f.fasi.forEach(x2=>fasiUsate.add(x2));
+    if(pot===null) return;
+    potTot += pot;
+    const fase = (x.p.props.fase && /L[123]/.test(x.p.props.fase)) ? x.p.props.fase : (f.fasi[0]||null);
+    if(fase && perFase[fase]!==undefined) perFase[fase] += pot;
+  });
+  const caricheFasi = Object.values(perFase).filter(v=>v>0);
+  if(caricheFasi.length>1){
+    const max = Math.max(...caricheFasi), min = Math.min(...caricheFasi);
+    const medio = caricheFasi.reduce((a,b)=>a+b,0)/caricheFasi.length;
+    if(medio>0 && (max-min)/medio > RIF.squilibrioMax){
+      aggiungi(A,'avviso','Fasi squilibrate',
+        `Fase più carica ${max} W, meno carica ${min} W: uno scarto del ${Math.round((max-min)/medio*100)}%. Uno squilibrio prolungato surriscalda i cavi del neutro e delle fasi scariche.`,
+        []);
+    }
+  }
+
+  // ── 7. protezione generale: senza, il corto circuito non e' controllato ──
+  if(!protezioni.length){
+    aggiungi(E,'errore','Nessuna protezione nel quadro',
+      'Non c\'è nessun magnetotermico, fusibile o differenziale. Tutto il quadro è scoperto.', []);
+  }
+  aggiungi(I,'info','Protezione generale',
+    'Il corto circuito in testa al quadro dipende dalla corrente di cortocircuito della alimentazione e dalla potenza di cortocircuito Icu del dispositivo: dati che il disegno non contiene. Verificare Icu ≥ Isc sulla documentazione della fornitura.', []);
+
+  // ── 8. dati mancanti ──
+  const senzaSez = protezioni.filter(x=>sezioneNum(x.p.props.cable)===null);
+  if(senzaSez.length){
+    aggiungi(A,'avviso','Sezione cavo mancante',
+      `${senzaSez.length} ${senzaSez.length===1?'dispositivo ha':'dispositivi hanno'} la protezione ma non la sezione del cavo: senza quella non si può controllare il sovraccarico del cavo.`,
+      senzaSez.map(x=>x.p.id));
+  }
+  const senzaPot = carichi.filter(x=>potenzaDi(x.p)===null && (x.p.props.uso||x.p.props.pot));
+  const carichiSenzaDato = carichi.filter(x=>potenzaDi(x.p)===null && !x.p.props.uso);
+  if(carichiSenzaDato.length){
+    aggiungi(A,'avviso','Potenza non dichiarata',
+      `${carichiSenzaDato.length} ${carichiSenzaDato.length===1?'componente ha':'componenti hanno'} potenza e uso sconosciuti: il bilancio del quadro è incompleto.`,
+      carichiSenzaDato.map(x=>x.p.id));
+  }
+
+  // ── 9. totali ──
+  const trifaseTot = elenco.some(x=>/trifase|3P|3~/.test(x.c.name+' '+x.c.sub));
+  const U = trifaseTot ? RIF.Un.trifase : RIF.Un.monofase;
+  const Itot = trifaseTot ? potTot/1000/(Math.sqrt(3)*U/1000) : potTot/1000/(U/1000);
+  const total = {
+    pot: potTot,
+    Itot, U, trifase: trifaseTot,
+    fasi: perFase,
+    nCarichi: carichi.length,
+    nProtezioni: protezioni.length,
+    InMin: protezioni.map(x=>inDi(x.p)).filter(v=>v!==null),
+  };
+  if(potTot>0){
+    const InMain = Math.ceil(Itot*1.15);
+    aggiungi(I,'info','Totale quadro',
+      `${potTot} W, circa ${Itot.toFixed(1)} A a ${U} V. Serve almeno un generale da ${InMain} A (con un margine del 15%).`, []);
+  }
+  return {E,A,I,total};
+}
+
+// Il numero di sezione da usare per una certa corrente.
+function sezioneConsigliata(A){
+  const chiavi = Object.keys(RIF.portata).map(Number).sort((a,b)=>a-b);
+  for(const s of chiavi) if(RIF.portata[s] >= A) return String(s).replace('.',',');
+  return '>95';
+}
+// La sezione minima per tenere la caduta entro il limite.
+function sezionePerCaduta(L,I,U,trif,limite){
+  const fatt = trif ? Math.sqrt(3) : 2;
+  const s = fatt*RIF.rho*L*I*100/(U*limite);
+  return String(Math.ceil(s*2)/2).replace('.',',');
+}
+
+
+// ── Assegna a ogni componente valori tipici del suo tipo ──────
+// Serve per provare la verifica senza compilare ogni scheda a mano.
+function assegnaValori(){
+  let n=0, senza=0;
+  S.placed.forEach(p=>{
+    const c = CATALOG.find(x=>x.id===p.cid); if(!c){ senza++; return; }
+    const t = TIPICI[c.id];
+    if(!t){ senza++; return; }
+    Object.keys(t).forEach(k=>{ if(p.props[k]===undefined || p.props[k]==='') p.props[k]=t[k]; });
+    // la lunghezza del circuito serve per la caduta di tensione
+    if(p.props.lung===undefined || p.props.lung==='') p.props.lung = ruoloDi(c)==='carico' ? '25' : '—';
+    n++;
+  });
+  renderAll(); updateSB();
+  toast(n? `Valori tipici assegnati a ${n} componenti${senza? `, ${senza} senza valori tipici`:''}` : 'Nessun componente riconosciuto', n?'ok':'err');
+}
+
+// ── Il pannello di verifica ───────────────────────────────────
+function apriVerifica(){
+  const r = verificaQuadro();
+  const riquadro = document.getElementById('mver');
+  riquadro.classList.add('open');
+
+  const t = r.total;
+  const fascia = t && t.pot>0 ? `
+    <div class="vres">
+      <div class="vres-c"><b>${t.pot.toLocaleString('it-IT')}</b><span>W totali</span></div>
+      <div class="vres-c"><b>${t.Itot.toFixed(1)}</b><span>A a ${t.U} V</span></div>
+      <div class="vres-c"><b>${t.trifase?'trifase':'monofase'}</b><span>sistema</span></div>
+      <div class="vres-c"><b>${t.nCarichi}</b><span>carichi</span></div>
+      <div class="vres-c"><b>${t.nProtezioni}</b><span>protezioni</span></div>
+    </div>
+    ${t.trifase? `<div class="vfasi">
+      ${['L1','L2','L3'].map(f=>{ const picco=Math.max(1,...Object.values(t.fasi));
+        const pct=Math.round(t.fasi[f]/picco*100);
+        return `<div class="vf"><span>${f}</span><i><u style="width:${t.fasi[f] ? Math.max(2, pct) : 0}%"></u></i><b>${t.fasi[f]} W</b></div>`; }).join('')}
+    </div>`:''}` : '';
+
+  const gruppo = (titolo, voci, classe, icona) => voci.length ? `
+    <div class="vgrp ${classe}">
+      <div class="vgrp-h">${icona} ${titolo}<b>${voci.length}</b></div>
+      ${voci.map((v,i)=>`<div class="vitem" data-g="${classe}" data-i="${i}">
+        <div class="vitem-t">${esc(v.titolo)}</div>
+        <div class="vitem-x">${esc(v.testo)}</div>
+        ${v.ids.length?`<div class="vitem-a">${v.ids.map(id=>{ const p=S.placed.find(x=>x.id===id); return p?`<button onclick="selDaVerifica('${id}')">${esc(p.tag||'seleziona')}</button>`:''; }).join('')}</div>`:''}
+      </div>`).join('')}
+    </div>` : '';
+
+  const vuoto = !r.E.length && !r.A.length
+    ? `<div class="vok"><b>Nessun problema rilevato</b><span>Protezioni, sezioni e differenziali risultano coerenti. Restano da verificare a mano: Icu della protezione generale e correnti di cortocircuito.</span></div>` : '';
+
+  document.getElementById('mver-box').innerHTML = `
+    <button class="mclose" onclick="chiudiVerifica()">✕</button>
+    <div class="mtitle">Verifica del quadro</div>
+    <div class="vavviso">I valori sono quelli di progetto della norma (CEI 64-8, CEI 11-27). La verifica è un controllo: sul posto vanno verificate le condizioni reali di posa, temperatura e materiale.</div>
+    ${fascia}${vuoto}
+    ${gruppo('Errori', r.E, 'err', '⛔')}
+    ${gruppo('Avvisi', r.A, 'avv', '⚠')}
+    ${gruppo('Informazioni', r.I, 'inf', 'ℹ')}
+    <div class="vfoot">
+      <button class="mbtn" onclick="assegnaValori();apriVerifica()">Assegna valori tipici</button>
+      <button class="mbtn" onclick="chiudiVerifica()">Chiudi</button>
+    </div>`;
+  window._verifica = r;
+}
+function chiudiVerifica(){ document.getElementById('mver').classList.remove('open'); }
+function selDaVerifica(id){
+  chiudiVerifica();
+  const p = S.placed.find(x=>x.id===id); if(!p) return;
+  sel(id);
+  const el = document.getElementById('pl_'+id);
+  if(el) el.scrollIntoView({block:'center', inline:'center', behavior:'smooth'});
+}
 
 function genPDF(){
   if(senzaPdf()) return;
