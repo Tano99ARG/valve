@@ -39,7 +39,8 @@ function getSs() {
 }
 
 var HEAD = ['id','updatedAt','deleted','barcode','sku','name','category','unit',
-            'qty','minQty','price','sellPrice','supplier','location','notes','thumb'];
+            'qty','minQty','price','sellPrice','supplier','location','notes','thumb',
+            'etichetta'];
 
 /* crea le intestazioni e le colonne se il foglio e' vuoto */
 function initSheet(ss) {
@@ -159,7 +160,8 @@ function rowToObj(r) {
     supplier:  r[12] === '' ? null : String(r[12]),
     location:  r[13] === '' ? null : String(r[13]),
     notes:     r[14] === '' ? null : String(r[14]),
-    thumb:     r[15] === '' ? null : String(r[15])
+    thumb:     r[15] === '' ? null : String(r[15]),
+    etichetta: r[16] === '' ? null : String(r[16])
   };
 }
 
@@ -182,7 +184,8 @@ function objToRow(o) {
     o.supplier == null ? '' : String(o.supplier),
     o.location == null ? '' : String(o.location),
     o.notes == null ? '' : String(o.notes),
-    o.thumb == null ? '' : String(o.thumb)
+    o.thumb == null ? '' : String(o.thumb),
+    o.etichetta == null ? '' : String(o.etichetta)
   ];
 }
 

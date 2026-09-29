@@ -184,6 +184,28 @@ ol.steps li{margin-bottom:7px}
   border:1px solid var(--b1);object-fit:cover;display:flex;align-items:center;justify-content:center;
   font-size:28px;color:var(--mut)}
 
+/* lettura dell'etichetta: scelta della riga da usare come nome.
+   Gli stessi stili base del pannello listino: senza, il pannello
+   scorrerebbe dentro la pagina invece di coprirla. */
+#ocrPanel{position:fixed;inset:0;z-index:96;display:none}
+#ocrPanel.on{display:block}
+#ocrPanel .bd{position:absolute;inset:0;background:rgba(0,0,0,.68)}
+#ocrPanel .in{position:absolute;left:0;right:0;bottom:0;max-height:88vh;background:var(--panel);
+  border-top:1px solid var(--b2);border-radius:16px 16px 0 0;display:flex;flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom)}
+#ocrPanel .hd{padding:12px 14px;border-bottom:1px solid var(--b1)}
+#ocrPanel #ocrCorpo{padding:14px 14px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1}
+.ocrProg{font-size:.84rem;color:var(--dim);margin-bottom:12px}
+.ocrBar{height:7px;background:var(--panel);border-radius:4px;overflow:hidden;margin:9px 0 4px}
+.ocrBar i{display:block;height:100%;width:0;background:var(--ora);transition:width .25s}
+.ocrRighe{max-height:44vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.ocrRiga{width:100%;text-align:left;background:var(--panel);border:1px solid var(--b1);color:var(--w);
+  padding:11px 13px;border-radius:8px;margin-bottom:7px;cursor:pointer;font-family:var(--fb);
+  font-size:.9rem;min-height:44px;display:block}
+.ocrRiga:active{background:var(--card2);border-color:var(--ora)}
+.ocrRiga .sc{font-family:var(--fm);font-size:.68rem;color:var(--ora2);letter-spacing:.5px}
+.ocrVuoto{color:var(--dim);font-size:.88rem;padding:14px 0}
+
 /* avviso scorte: barra in evidenza sulle schede Scansiona e Catalogo */
 .abar{display:none;align-items:center;gap:11px;margin-bottom:12px;padding:12px 14px;
   border-radius:9px;background:rgba(243,156,18,.13);border:1px solid rgba(243,156,18,.5);
@@ -479,6 +501,11 @@ ol.steps li{margin-bottom:7px}
       </div>
     </div>
     <div class="fld">
+      <label class="flbl" for="fEtichetta">Testo letto sull'etichetta</label>
+      <textarea class="inp" id="fEtichetta" placeholder="Compilato leggendo l'etichetta, o scritto a mano. Serve per trovare il prodotto cercando parole diverse dal nome."></textarea>
+      <button class="btn btn-sm" style="margin-top:8px;width:100%" onclick="scanEtichetta()">🔤 Leggi l'etichetta con la fotocamera</button>
+    </div>
+    <div class="fld">
       <label class="flbl" for="fNotes">Note</label>
       <textarea class="inp" id="fNotes" placeholder="Dimensioni, compatibilità, pezzi per scatola…"></textarea>
     </div>
@@ -489,6 +516,20 @@ ol.steps li{margin-bottom:7px}
     <div id="shDelWrap" style="display:none;margin-top:11px">
       <button class="btn btn-d btn-sm" style="width:100%" onclick="deleteProduct()">Elimina prodotto</button>
     </div>
+  </div>
+</div>
+
+<!-- LETTURA ETICHETTA -->
+<div id="ocrPanel">
+  <div class="bd" onclick="chiudiOcr()"></div>
+  <div class="in">
+    <div class="hd">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-weight:700;font-size:1.12rem;flex:1">Testo dell'etichetta</div>
+        <button class="btn btn-sm" onclick="chiudiOcr()">✕</button>
+      </div>
+    </div>
+    <div id="ocrCorpo"></div>
   </div>
 </div>
 
@@ -574,7 +615,7 @@ function now(){ return Date.now(); }
 function blankProduct(barcode){
   return { id:uid(), barcode:barcode||'', sku:'', name:'', category:'', unit:'pz',
            qty:0, minQty:0, price:0, sellPrice:0, supplier:'', location:'', notes:'',
-           thumb:null, createdAt:now(), updatedAt:now(), deleted:false, dirty:true };
+           etichetta:'', thumb:null, createdAt:now(), updatedAt:now(), deleted:false, dirty:true };
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -607,6 +648,7 @@ function norm(p){
     supplier: p.supplier || '',
     location: p.location || '',
     notes: p.notes || '',
+    etichetta: p.etichetta || '',
     thumb: p.thumb || null,
     createdAt: Number(p.createdAt) || now(),
     updatedAt: Number(p.updatedAt) || now(),
@@ -844,6 +886,11 @@ async function showScanResult(code, p){
           '<button class="qbtn2" onclick="bump(\'' + p.id + '\',1)">+</button>' +
           '<button class="btn btn-sm" style="margin-left:auto" onclick="openSheet(\'' + p.id + '\')">✎ Modifica</button>' +
         '</div>' +
+        '<div class="hitrow" style="margin-top:9px">' +
+          '<button class="btn btn-sm" onclick="fotoSuProdotto(\'' + p.id + '\')">📷 Foto</button>' +
+          '<button class="btn btn-sm" onclick="scanEtichetta(\'' + p.id + '\')">🔤 Leggi etichetta</button>' +
+          (p.etichetta ? '<button class="btn btn-sm" onclick="openSheet(\'' + p.id + '\')">👁 Testo letto</button>' : '') +
+        '</div>' +
         '<div class="hitmeta" style="margin-top:12px">Prezzo acquisto <b>' + eur(p.price) +
           '</b> · vendita <b>' + eur(p.sellPrice) + '</b></div>' +
         (isLow(p) ? '<div class="hitmeta" style="color:var(--red);margin-top:5px">⚠ Sotto la scorta minima (' + fmtQty(p.minQty) + ')</div>' : '') +
@@ -857,6 +904,11 @@ async function showScanResult(code, p){
         '<div class="hitrow">' +
           '<button class="btn btn-p" onclick="openSheet(null,\'' + esc(code).replace(/'/g,"") + '\')">+ Crea prodotto</button>' +
           '<button class="btn btn-sm" onclick="startScan()">↺ Scansiona ancora</button>' +
+        '</div>' +
+        '<div class="hitmeta" style="margin-top:11px">Appena lo crei puoi scattare la foto e far ' +
+        'leggere l\'etichetta: così lo trovi subito cercando parole diverse dal nome.</div>' +
+        '<div class="hitrow" style="margin-top:9px">' +
+          '<button class="btn btn-sm" onclick="openSheet(null,\'' + esc(code).replace(/'/g,"") + '\');setTimeout(scanEtichetta,350)">🔤 Crea e leggi l\'etichetta</button>' +
         '</div>' +
       '</div>';
   }
@@ -886,6 +938,283 @@ function esc(s){
 /* ══════════════════════════════════════════════════════════════
    7. CATALOGO
    ══════════════════════════════════════════════════════════════ */
+/* ── 6bis. FOTO DIRETTA E LETTURA DELL'ETICHETTA ──
+   Dopo lo scan vuoi due cose: la foto del prodotto e il testo scritto
+   sull'etichetta. La foto si scatta e basta; il testo va letto. */
+
+// ── libreria di riconoscimento, caricata solo quando serve ──
+// Sono 5-15 MB: tenerli nel precache appesantirebbe l'app per tutti.
+// Tesseract tiene i dati della lingua in una cache sua, quindi dalla
+// seconda volta e' gia' in locale.
+const TESS_URL = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
+let tessPromessa = null;
+
+function caricaTesseract(){
+  if(window.Tesseract) return Promise.resolve(window.Tesseract);
+  if(tessPromessa) return tessPromessa;
+  tessPromessa = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = TESS_URL;
+    s.async = true;
+    s.onload  = () => window.Tesseract ? res(window.Tesseract)
+                                       : rej(new Error('Tesseract non disponibile'));
+    s.onerror = () => { tessPromessa = null; rej(new Error('Serve la rete per la prima lettura')); };
+    document.head.appendChild(s);
+  });
+  return tessPromessa;
+}
+
+// Le etichette sono piccole e il riconoscimento sbaglia: ingrandire,
+// passare a grigi e aumentare il contrasto migliora molto il risultato.
+function preparaPerOcr(file){
+  return new Promise((res, rej) => {
+    const img = new Image();
+    const finito = () => {
+      const latoMax = 1800;
+      const k = Math.min(latoMax / img.naturalWidth, 1);
+      const c = document.createElement('canvas');
+      c.width  = Math.max(1, Math.round(img.naturalWidth  * k));
+      c.height = Math.max(1, Math.round(img.naturalHeight * k));
+      const g = c.getContext('2d');
+      g.imageSmoothingQuality = 'high';
+      g.drawImage(img, 0, 0, c.width, c.height);
+      try{
+        const d = g.getImageData(0, 0, c.width, c.height);
+        const px = d.data;
+        for(let i = 0; i < px.length; i += 4){
+          const v = (px[i]*0.299 + px[i+1]*0.587 + px[i+2]*0.114);
+          const x = (v - 128) * 1.6 + 128;
+          const y = x < 0 ? 0 : (x > 255 ? 255 : x);
+          px[i] = px[i+1] = px[i+2] = y;
+        }
+        g.putImageData(d, 0, 0);
+        res(c);
+      }catch(e){ res(c); }
+    };
+    img.onload  = finito;
+    img.onerror = () => rej(new Error('Immagine non leggibile'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// Dalle righe riconosciute sceglie quelle che sembrano un nome e scarta
+// il rumore: numeri, codici a barre, sole misure.
+//
+// Il riconoscimento sbaglia piu' spesso sulle scritte a basso contrasto
+// o capovolte, e sbagliando produce parole lunghe e piene di lettere.
+// Per questo l'ordinamento pesa la confidenza che Tesseract dà per ogni
+// riga: una riga letta male arriva spesso lunga, ma con confidenza bassa.
+const OCR_CONF_MINIMA = 55;
+
+function scegliRighe(dati){
+  let righe = [];
+  // dati puo' essere il testo semplice oppure data di Tesseract
+  if(dati && Array.isArray(dati.lines) && dati.lines.length){
+    righe = dati.lines
+      .map(l => ({ testo: String(l.text || '').trim(), conf: Number(l.confidence) || 0 }))
+      .filter(r => r.testo);
+    // nessuna riga affidabile: meglio il testo grezzo che non scegliere nulla
+    if(!righe.some(r => r.conf >= OCR_CONF_MINIMA)){
+      righe = righe.map(r => ({ testo: r.testo, conf: 0 }));
+    }
+  }else{
+    righe = String((dati && dati.text) || dati || '')
+      .split(/\r?\n/).map(s => s.trim()).filter(Boolean)
+      .map(s => ({ testo: s, conf: 0 }));
+  }
+
+  const utili = [];
+  for(const r of righe){
+    const s = r.testo;
+    if(s.length < 3) continue;
+    if(/^\d{8,}$/.test(s.replace(/\s/g,''))) continue;                    // codice a barre
+    if(/^\d+([.,]\d+)?\s*(mm|cm|m|kg|g|ml|l|w|v|a|hz|°c|%)$/i.test(s)) continue; // sole misure
+    const lettere = (s.match(/[a-zA-ZÀ-ÿ]/g) || []).length;
+    if(lettere < s.length * 0.45) continue;                                // troppe cifre
+    utili.push(r);
+  }
+
+  utili.sort((a, b) => punteggioOcr(b) - punteggioOcr(a));
+  return utili.slice(0, 12).map(r => r.testo);
+}
+
+function punteggioOcr(r){
+  const s = r.testo;
+  const lettere = (s.match(/[a-zA-ZÀ-ÿ]/g) || []).length / s.length;
+  const lunghezza = Math.min(s.length, 40) / 40;
+  // la confidenza vale di piu': una riga all 90% batte una lunga all 30%
+  return (r.conf / 100) * 0.65 + lettere * 0.2 + lunghezza * 0.15;
+}
+
+let ocrTargeto = null;      // prodotto gia' salvato da compilare
+let OCR_ARCHIVIO = [];       // righe mostrate, indicizzate dai pulsanti
+
+function chiudiOcr(){
+  $('ocrPanel').classList.remove('on');
+  $('ocrCorpo').innerHTML = '';
+  ocrTargeto = null;
+  OCR_ARCHIVIO = [];
+}
+
+// parte dalla fotocamera, poi mostra le righe riconosciute
+function scanEtichetta(prodottoId){
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'image/*';
+  inp.capture = 'environment';
+  inp.onchange = e => {
+    const f = e.target.files && e.target.files[0];
+    if(!f) return;
+    ocrTargeto = prodottoId || null;
+    avviaOcr(f);
+  };
+  inp.click();
+}
+
+async function avviaOcr(file){
+  const box = $('ocrCorpo');
+  $('ocrPanel').classList.add('on');
+  box.innerHTML =
+    '<div class="ocrProg" id="ocrProg">Preparo l\'immagine…</div>' +
+    '<div class="ocrBar"><i id="ocrBar"></i></div>' +
+    '<div class="ocrProg" style="font-size:.78rem">La prima volta si scaricano circa 10 MB ' +
+    'per il riconoscimento. Dopo resta in locale e funziona anche senza rete.</div>';
+
+  try{
+    const T = await caricaTesseract();
+    const img = await preparaPerOcr(file);
+    const prog = m => {
+      if(!m) return;
+      if(m.status && $('ocrProg')) $('ocrProg').textContent = traduciStato(m.status, m.progress);
+      if($('ocrBar')) $('ocrBar').style.width = Math.round((m.progress || 0) * 100) + '%';
+    };
+    const out = await T.recognize(img, 'ita', { logger: prog });
+    mostraRigheOcr(out && out.data ? out.data : '');
+  }catch(e){
+    box.innerHTML =
+      '<div class="ocrVuoto">Non sono riuscito a leggere l\'etichetta: ' + esc(e.message || e) + '</div>' +
+      '<button class="btn btn-blk" onclick="chiudiOcr()">Chiudi</button>';
+  }
+}
+
+function traduciStato(stato, prog){
+  const p = Math.round((prog || 0) * 100) + '%';
+  switch(stato){
+    case 'loading tesseract core':        return 'Carico il riconoscimento… ' + p;
+    case 'initializing tesseract':        return 'Preparo il riconoscimento… ' + p;
+    case 'loading language traineddata':  return 'Scarico la lingua italiana… ' + p;
+    case 'initializing api':              return 'Avvio il riconoscimento… ' + p;
+    case 'recognizing text':              return 'Leggo l\'etichetta… ' + p;
+    default: return 'Lavoro… ' + p;
+  }
+}
+
+function mostraRigheOcr(dati){
+  const box = $('ocrCorpo');
+  const righe = scegliRighe(dati);
+  const testo = (dati && dati.text) || dati || '';
+  const tutto = String(testo).replace(/\n{2,}/g, '\n').trim();
+
+  if(!righe.length){
+    box.innerHTML =
+      '<div class="ocrVuoto">Non ho trovato testo leggibile. Prova a scattare la foto più ' +
+      'vicino e con la luce davanti, oppure inquadrare solo la riga col nome.</div>' +
+      (tutto ? '<div class="ocrRiga" style="cursor:default">Tutto ciò che ho letto:<br><b>' + esc(tutto) + '</b></div>' : '') +
+      '<button class="btn btn-blk" onclick="chiudiOcr()">Chiudi</button>';
+    return;
+  }
+
+  let h = '<div class="ocrProg" style="margin-bottom:10px">Tocca la riga giusta per metterla nel nome.</div>';
+  h += '<div class="ocrRighe">';
+  righe.forEach((r, i) => {
+    h += '<button class="ocrRiga" data-i="' + i + '"><span class="sc">nome</span><br>' + esc(r) + '</button>';
+  });
+  h += '</div>';
+  h += '<div style="display:flex;gap:9px;margin-top:4px">' +
+       '<button class="btn" style="flex:1" onclick="salvaTestoOcr()">Salva tutto il testo</button>' +
+       '<button class="btn" style="flex:1" onclick="chiudiOcr()">Annulla</button></div>';
+  box.innerHTML = h;
+
+  // il testo vive in un array: non finisce mai dentro l'HTML
+  OCR_ARCHIVIO = righe;
+  [...box.querySelectorAll('.ocrRiga')].forEach(b => {
+    b.onclick = () => usaRigaOcr(OCR_ARCHIVIO[Number(b.dataset.i)]);
+  });
+}
+
+function applicaOcr(nome, testo){
+  // attento: chiudiOcr() azzera ocrTargeto, quindi lo conservo prima
+  const bersaglio = ocrTargeto;
+  const inScheda  = $('sheet').classList.contains('on') && $('fName');
+
+  // scheda aperta: compila i campi e lascia decidere il salvataggio
+  if(inScheda){
+    chiudiOcr();
+    if(nome)  $('fName').value = nome;
+    if(testo) $('fEtichetta').value = testo;
+    toast(nome ? 'Nome compilato' : 'Testo salvato nell\'etichetta', '', nome || 'Ora è cercabile');
+    return;
+  }
+
+  // prodotto gia' salvato: si aggiorna subito e si riapplica il risultato
+  const p = bersaglio ? PRODUCTS.find(x => x.id === bersaglio) : null;
+  chiudiOcr();
+  if(!p){
+    toast('Nessun prodotto da compilare','err');
+    return;
+  }
+  if(nome)  p.name = nome;
+  if(testo) p.etichetta = testo;
+  p.updatedAt = now(); p.dirty = true;
+  DB.put(p).then(() => {
+    renderAll(); scheduleSync();
+    showScanResult(p.barcode || p.sku || p.id, p);
+    toast('Prodotto aggiornato', '', nome || 'il testo dell\'etichetta ora è cercabile');
+  });
+}
+
+function usaRigaOcr(testo){
+  if(testo) applicaOcr(testo, testo);
+}
+
+function salvaTestoOcr(){
+  const archivio = [...$('ocrCorpo').querySelectorAll('.ocrRiga')]
+    .map(b => OCR_ARCHIVIO[Number(b.dataset.i)]).filter(Boolean);
+  if(!archivio.length){ chiudiOcr(); return; }
+  applicaOcr('', archivio.join('\n'));
+}
+
+function fotoSuProdotto(id){
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = 'image/*';
+  inp.capture = 'environment';
+  inp.onchange = e => {
+    const f = e.target.files && e.target.files[0];
+    if(f) salvaFotoProdotto(id, f);
+  };
+  inp.click();
+}
+
+// scrive la foto sul prodotto e la riapplica al risultato dello scan
+async function salvaFotoProdotto(id, file){
+  try{
+    const { thumb, blob } = await fileToThumb(file);
+    const p = PRODUCTS.find(x => x.id === id);
+    if(!p){ toast('Prodotto non trovato','err'); return; }
+    p.thumb = thumb;
+    p.updatedAt = now(); p.dirty = true;
+    await DB.put(p);
+    await DB.putPhoto(p.id, blob);
+    renderAll();
+    scheduleSync();
+    showScanResult(p.barcode || p.sku || p.id, p);
+    toast('Foto salvata', '', p.name || 'il prodotto');
+  }catch(e){
+    toast('Foto non leggibile','err');
+  }
+}
+
 function catsList(){
   const m = {};
   live().forEach(p => { if(p.category) m[p.category] = (m[p.category]||0)+1; });
@@ -915,7 +1244,8 @@ async function renderCat(){
         || (p.sku||'').toLowerCase().includes(q)
         || (p.barcode||'').includes(q)
         || (p.category||'').toLowerCase().includes(q)
-        || (p.location||'').toLowerCase().includes(q);
+        || (p.location||'').toLowerCase().includes(q)
+        || (p.etichetta||'').toLowerCase().includes(q);
   });
   rows.sort((a,b) => (a.name||'').localeCompare(b.name||'it'));
 
@@ -1051,6 +1381,7 @@ function openSheet(id, barcode){
   $('fSup').value     = p ? p.supplier : '';
   $('fLoc').value     = p ? p.location : '';
   $('fNotes').value   = p ? p.notes : '';
+  $('fEtichetta').value = p ? (p.etichetta || '') : '';
 
   if(p && p.thumb){ $('shThumb').src = p.thumb; $('shThumb').style.display='block'; $('shPh').style.display='none'; $('shDelPh').style.display='block'; }
   else { $('shThumb').style.display='none'; $('shPh').style.display='flex'; $('shDelPh').style.display='none'; }
@@ -1114,6 +1445,7 @@ async function saveProductUI(){
   p.supplier  = $('fSup').value.trim();
   p.location  = $('fLoc').value.trim();
   p.notes     = $('fNotes').value.trim();
+  p.etichetta = $('fEtichetta') ? $('fEtichetta').value.trim() : '';
   if(editingThumb) p.thumb = editingThumb;
   p.updatedAt = now(); p.dirty = true;
 
@@ -1443,7 +1775,7 @@ function download(name, blob){
 }
 
 function exportCSV(){
-  const cols = ['sku','barcode','name','category','unit','qty','minQty','price','sellPrice','supplier','location','notes'];
+  const cols = ['sku','barcode','name','etichetta','category','unit','qty','minQty','price','sellPrice','supplier','location','notes'];
   const q = v => {
     const s = String(v == null ? '' : v);
     return /[;"\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
