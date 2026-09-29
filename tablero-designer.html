@@ -57,7 +57,7 @@ body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:13px
 .ws{display:flex;flex:1;overflow:hidden}
 
 /* ── LEFT PANEL ── */
-.lp{width:210px;background:var(--surf);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0}
+.lp{width:188px;background:var(--surf);border-right:1px solid var(--b1);display:flex;flex-direction:column;flex-shrink:0}
 .lp-search{padding:8px}
 .lp-search input{width:100%;background:var(--card);border:1px solid var(--b1);color:var(--w);font-family:var(--fb);font-size:.8rem;padding:6px 9px;border-radius:3px;outline:none}
 .lp-search input:focus{border-color:var(--ora)}
@@ -103,11 +103,16 @@ body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:13px
 #cvs{
   position:relative;width:3200px;height:2400px;
   background-color:var(--black);
+  /* La griglia si legge come carta quadrellata. --gw e' lo spessore della
+     linea nel foglio: applicaVista() lo ricalcola a ogni zoom, perche' con
+     una riga fissa da 1px, riducendo la scala la linea scende sotto il
+     pixel e la griglia sparisce del tutto. */
+  --gw:1px;
   background-image:
-    linear-gradient(rgba(74,142,194,.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(74,142,194,.06) 1px,transparent 1px),
-    linear-gradient(rgba(74,142,194,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(74,142,194,.025) 1px,transparent 1px);
+    linear-gradient(rgba(0,212,170,.13) var(--gw),transparent var(--gw)),
+    linear-gradient(90deg,rgba(0,212,170,.13) var(--gw),transparent var(--gw)),
+    linear-gradient(rgba(0,212,170,.05) var(--gw),transparent var(--gw)),
+    linear-gradient(90deg,rgba(0,212,170,.05) var(--gw),transparent var(--gw));
   background-size:100px 100px,100px 100px,20px 20px,20px 20px;
   transform-origin:0 0;
 }
@@ -182,7 +187,7 @@ body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:13px
 .din.sel .din-del{display:flex}
 
 /* ── RIGHT PANEL ── */
-.rp{width:224px;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.rp{width:200px;background:var(--surf);border-left:1px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
 .rp::-webkit-scrollbar{width:3px}
 .rp::-webkit-scrollbar-thumb{background:var(--b2)}
 .rp-hdr{padding:10px 12px;border-bottom:1px solid var(--b1);font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.15em;color:var(--dim);text-transform:uppercase}
@@ -271,7 +276,7 @@ body {
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
-.torna-dash{position:fixed;left:12px;bottom:12px;z-index:60;background:rgba(29,33,48,.95);
+.torna-dash{position:fixed;right:12px;bottom:12px;z-index:60;background:rgba(29,33,48,.95);
   border:1px solid var(--b1);color:var(--dim);padding:9px 14px;border-radius:9px;font-size:.84rem;
   text-decoration:none;font-weight:600;display:none;align-items:center;gap:7px}
 .torna-dash.on{display:inline-flex}
@@ -590,10 +595,10 @@ const CATALOG=[
    ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
           {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
    svg:svgDisj(4,76,64)},
-  {id:'id2',cat:'Protezione',name:'Differenziale 2P',sub:'ID — 2P 30mA',w:46,h:72,
+  {id:'id2',cat:'Protezione',name:'Differenziale 2P',sub:'ID — 2P 30mA',w:44,h:72,
    ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'N',pos:'t1'},{id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'N',pos:'b1'}],
    svg:svgDifer(2)},
-  {id:'id4',cat:'Protezione',name:'Differenziale 4P',sub:'ID — 4P 30mA',w:82,h:72,
+  {id:'id4',cat:'Protezione',name:'Differenziale 4P',sub:'ID — 4P 30mA',w:80,h:72,
    ports:[{id:'T1',t:'L1',pos:'t0'},{id:'T3',t:'L2',pos:'t1'},{id:'T5',t:'L3',pos:'t2'},{id:'T7',t:'N',pos:'t3'},
           {id:'T2',t:'L1',pos:'b0'},{id:'T4',t:'L2',pos:'b1'},{id:'T6',t:'L3',pos:'b2'},{id:'T8',t:'N',pos:'b3'}],
    svg:svgDifer(4)},
@@ -817,7 +822,7 @@ const CATALOG=[
      <circle cx="14" cy="14" r="7" fill="#27ae60" opacity=".9"/>
      <circle cx="11" cy="11" r="3" fill="#7dff9e" opacity=".5"/>
    </svg>`},
-  {id:'pl-r',cat:'Señalización',name:'Piloto LED rojo',sub:'Señal paro / falla',w:28,h:28,
+  {id:'pl-r',cat:'Segnaletica',name:'Piloto LED rojo',sub:'Señal paro / falla',w:28,h:28,
    ports:[{id:'T1',t:'A1',pos:'lft'},{id:'T2',t:'A2',pos:'rgt'}],
    svg:`<svg viewBox="0 0 28 28" width="28" height="28">
      <circle cx="14" cy="14" r="12" fill="#301a1a" stroke="#e74c3c" stroke-width="1.5"/>
@@ -1217,7 +1222,7 @@ const CATALOG=[
    </svg>`},
 
   // ════ GABINETTI ════
-  {id:'gab-metal',cat:'Gabinetti',name:'Gabinetto metallico',sub:'Quadro lamiera con porta',w:120,h:140,ports:[],
+  {id:'gab-metal',cat:'Gabineti',name:'Gabinetto metallico',sub:'Quadro lamiera con porta',w:120,h:140,ports:[],
    specs:['Chapa DD calibre 16/18','Pintura epoxi poliéster','Grado: IP40 – IP54','Con contrazócalo y bandeja'],
    svg:`<svg viewBox="0 0 120 140" width="120" height="140">
      <rect x="2" y="2" width="116" height="136" rx="2" fill="#1a1d28" stroke="#555a78" stroke-width="2"/>
@@ -1228,7 +1233,7 @@ const CATALOG=[
      <text x="60" y="74" text-larghezzar="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">GABINETE</text>
      <text x="60" y="86" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#454a68">IP54</text>
    </svg>`},
-  {id:'gab-estanco',cat:'Gabinetti',name:'Gabinetto stagno',sub:'Poliestere / ABS IP65-IP66',w:104,h:124,ports:[],
+  {id:'gab-estanco',cat:'Gabineti',name:'Gabinetto stagno',sub:'Poliestere / ABS IP65-IP66',w:104,h:124,ports:[],
    specs:['Material: poliéster / ABS','Grado: IP65 – IP66','Resistente UV intemperie','Cierre con junta perimetral'],
    svg:`<svg viewBox="0 0 104 124" width="104" height="124">
      <rect x="2" y="2" width="100" height="120" rx="6" fill="#1a2028" stroke="#4a5568" stroke-width="2"/>
@@ -1237,7 +1242,7 @@ const CATALOG=[
      <text x="52" y="60" text-larghezzar="middle" font-family="Share Tech Mono" font-size="8" fill="#7a82a8">ESTANCO</text>
      <text x="52" y="74" text-larghezzar="middle" font-family="Share Tech Mono" font-size="7" fill="#27ae60">IP66</text>
    </svg>`},
-  {id:'caja-pvc',cat:'Gabinetti',name:'Scatola stagna PVC',sub:'Scatola di passaggio/derivazione IP55',w:72,h:72,ports:[],
+  {id:'caja-pvc',cat:'Gabineti',name:'Scatola stagna PVC',sub:'Scatola di passaggio/derivazione IP55',w:72,h:72,ports:[],
    specs:['PVC autoextinguible','Grado: IP55 – IP65','Conos rompibles para caños','Tapa con vites 1/4 vuelta'],
    svg:`<svg viewBox="0 0 72 72" width="72" height="72">
      <rect x="2" y="2" width="68" height="68" rx="4" fill="#20242e" stroke="#4a5060" stroke-width="2"/>
@@ -1248,7 +1253,7 @@ const CATALOG=[
      <text x="36" y="34" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6.5" fill="#7a82a8">CAJA</text>
      <text x="36" y="44" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">IP55</text>
    </svg>`},
-  {id:'tablero-mod',cat:'Gabinetti',name:'Quadro da incasso',sub:'Scatola per moduli DIN (12-24 poli)',w:108,h:96,ports:[],
+  {id:'tablero-mod',cat:'Gabineti',name:'Quadro da incasso',sub:'Scatola per moduli DIN (12-24 poli)',w:108,h:96,ports:[],
    specs:['Embutir o aplicar','Capacidad: 8 – 54 modulos DIN','Puerta transparente','Rotaia e barretta di neutro/terra'],
    svg:`<svg viewBox="0 0 108 96" width="108" height="96">
      <rect x="2" y="2" width="104" height="92" rx="3" fill="#1c202a" stroke="#555a72" stroke-width="2"/>
@@ -1261,7 +1266,7 @@ const CATALOG=[
      <line x1="14" y1="71" x2="94" y2="71" stroke="#4a5068" stroke-width="3" opacity=".5"/>
      <text x="54" y="20" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#7a82a8">TABLERO MODULAR DIN</text>
    </svg>`},
-  {id:'cofre',cat:'Gabinetti',name:'Armadio con porta',sub:'Gabinetto di comando con vassoio',w:120,h:148,ports:[],
+  {id:'cofre',cat:'Gabineti',name:'Armadio con porta',sub:'Gabinetto di comando con vassoio',w:120,h:148,ports:[],
    specs:['Chapa plegada calibre 16','Puerta ciega con manija y traba','Bandeja de montaje galvanizada','Para tableros de comando/potencia'],
    svg:`<svg viewBox="0 0 120 148" width="120" height="148">
      <rect x="2" y="2" width="116" height="144" rx="2" fill="#1a1d28" stroke="#5a607a" stroke-width="2.5"/>
@@ -1306,7 +1311,7 @@ const CATALOG=[
      <rect x="6" y="29" width="12" height="3" rx="1" fill="#0f1820"/>
      <line x1="12" y1="33" x2="12" y2="39" stroke="#6af" stroke-width="2"/>
    </svg>`},
-  {id:'born-doble',cat:'Borneras',name:'Bornera doble piso',sub:'Borne dos niveles paso',w:24,h:38,
+  {id:'born-doble',cat:'Morsetti',name:'Bornera doble piso',sub:'Borne dos niveles paso',w:24,h:38,
    ports:[{id:'T1',t:'COM',pos:'t0'},{id:'T2',t:'COM',pos:'t1'},{id:'B1',t:'COM',pos:'b0'},{id:'B2',t:'COM',pos:'b1'}],
    specs:['Dos niveles independientes','Ahorro de espacio en riel','Sezione: 2.5 – 4mm²','Puenteable por nivel'],
    svg:`<svg viewBox="0 0 24 38" width="24" height="38">
@@ -1316,7 +1321,7 @@ const CATALOG=[
      <circle cx="8" cy="11" r="2" fill="#008F6E"/><circle cx="16" cy="11" r="2" fill="#008F6E"/>
      <circle cx="8" cy="27" r="2" fill="#008F6E"/><circle cx="16" cy="27" r="2" fill="#008F6E"/>
    </svg>`},
-  {id:'tope-riel',cat:'Borneras',name:'Tope de riel',sub:'Freno/sujeción de borneras',w:12,h:34,ports:[],
+  {id:'tope-riel',cat:'Morsetti',name:'Tope de riel',sub:'Freno/sujeción de borneras',w:12,h:34,ports:[],
    specs:['Fijación a riel con vite','Evita desplazamiento de borneras','Metálico o plástico','Universal DIN 35mm'],
    svg:`<svg viewBox="0 0 12 34" width="12" height="34">
      <rect x="2" y="2" width="8" height="30" rx="2" fill="#3a4050" stroke="#5a6078" stroke-width="1"/>
@@ -1324,13 +1329,13 @@ const CATALOG=[
      <circle cx="6" cy="8" r="2" fill="#6a7090"/>
      <line x1="6" y1="6" x2="6" y2="10" stroke="#2a2e3a"/><line x1="4" y1="8" x2="8" y2="8" stroke="#2a2e3a"/>
    </svg>`},
-  {id:'sep-borne',cat:'Borneras',name:'Separador / tapa',sub:'Placa final de bornera',w:10,h:34,ports:[],
+  {id:'sep-borne',cat:'Morsetti',name:'Separador / tapa',sub:'Placa final de bornera',w:10,h:34,ports:[],
    specs:['Tapa de cierre lateral','Aísla el último borne','Mismo color que la serie','Evita contacto accidental'],
    svg:`<svg viewBox="0 0 10 34" width="10" height="34">
      <rect x="2" y="2" width="6" height="30" rx="1" fill="#2a3040" stroke="#454a68" stroke-width="1" stroke-dasharray="2,1.5"/>
      <line x1="5" y1="6" x2="5" y2="28" stroke="#454a68" stroke-width=".6"/>
    </svg>`},
-  {id:'born-pot',cat:'Borneras',name:'Bornera de potencia',sub:'Borne de paso alta sección',w:30,h:40,
+  {id:'born-pot',cat:'Morsetti',name:'Bornera de potencia',sub:'Borne de paso alta sección',w:30,h:40,
    ports:[{id:'T',t:'L1',pos:'top'},{id:'B',t:'L1',pos:'bot'}],
    specs:['Sezione: 16 – 95mm²','Para acometida / cargas grandes','Cuerpo poliamida reforzado','Tornillo M6/M8'],
    svg:`<svg viewBox="0 0 30 40" width="30" height="40">
@@ -1340,7 +1345,7 @@ const CATALOG=[
      <circle cx="15" cy="11.5" r="3.5" fill="#008F6E"/><circle cx="15" cy="28.5" r="3.5" fill="#008F6E"/>
      <text x="15" y="22" text-larghezzar="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">95mm²</text>
    </svg>`},
-  {id:'peine',cat:'Borneras',name:'Peine de distribución',sub:'Barra peine para disyuntores',w:120,h:18,
+  {id:'peine',cat:'Morsetti',name:'Peine de distribución',sub:'Barra peine para disyuntores',w:120,h:18,
    ports:[{id:'P1',t:'L1',pos:'t0'},{id:'P2',t:'L1',pos:'t1'},{id:'P3',t:'L1',pos:'t2'},{id:'P4',t:'L1',pos:'t3'}],
    specs:['Distribución entre disyuntores','1P / 3P / 3P+N','Hasta 63A','Cobre aislado, paso 18mm'],
    svg:`<svg viewBox="0 0 120 18" width="120" height="18">
@@ -1348,7 +1353,7 @@ const CATALOG=[
      <rect x="16" y="9" width="4" height="7" fill="#b87333"/><rect x="40" y="9" width="4" height="7" fill="#b87333"/><rect x="64" y="9" width="4" height="7" fill="#b87333"/><rect x="88" y="9" width="4" height="7" fill="#b87333"/>
      <text x="60" y="7.5" text-larghezzar="middle" font-family="Share Tech Mono" font-size="5" fill="#fff">PEINE DISTRIBUCIÓN</text>
    </svg>`},
-  {id:'term-puntera',cat:'Terminales',name:'Terminal puntera',sub:'Ferrule tubular aislado',w:40,h:16,
+  {id:'term-puntera',cat:'Terminali',name:'Terminal puntera',sub:'Ferrule tubular aislado',w:40,h:16,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Sezione: 0.5 – 16mm²','Tubular de cobre estañado','Faldón aislado por color','Engaste con crimpadora'],
    svg:`<svg viewBox="0 0 40 16" width="40" height="16">
@@ -1357,7 +1362,7 @@ const CATALOG=[
      <line x1="36" y1="8" x2="40" y2="8" stroke="#7a82a8" stroke-width="1.5"/>
      <text x="9" y="3" text-larghezzar="middle" font-family="Share Tech Mono" font-size="4" fill="#7a82a8">aisl.</text>
    </svg>`},
-  {id:'term-ojal',cat:'Terminales',name:'Terminal ojal',sub:'Ring terminal a vite',w:40,h:20,
+  {id:'term-ojal',cat:'Terminali',name:'Terminal ojal',sub:'Ring terminal a vite',w:40,h:20,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Ojal: M4 – M12','Cobre estañado','Engaste o soldadura','Para barra o bornera de vite'],
    svg:`<svg viewBox="0 0 40 20" width="40" height="20">
@@ -1366,7 +1371,7 @@ const CATALOG=[
      <circle cx="32" cy="10" r="7" fill="none" stroke="#c0c0c0" stroke-width="3"/>
      <circle cx="32" cy="10" r="3" fill="#1a1d28"/>
    </svg>`},
-  {id:'term-pala',cat:'Terminales',name:'Terminal pala',sub:'Fork / horquilla a vite',w:40,h:20,
+  {id:'term-pala',cat:'Terminali',name:'Terminal pala',sub:'Fork / horquilla a vite',w:40,h:20,
    ports:[{id:'C',t:'COM',pos:'lft'}],
    specs:['Horquilla: M3 – M6','Vite a rapida','Cobre estañado aislado','Sezione: 0.5 – 6mm²'],
    svg:`<svg viewBox="0 0 40 20" width="40" height="20">
@@ -1374,7 +1379,7 @@ const CATALOG=[
      <rect x="18" y="8" width="8" height="4" fill="#c0c0c0"/>
      <path d="M26,6 L38,6 L38,8 L30,8 L30,12 L38,12 L38,14 L26,14 Z" fill="#c0c0c0"/>
    </svg>`},
-  {id:'prensa',cat:'Terminales',name:'Prensacable',sub:'Glándula PG / métrica IP68',w:36,h:36,ports:[],
+  {id:'prensa',cat:'Terminali',name:'Prensacable',sub:'Glándula PG / métrica IP68',w:36,h:36,ports:[],
    specs:['Rosca PG7 – PG48 / M12–M63','Grado: IP68','Sujeción y sellado de cable','Poliamida o latón'],
    svg:`<svg viewBox="0 0 36 36" width="36" height="36">
      <rect x="6" y="4" width="24" height="10" rx="2" fill="#2a2e3a" stroke="#454a68"/>
@@ -1427,7 +1432,7 @@ const CATALOG=[
    </svg>`},
 
   // ════ SENSORES / VARIOS ════
-  {id:'pt100',cat:'Sensores',name:'Sensor PT100',sub:'Termorresistencia industrial',w:48,h:44,
+  {id:'pt100',cat:'Sensori',name:'Sensor PT100',sub:'Termorresistencia industrial',w:48,h:44,
    ports:[{id:'A',t:'OUT',pos:'b0'},{id:'B',t:'OUT',pos:'b1'}],
    specs:['Rango: -200 a +600°C','Pt100 / Pt1000 3 hilos','Vaina inox AISI 316','Precisión clase A'],
    svg:`<svg viewBox="0 0 48 44" width="48" height="44">
@@ -1437,7 +1442,7 @@ const CATALOG=[
      <text x="24" y="33" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#27ae60">PT100</text>
      <line x1="18" y1="38" x2="18" y2="44" stroke="#7a82a8" stroke-width="1.5"/><line x1="30" y1="38" x2="30" y2="44" stroke="#7a82a8" stroke-width="1.5"/>
    </svg>`},
-  {id:'timer',cat:'Sensores',name:'Temporizador',sub:'Timer multifunzione a riel',w:40,h:56,
+  {id:'timer',cat:'Sensori',name:'Temporizador',sub:'Timer multifunzione a riel',w:40,h:56,
    ports:[{id:'A1',t:'A1',pos:'t0'},{id:'A2',t:'A2',pos:'t1'},{id:'C',t:'COM',pos:'b0'},{id:'NO',t:'OUT',pos:'b1'}],
    specs:['Rango: 0.1s – 100h','Multifunzione (ON/OFF delay)','Salida relé 8A','Alimentación 12–240V'],
    svg:`<svg viewBox="0 0 40 56" width="40" height="56">
@@ -1448,7 +1453,7 @@ const CATALOG=[
      <text x="20" y="40" text-larghezzar="middle" font-family="Share Tech Mono" font-size="5.5" fill="#7a82a8">TIMER</text>
      <line x1="14" y1="46" x2="14" y2="54" stroke="#7a82a8" stroke-width="2"/><line x1="26" y1="46" x2="26" y2="54" stroke="#7a82a8" stroke-width="2"/>
    </svg>`},
-  {id:'toma-din',cat:'Sensores',name:'Tomacorriente DIN',sub:'Toma de servicio a riel',w:40,h:44,
+  {id:'toma-din',cat:'Sensori',name:'Tomacorriente DIN',sub:'Toma de servicio a riel',w:40,h:44,
    ports:[{id:'L',t:'L1',pos:'t0'},{id:'N',t:'N',pos:'t1'},{id:'PE',t:'PE',pos:'t2'}],
    specs:['Schuko 2P+T 16A','Montaje en riel DIN','220V servicio','Para mantenimiento de tablero'],
    svg:`<svg viewBox="0 0 40 44" width="40" height="44">
@@ -1471,12 +1476,12 @@ const CATALOG=[
    </svg>`},
 
   // ════ ANOTACIÓN ════
-  {id:'lbl',cat:'Anotación',name:'Etiqueta',sub:'Rótulo de texto libre',w:60,h:24,ports:[],
+  {id:'lbl',cat:'Annotazioni',name:'Etiqueta',sub:'Rótulo de texto libre',w:60,h:24,ports:[],
    svg:`<svg viewBox="0 0 60 24" width="60" height="24">
      <rect x="1" y="1" width="58" height="22" rx="2" fill="none" stroke="#353a58" stroke-width="1" stroke-dasharray="4,3"/>
      <text x="30" y="15" text-larghezzar="middle" font-family="Barlow Condensed" font-size="9" fill="#e8eaf4" font-weight="700">ETIQUETA</text>
    </svg>`},
-  {id:'flecha',cat:'Anotación',name:'Continuación',sub:'Flecha referencia de hoja',w:52,h:24,ports:[{id:'C',t:'COM',pos:'lft'}],
+  {id:'flecha',cat:'Annotazioni',name:'Continuación',sub:'Flecha referencia de hoja',w:52,h:24,ports:[{id:'C',t:'COM',pos:'lft'}],
    svg:`<svg viewBox="0 0 52 24" width="52" height="24">
      <polygon points="2,12 28,4 28,9 50,9 50,15 28,15 28,20" fill="#1e2235" stroke="#f47920" stroke-width="1.2"/>
      <text x="36" y="14" text-larghezzar="middle" font-family="Share Tech Mono" font-size="6" fill="#f47920">/2</text>
@@ -1573,7 +1578,7 @@ const CATALOG=[
 //  ESTADO
 // ═══════════════════════════════════════════════════════════════
 const S={
-  tab:'layout', tool:'sel', zoom:1,
+  tab:'layout', tool:'sel', zoom:1, tx:0, ty:0,
   placed:[], wires:[], rails:[],
   sel:null, selWire:null, selRail:null,
   wireType:'L1',
@@ -1596,9 +1601,11 @@ window.addEventListener('DOMContentLoaded',()=>{
   setupCanvas();
   setupKeys();
   updateSB();
-  // fecha
   const d=new Date();
   document.getElementById('cinfo').textContent=d.toLocaleDateString('it-IT');
+  // Si inquadra dopo il primo disegno: il foglio e' 3200x2400 e, senza
+  // questo, si parte sempre nell'angolo in alto a sinistra con il 100% zoom.
+  requestAnimationFrame(()=>fitView(.6));
 });
 
 // ═══════════════════════════════════════════════════════════════
@@ -1609,7 +1616,7 @@ function buildRail(){
   const q=document.getElementById('rail-q').value.toLowerCase();
   const cats=[...new Set(CATALOG.map(c=>c.cat))];
   const ce=document.getElementById('lp-cats');
-  ce.innerHTML=`<button class="lp-cat ${railCat==='todos'?'on':''}" onclick="setCat('todos')">Todos</button>`+
+  ce.innerHTML=`<button class="lp-cat ${railCat==='todos'?'on':''}" onclick="setCat('todos')">Tutte</button>`+
     cats.map(c=>`<button class="lp-cat ${railCat===c?'on':''}" onclick="setCat('${c}')">${c}</button>`).join('');
   const items=CATALOG.filter(c=>{
     const mc=railCat==='todos'||c.cat===railCat;
@@ -1617,7 +1624,7 @@ function buildRail(){
     return mc&&mq;
   });
   const le=document.getElementById('lp-list');
-  le.innerHTML=items.length?'':'<div style="color:var(--mut);font-size:.75rem;padding:14px;text-align:center">Sin resultados</div>';
+  le.innerHTML=items.length?'':'<div style="color:var(--mut);font-size:.75rem;padding:14px;text-align:center">Nessun risultato</div>';
   items.forEach(comp=>{
     const el=document.createElement('div');
     el.className='comp-row';
@@ -1809,7 +1816,7 @@ function renderP(p){
     <div class="placed-body">
       ${tagHtml}
       ${svgHtml}
-      <button class="del-btn" onclick="delById('${p.id}')" title="Eliminar">✕</button>
+      <button class="del-btn" onclick="delById('${p.id}')" title="Elimina">✕</button>
       ${portsHtml}
     </div>
     <div class="placed-lbl">${esc(p.label)}</div>`;
@@ -2101,7 +2108,7 @@ function renderRails(){
       <div class="din-label">⎓ ${esc(r.label||'Riel DIN')} · ${Math.round(r.w/1)*1}px</div>
       <div class="din-handle l" data-edge="l"></div>
       <div class="din-handle r" data-edge="r"></div>
-      <button class="din-del" title="Eliminar riel">✕</button>`;
+      <button class="din-del" title="Elimina binario">✕</button>`;
     // Select + drag (move whole rail)
     el.addEventListener('mousedown',e=>{
       if(S.tool!=='sel')return;
@@ -2204,17 +2211,17 @@ function renderCompProps(id){
       <div class="prow"><div class="plbl">Tensione</div><input class="pinp" id="pr-vn" value="${esc(p.props.Vn||'')}" placeholder="220V" oninput="upNested('Vn',this.value,'${id}')" aria-label="Tensione"></div>
       <div class="prow"><div class="plbl">Curva</div><input class="pinp" id="pr-cur" value="${esc(p.props.curva||'')}" placeholder="C / B / D" oninput="upNested('curva',this.value,'${id}')" aria-label="Curva"></div>
     </div>
-    <div class="prow"><div class="plbl">Sección cable</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')" aria-label="Sección cable"></div>
-    <div class="prow"><div class="plbl">Circuito / Descripción</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')" aria-label="Circuito / Descripción"></div>
+    <div class="prow"><div class="plbl">Sezione cavo</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')" aria-label="Sezione cavo"></div>
+    <div class="prow"><div class="plbl">Circuito / Descrizione</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')" aria-label="Circuito / Descrizione"></div>
     <div class="psep"></div>
-    <div class="prow"><div class="plbl">Rotar</div>
+    <div class="prow"><div class="plbl">Ruota</div>
       <div style="display:flex;gap:6px">
         <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="rot('${id}',-90)">↺ −90°</button>
         <button class="btn btn-ghost" style="flex:1;justify-content:center" onclick="rot('${id}',90)">↻ +90°</button>
       </div>
     </div>
     <div class="psep"></div>
-    <button class="btn" style="width:100%;justify-content:center;background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.25)" onclick="delById('${id}')">🗑 Eliminar</button>
+    <button class="btn" style="width:100%;justify-content:center;background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.25)" onclick="delById('${id}')">🗑 Elimina</button>
   </div>`;
 }
 function upProp(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p[k]=v;renderP(p);const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');}
@@ -2236,7 +2243,7 @@ function setTool(t){
     document.getElementById('tb-'+id)?.classList.toggle('on',id===t);
   });
   cvs.className=t==='pan'?'pan-mode':'';
-  document.getElementById('st-tool').textContent=`Herramienta: ${{sel:'Seleccionar',pan:'Pan',wire:'Conductor'}[t]||t}`;
+  document.getElementById('st-tool').textContent=`Strumento: ${{sel:'Seleziona',pan:'Sposta',wire:'Cavo'}[t]||t}`;
   if(t!=='wire'){S.wiring=null;document.getElementById('wire-preview')?.remove();}
 }
 function setWT(t){
@@ -2256,28 +2263,68 @@ function switchTab(tab){
 // ═══════════════════════════════════════════════════════════════
 //  ZOOM / FIT
 // ═══════════════════════════════════════════════════════════════
-function doZoom(f){
-  S.zoom=Math.min(3,Math.max(.15,S.zoom*f));
-  cvs.style.transform=`scale(${S.zoom})`;
+// La vista e' uno spostamento + una scala. Lo spostamento serve a centrare
+// davvero: con la sola scala, quando il disegno e' piu' corto del riquadro
+// non si puo' scrollare fino a metterlo al centro, e resta in alto a sinistra.
+// Le coordinate del puntatore passano da getBoundingClientRect, quindi lo
+// spostamento e' gia' contato e non va corretto nulla.
+function applicaVista(){
+  cvs.style.transform=`translate(${S.tx||0}px,${S.ty||0}px) scale(${S.zoom})`;
+  // la linea della griglia deve restare di un pixel sullo schermo
+  cvs.style.setProperty('--gw', (1/(S.zoom||1))+'px');
   document.getElementById('zlbl').textContent=Math.round(S.zoom*100)+'%';
 }
-function fitView(){
-  if(!S.placed.length){S.zoom=1;cvs.style.transform='scale(1)';return}
-  const xs=S.placed.map(p=>p.x),ys=S.placed.map(p=>p.y);
-  const pw=cscroll.clientWidth,ph=cscroll.clientHeight;
-  const cw=Math.max(...xs)-Math.min(...xs)+300,ch=Math.max(...ys)-Math.min(...ys)+300;
-  S.zoom=Math.min(pw/cw,ph/ch,1.2);
-  cvs.style.transform=`scale(${S.zoom})`;
-  document.getElementById('zlbl').textContent=Math.round(S.zoom*100)+'%';
-  cscroll.scrollLeft=(Math.min(...xs)-60)*S.zoom;
-  cscroll.scrollTop=(Math.min(...ys)-60)*S.zoom;
+function doZoom(f){
+  const pw=cscroll.clientWidth, ph=cscroll.clientHeight;
+  const z0=S.zoom||1;
+  const z1=Math.min(3, Math.max(.15, z0*f));
+  if(z1===z0 || !pw || !ph) return;
+  // il punto di foglio al centro del riquadro resta fermo
+  const X0=(pw/2 + cscroll.scrollLeft - (S.tx||0))/z0;
+  const Y0=(ph/2 + cscroll.scrollTop  - (S.ty||0))/z0;
+  S.zoom=z1;
+  S.tx=pw/2 + cscroll.scrollLeft - X0*z1;
+  S.ty=ph/2 + cscroll.scrollTop  - Y0*z1;
+  applicaVista();
+}
+// Inquadra tutto quello che c'e' sul foglio e lo centra.
+// L'ingombro si calcola sui componenti INTERI (con la rotazione), sui binari
+// e sui conduttori: se si usano solo i punti x,y, un quadro largo viene
+// tagliato e la vista resta in alto a sinistra.
+function fitView(zoomMinimo){
+  const pw=cscroll.clientWidth, ph=cscroll.clientHeight;
+  if(!pw || !ph) return;
+  let x1=Infinity, y1=Infinity, x2=-Infinity, y2=-Infinity;
+  const segnala=(ax,ay,bx,by)=>{
+    if(ax<x1)x1=ax; if(ay<y1)y1=ay; if(bx>x2)x2=bx; if(by>y2)y2=by;
+  };
+  S.placed.forEach(p=>{
+    const c=CATALOG.find(k=>k.id===p.cid); if(!c) return;
+    const ruotato=Math.round(p.rot||0)%180!==0;
+    const w=ruotato ? c.h : c.w, h=ruotato ? c.w : c.h;
+    segnala(p.x, p.y-4, p.x+w, p.y+h);          // il -4 e' il tag in alto
+  });
+  (S.rails||[]).forEach(r=>segnala(r.x, r.y, r.x+r.w, r.y+r.h));
+  (S.wires||[]).forEach(w=>(w.pts||[]).forEach(pt=>segnala(pt.x, pt.y, pt.x, pt.y)));
+  if(!isFinite(x1)){ x1=260; y1=180; x2=261; y2=181; }   // foglio vuoto: centro comodo
+
+  const m=56;
+  x1-=m; y1-=m; x2+=m; y2+=m;
+  const cw=Math.max(1, x2-x1), ch=Math.max(1, y2-y1);
+  const z = Math.min(pw/cw, ph/ch);
+  S.zoom=Math.max(zoomMinimo||.15, Math.min(2.2, z));
+  // centra il disegno nel riquadro e riparte da zero come scorrimento
+  cscroll.scrollLeft=0; cscroll.scrollTop=0;
+  S.tx=Math.round(pw/2 - (x1+x2)/2*S.zoom);
+  S.ty=Math.round(ph/2 - (y1+y2)/2*S.zoom);
+  applicaVista();
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  STATUS BAR
 // ═══════════════════════════════════════════════════════════════
 function updateSB(){
-  document.getElementById('st-comp').textContent=`Componentes: ${S.placed.length}`;
+  document.getElementById('st-comp').textContent=`Componenti: ${S.placed.length}`;
   document.getElementById('st-wire').textContent=`Conductores: ${S.wires.length}`;
 }
 
@@ -2315,7 +2362,7 @@ function resetCanvas(){
   wireSvg.innerHTML='';bridgeSvg.innerHTML='';
 }
 function clearAll(){
-  if(S.placed.length&&!confirm('¿Limpiar todo?'))return;
+  if(S.placed.length&&!confirm('Svuotare tutto?'))return;
   resetCanvas();
   desel();updateSB();toast('Tablero limpiado');
 }
@@ -2436,7 +2483,7 @@ function loadTemplate(key){
   fitView();
   updateSB();
   closeTplModal();
-  toast(`Plantilla "${tpl.name}" cargada — completá el cableado con la herramienta de cable`);
+  toast(`Modello "${tpl.name}" caricato — completa il cablaggio con lo strumento cavo`);
 }
 
 // ═══════════════════════════════════════════════════════════════

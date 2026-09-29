@@ -1,4 +1,4 @@
-const CACHE_NAME = 'valve-v18';
+const CACHE_NAME = 'valve-v19';
 const ASSETS = [
   './',
   './index.html',
