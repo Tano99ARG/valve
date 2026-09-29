@@ -1,9 +1,10 @@
-const CACHE_NAME = 'valve-v12';
+const CACHE_NAME = 'valve-v13';
 const ASSETS = [
   './',
   './index.html',
   './apex-landing.html',
   './calculadora.html',
+  './cantieri.html',
   './carico-termico.html',
   './checklist.html',
   './checklist-starlink.html',

@@ -272,6 +272,7 @@ body {
     <button class="nav-item" data-view="checklist"><span class="nav-icon" aria-hidden="true">✅</span> Checklist di manutenzione</button>
     <button class="nav-item" data-view="planos"><span class="nav-icon" aria-hidden="true">📐</span> Planimetrie e quadri</button>
     <button class="nav-item" data-view="magazzino"><span class="nav-icon" aria-hidden="true">📦</span> Magazzino</button>
+    <button class="nav-item" data-view="cantieri"><span class="nav-icon" aria-hidden="true">🏗</span> Cantieri</button>
     <div class="sidebar-section">Conoscenza</div>
     <button class="nav-item" data-view="normativa"><span class="nav-icon" aria-hidden="true">📜</span> Scheda di normativa</button>
     <button class="nav-item" data-view="manuales"><span class="nav-icon" aria-hidden="true">📚</span> Manuali</button>
@@ -432,7 +433,32 @@ body {
     </div>
 
     <!-- PLANOS -->
-    <div class="view" id="view-magazzino">
+    <div class="view" id="view-cantieri">
+    <div class="view-eyebrow">Documentazione</div>
+    <div class="view-title" style="margin-bottom:8px;">Cantieri</div>
+    <p class="tool-desc" style="margin-bottom:24px;max-width:640px;">
+      Documenta ogni installazione: foto scatte sul posto, file allegati, note e
+      stato del lavoro. Tutto resta sul telefono e si legge anche senza rete.
+    </p>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">🏗</span><div class="tool-name">Cantieri</div></div>
+        <p class="tool-desc">Ogni installazione con le sue foto, i suoi file e le note del lavoro. In corso o finito.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('cantieri.html','Cantieri');return false;">
+          🏗 Apri i cantieri
+        </label>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header"><span class="tool-icon" aria-hidden="true">📄</span><div class="tool-name">Relazione PDF</div></div>
+        <p class="tool-desc">Dal bottone in basso, in ogni cantiere: relazione su più pagine con dati, note e foto, pronta da mandare al cliente.</p>
+        <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
+        <button class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('cantieri.html','Cantieri — relazione PDF')">📄 Apri e genera</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="view" id="view-magazzino">
     <div class="view-eyebrow">Gestione</div>
     <div class="view-title" style="margin-bottom:8px;">Magazzino</div>
     <p class="tool-desc" style="margin-bottom:24px;max-width:640px;">
@@ -608,7 +634,7 @@ body {
 'use strict';
 
 // ── CONSTANTES ──────────────────────────────────────────────
-const VIEWS = { dashboard:'Pannello principale', presupuestador:'Preventivatore', calculadora:'Calcolatrice tecnica', instrumentos:'Strumenti di misura', informe:'Relazione tecnica di visita', checklist:'Checklist di manutenzione', normativa:'Scheda di normativa', planos:'Planimimetrie e quadri', magazzino:'Magazzino', manuales:'Manuali', tips:'Consigli e tutorial' };
+const VIEWS = { dashboard:'Pannello principale', presupuestador:'Preventivatore', calculadora:'Calcolatrice tecnica', instrumentos:'Strumenti di misura', informe:'Relazione tecnica di visita', checklist:'Checklist di manutenzione', normativa:'Scheda di normativa', planos:'Planimimetrie e quadri', magazzino:'Magazzino', cantieri:'Cantieri', manuales:'Manuali', tips:'Consigli e tutorial' };
 const CAT_LABELS = { AA:'Aria cond.', ELE:'Elettrico', SOL:'Solare', SEC:'Sicurezza', NET:'Reti', PLO:'Idraulica', GEN:'Generale' };
 const TIPO_LABELS = { tip:'💡 CONSIGLIO', tuto:'🎥 TUTORIAL', alerta:'⚠️ ALLARME' };
 

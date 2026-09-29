@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cantieri">
+<meta name="description" content="Documenta i tuoi cantieri: foto, file, note e relazione finale.">
+<title>Valve Electronics — Cantieri</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;
+  --ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
+  --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:15px;line-height:1.5;
+  padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);overflow-x:hidden}
+body{min-height:100vh}
+
+/* ── testata ── */
+header.top{background:linear-gradient(160deg,var(--panel),var(--surf));border-bottom:1px solid var(--b1);
+  padding:14px 16px calc(12px + env(safe-area-inset-top));position:sticky;top:0;z-index:30}
+.top-in{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;flex:0 0 auto}
+.titles{flex:1;min-width:0}
+.t1{font-family:var(--fd);font-size:1.45rem;font-weight:800;letter-spacing:.5px;line-height:1.1}
+.t1 span{color:var(--ora)}
+.t2{font-size:.7rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.tb-btn{background:var(--card);border:1px solid var(--b1);color:var(--w);width:38px;height:38px;
+  border-radius:9px;font-size:17px;cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.tb-btn:active{background:var(--card2)}
+.off{display:flex;align-items:center;gap:6px;font-size:.68rem;padding:5px 10px;border-radius:20px;
+  background:var(--card);border:1px solid var(--b1);color:var(--dim);font-weight:600;white-space:nowrap}
+.off .dot{width:7px;height:7px;border-radius:50%;background:var(--grn);flex:0 0 auto}
+.off.offline .dot{background:var(--yel)}
+.off.err .dot{background:var(--red)}
+
+/* ── contenuto ── */
+main{max-width:900px;margin:0 auto;padding:16px 14px 90px}
+.view{display:none}
+.view.on{display:block}
+.eyebrow{font-family:var(--fd);font-size:.74rem;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--ora);font-weight:700;margin-bottom:4px}
+.h1{font-family:var(--fd);font-size:1.7rem;font-weight:700;line-height:1.15;margin-bottom:6px}
+.lead{color:var(--dim);font-size:.92rem;margin-bottom:18px;max-width:60ch}
+
+/* ── bottoni ── */
+.btn{background:var(--card);border:1px solid var(--b1);color:var(--w);padding:11px 16px;border-radius:9px;
+  font-family:var(--fb);font-size:.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;gap:7px;min-height:44px;transition:background .15s,border-color .15s}
+.btn:active{background:var(--card2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-p{background:var(--ora);border-color:var(--ora);color:#06231d;font-weight:700}
+.btn-p:active{background:var(--blu)}
+.btn-pri{background:var(--ora);border-color:var(--ora);color:#06231d;font-weight:700}
+.btn-r{border-color:rgba(231,76,60,.5);color:#ff9a9a}
+.btn-r:active{background:rgba(231,76,60,.15)}
+.btn-sm{padding:8px 12px;font-size:.82rem;min-height:40px}
+.btn-blk{width:100%}
+.row{display:flex;gap:9px;flex-wrap:wrap}
+.row>.btn{flex:1 1 auto}
+
+/* ── filtri ── */
+.filtri{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
+.chip{padding:8px 14px;border-radius:20px;background:var(--card);border:1px solid var(--b1);color:var(--dim);
+  font-size:.85rem;font-weight:600;cursor:pointer;min-height:40px;display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:rgba(0,212,170,.14);border-color:var(--ora);color:var(--ora)}
+.chip .n{font-family:var(--fm);font-size:.78rem;opacity:.85}
+
+/* ── schede cantiere ── */
+.cnt{background:var(--card);border:1px solid var(--b1);border-radius:11px;padding:14px;margin-bottom:11px;
+  cursor:pointer;display:flex;gap:13px;align-items:center}
+.cnt:active{background:var(--card2)}
+.cnt .thumb{width:62px;height:62px;flex:0 0 auto;border-radius:8px;background:var(--panel);
+  display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;border:1px solid var(--b1)}
+.cnt .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.cnt .corpo{flex:1;min-width:0}
+.cnt .nome{font-family:var(--fd);font-size:1.12rem;font-weight:700;line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cnt .sub{font-size:.8rem;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cnt .meta{display:flex;gap:7px;align-items:center;margin-top:5px;flex-wrap:wrap}
+.badge{font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.4px;
+  text-transform:uppercase;white-space:nowrap}
+.badge.corso{background:rgba(243,156,18,.16);color:var(--yel);border:1px solid rgba(243,156,18,.4)}
+.badge.finito{background:rgba(46,204,113,.14);color:var(--grn);border:1px solid rgba(46,204,113,.4)}
+.badge.neutro{background:var(--panel);color:var(--dim);border:1px solid var(--b1)}
+
+/* ── campi ── */
+.card{background:var(--card);border:1px solid var(--b1);border-radius:11px;padding:15px;margin-bottom:13px}
+.card h3{font-family:var(--fd);font-size:1.08rem;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:8px}
+.card p{color:var(--dim);font-size:.86rem;margin-bottom:12px}
+.fld{margin-bottom:12px}
+.fld:last-child{margin-bottom:0}
+.flbl{display:block;font-size:.76rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);
+  font-weight:600;margin-bottom:5px}
+.inp{width:100%;background:var(--panel);border:1px solid var(--b1);color:var(--w);padding:11px 13px;
+  border-radius:8px;font-family:var(--fb);font-size:16px}
+.inp:focus{outline:none;border-color:var(--ora)}
+textarea.inp{min-height:88px;resize:vertical;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── griglia media ── */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.mt{position:relative;aspect-ratio:1;background:var(--panel);border:1px solid var(--b1);border-radius:8px;
+  overflow:hidden;cursor:pointer}
+.mt img{width:100%;height:100%;object-fit:cover;display:block}
+.mt .file{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  height:100%;padding:8px;text-align:center}
+.mt .file .ic{font-size:26px}
+.mt .file .nm{font-size:.64rem;color:var(--dim);word-break:break-all;line-height:1.25;
+  max-height:2.5em;overflow:hidden}
+.mt .del{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:none;
+  background:rgba(10,12,18,.82);color:#ff9a9a;font-size:16px;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;line-height:1}
+.mt .tipo{position:absolute;bottom:4px;left:4px;font-size:.6rem;font-weight:700;background:rgba(10,12,18,.82);
+  color:var(--dim);padding:2px 6px;border-radius:4px;letter-spacing:.4px}
+
+/* ── barra azioni in fondo ── */
+.foot{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,transparent,var(--black) 26%);
+  padding:26px 14px calc(12px + env(safe-area-inset-bottom));z-index:20;pointer-events:none}
+.foot-in{max-width:900px;margin:0 auto;display:flex;gap:9px;pointer-events:auto}
+.foot-in>.btn{flex:1}
+
+/* ── stato vuoto ── */
+.vuoto{text-align:center;padding:46px 20px;color:var(--dim)}
+.vuoto .ic{font-size:46px;margin-bottom:12px}
+.vuoto .t{font-family:var(--fd);font-size:1.2rem;color:var(--w);font-weight:700;margin-bottom:6px}
+.vuoto p{font-size:.88rem;max-width:34ch;margin:0 auto 16px}
+
+/* ── barra spazio ── */
+.quote{display:flex;align-items:center;gap:11px;margin-bottom:14px;padding:11px 13px;background:var(--card);
+  border:1px solid var(--b1);border-radius:9px;font-size:.82rem}
+.bar{flex:1;height:7px;background:var(--panel);border-radius:4px;overflow:hidden;flex:0 0 auto}
+.bar i{display:block;height:100%;background:var(--ora);border-radius:4px}
+.bar i.warn{background:var(--yel)}
+.bar i.crit{background:var(--red)}
+
+/* ── toast ── */
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(90px);bottom:calc(20px + env(safe-area-inset-bottom));
+  background:var(--card2);border:1px solid var(--b2);color:var(--w);padding:12px 18px;border-radius:10px;
+  font-size:.88rem;font-weight:600;z-index:60;transition:transform .25s;max-width:90vw;text-align:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.5);display:flex;align-items:center;gap:14px}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:rgba(231,76,60,.6)}
+.toast b{display:block;font-weight:700}
+.toast small{color:var(--dim);font-weight:500}
+.annulla{background:transparent;border:1px solid var(--ora);color:var(--ora);padding:6px 12px;border-radius:7px;
+  font-family:var(--fb);font-size:.8rem;font-weight:700;cursor:pointer;flex:0 0 auto;min-height:36px}
+
+/* ── lightbox ── */
+.lb{position:fixed;inset:0;background:rgba(5,6,10,.96);z-index:70;display:none;flex-direction:column;
+  padding-top:env(safe-area-inset-top)}
+.lb.on{display:flex}
+.lb-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;gap:10px}
+.lb-bar .t{font-size:.84rem;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-img{flex:1;display:flex;align-items:center;justify-content:center;padding:0 12px;min-height:0}
+.lb-img img,.lb-img iframe{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.lb-bar .btn{min-height:40px;padding:8px 13px}
+
+/* ── mobile ── */
+@media(max-width:600px){
+  .grid2{grid-template-columns:1fr}
+  main{padding:14px 12px 92px}
+  h1,.h1{font-size:1.5rem}
+  .gal{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+}
+@media(pointer:coarse){button,input,select,textarea{min-height:44px}input,select,textarea{font-size:16px!important}}
+@media print{.foot,.tb-btn{display:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <svg class="logo" viewBox="0 0 40 36" aria-hidden="true">
+      <polygon points="20,2 38,34 2,34" fill="#4A8EC2"/>
+      <polygon points="20,2 38,34 20,34" fill="#3A3A4A"/>
+      <polygon points="15,21 19,12 23,21 21,21 23,28 17,28 19,21" fill="#00D4AA"/>
+    </svg>
+    <div class="titles">
+      <div class="t1">CANTIERI</div>
+      <div class="t2">Valve Electronics</div>
+    </div>
+    <div class="off" id="offBadge"><span class="dot"></span><span id="offTxt">in locale</span></div>
+  </div>
+</header>
+
+<main>
+  <!-- ══════════ ELENCO ══════════ -->
+  <section class="view on" id="v-list">
+    <div class="eyebrow">Documentazione</div>
+    <h1 class="h1">I tuoi cantieri</h1>
+    <p class="lead">Foto, file e note di ogni installazione, per tenere traccia di un lavoro mentre è in corso e dopo che è finito.</p>
+
+    <div class="quote">
+      <span>📦 Spazio</span>
+      <div class="bar"><i id="qBar" style="width:0%"></i></div>
+      <span id="qTxt" style="white-space:nowrap">—</span>
+    </div>
+
+    <div class="filtri">
+      <button class="chip on" data-f="tutti">Tutti <span class="n" id="nTutti">0</span></button>
+      <button class="chip" data-f="in_corso">In corso <span class="n" id="nCorso">0</span></button>
+      <button class="chip" data-f="finito">Finiti <span class="n" id="nFinito">0</span></button>
+    </div>
+
+    <div id="lista"></div>
+  </section>
+
+  <!-- ══════════ DETTAGLIO ══════════ -->
+  <section class="view" id="v-detail">
+    <div id="dHead"></div>
+
+    <div class="card">
+      <h3>📋 Dati del cantiere</h3>
+      <div class="grid2">
+        <div class="fld">
+          <label class="flbl" for="fNome">Nome cantiere *</label>
+          <input class="inp" id="fNome" type="text" placeholder="Es. Villa Bianchi — impianto FV">
+        </div>
+        <div class="fld">
+          <label class="flbl" for="fCliente">Cliente</label>
+          <input class="inp" id="fCliente" type="text" placeholder="Nome e cognome">
+        </div>
+      </div>
+      <div class="fld">
+        <label class="flbl" for="fIndirizzo">Indirizzo</label>
+        <input class="inp" id="fIndirizzo" type="text" placeholder="Via, numero civico, città">
+      </div>
+      <div class="grid2">
+        <div class="fld">
+          <label class="flbl" for="fTelefono">Telefono</label>
+          <input class="inp" id="fTelefono" type="tel" inputmode="tel" placeholder="+39 ...">
+        </div>
+        <div class="fld">
+          <label class="flbl" for="fStato">Stato</label>
+          <select class="inp" id="fStato">
+            <option value="in_corso">In corso</option>
+            <option value="finito">Finito</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="fld">
+          <label class="flbl" for="fInizio">Data inizio</label>
+          <input class="inp" id="fInizio" type="date">
+        </div>
+        <div class="fld">
+          <label class="flbl" for="fFine">Data fine</label>
+          <input class="inp" id="fFine" type="date">
+        </div>
+      </div>
+      <div class="fld">
+        <label class="flbl" for="fNote">Note del cantiere</label>
+        <textarea class="inp" id="fNote" placeholder="Materiali usati, particolarità, lavoro da fare, accordi con il cliente…"></textarea>
+      </div>
+      <button class="btn btn-p btn-blk" onclick="salvaDati()">💾 Salva i dati</button>
+    </div>
+
+    <div class="card">
+      <h3>📷 Foto e file <span class="badge neutro" id="cntMedia" style="margin-left:auto">0</span></h3>
+      <p>Le foto vengono ridimensionate per non riempire il telefono. Tutto resta sul dispositivo e si legge anche senza rete.</p>
+      <div class="row" style="margin-bottom:12px">
+        <label class="btn btn-p" style="flex:1 1 46%">
+          📷 Scatta foto
+          <input type="file" id="inFoto" accept="image/*" capture="environment" multiple hidden>
+        </label>
+        <label class="btn" style="flex:1 1 46%">
+          🖼 Scegli foto
+          <input type="file" id="inFotoLib" accept="image/*" multiple hidden>
+        </label>
+      </div>
+      <label class="btn btn-blk">
+        📎 Allega un file
+        <input type="file" id="inFile" multiple hidden>
+      </label>
+      <div class="gal" id="gal" style="margin-top:13px"></div>
+    </div>
+
+    <div class="card">
+      <h3>📤 Esporta</h3>
+      <p>La relazione PDF porta foto, dati e note su più pagine, pronta da mandare al cliente. Il backup JSON contiene tutto, immagini comprese.</p>
+      <div class="row">
+        <button class="btn btn-p" style="flex:1 1 46%" onclick="pdf()">📄 Relazione PDF</button>
+        <button class="btn" style="flex:1 1 46%" onclick="backup()">💾 Backup JSON</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>⚠ Zona pericolosa</h3>
+      <p>Eliminare un cantiere porta via anche tutte le sue foto e i suoi file. Puoi annullare entro pochi secondi.</p>
+      <button class="btn btn-r btn-blk" onclick="eliminaCantieri()">🗑 Elimina il cantiere</button>
+    </div>
+  </section>
+</main>
+
+<!-- barra azioni della vista dettaglio -->
+<div class="foot" id="foot" style="display:none">
+  <div class="foot-in">
+    <button class="btn" onclick="go('list')">‹ Cantieri</button>
+    <button class="btn btn-p" onclick="salvaDati()">💾 Salva</button>
+  </div>
+</div>
+
+<!-- lightbox -->
+<div class="lb" id="lb">
+  <div class="lb-bar">
+    <span class="t" id="lbTitolo"></span>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" id="lbScarica" onclick="scarica()">⬇ Salva</button>
+      <button class="btn btn-sm" onclick="chiudiLb()">✕</button>
+    </div>
+  </div>
+  <div class="lb-img" id="lbImg"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   1. COSTANTI E STATO
+   ══════════════════════════════════════════════════════════════ */
+const DBN = 'valve-cantieri', DBV = 1;
+const MAX_EDGE = 1600;      // lato massimo della foto conservata
+const QUALITY  = 0.82;
+const THUMB    = 320;      // miniatura per la griglia
+const MAX_FILE = 25 * 1024 * 1024;   // 25 MB per un file non fotografico
+
+let db = null;
+let CANTIERI = [];
+let MEDIA = [];             // media del cantiere aperto
+let apertoId = null;
+let filtro = 'tutti';
+let lbId = null;            // file aperto nel lightbox
+let annullaT = null;
+let urlTemp = null;         // object URL da liberare
+
+const $ = id => document.getElementById(id);
+const uid = () => 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+const now = () => Date.now();
+
+function dataIt(v){
+  if(!v) return '';
+  const d = new Date(v);
+  if(isNaN(d)) return '';
+  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+function numIt(n){
+  const b = Number(n) || 0;
+  if(b < 1024) return b + ' B';
+  if(b < 1048576) return (b/1024).toFixed(0) + ' KB';
+  if(b < 1073741824) return (b/1048576).toFixed(1) + ' MB';
+  return (b/1073741824).toFixed(2) + ' GB';
+}
+const estensione = nome => {
+  const m = /\.([a-z0-9]+)$/i.exec(nome || '');
+  return m ? m[1].toUpperCase() : 'FILE';
+};
+const iconaFile = mime => {
+  if(/(pdf)/.test(mime||'')) return '📕';
+  if(/(word|document)/.test(mime||'')) return '📘';
+  if(/(sheet|excel)/.test(mime||'')) return '📗';
+  if(/(zip|rar|7z|compressed)/.test(mime||'')) return '🗜';
+  if(/(image)/.test(mime||'')) return '🖼';
+  return '📎';
+};
+
+/* ══════════════════════════════════════════════════════════════
+   2. DATABASE
+   ══════════════════════════════════════════════════════════════ */
+function openDB(){
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DBN, DBV);
+    r.onupgradeneeded = e => {
+      const d = e.target.result;
+      if(!d.objectStoreNames.contains('cantieri')){
+        const s = d.createObjectStore('cantieri',{keyPath:'id'});
+        s.createIndex('stato','stato');
+        s.createIndex('updatedAt','updatedAt');
+      }
+      if(!d.objectStoreNames.contains('media')){
+        const s = d.createObjectStore('media',{keyPath:'id'});
+        s.createIndex('cantiereId','cantiereId');
+      }
+    };
+    r.onsuccess = e => res(e.target.result);
+    r.onerror   = e => rej(e.target.error);
+  });
+}
+function st(nome, modo){ return db.transaction(nome, modo).objectStore(nome); }
+function pReq(r){ return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); }
+
+const DB = {
+  tutti:     () => pReq(st('cantieri','readonly').getAll()),
+  cantiere:  (id) => pReq(st('cantieri','readonly').get(id)),
+  salvaC:    (c)  => pReq(st('cantieri','readwrite').put(c)),
+  delC:      (id) => pReq(st('cantieri','readwrite').delete(id)),
+  mediaDi:   (id) => pReq(st('media','readonly').index('cantiereId').getAll(IDBKeyRange.only(id))),
+  salvaM:    (m)  => pReq(st('media','readwrite').put(m)),
+  delM:      (id) => pReq(st('media','readwrite').delete(id)),
+  media:     (id) => pReq(st('media','readonly').get(id)),
+  tuttoMedia:() => pReq(st('media','readonly').getAll())
+};
+
+function blankCantiere(){
+  return { id:uid(), nome:'', cliente:'', indirizzo:'', telefono:'',
+           stato:'in_corso', dataInizio:'', dataFine:'', note:'',
+           createdAt:now(), updatedAt:now() };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   3. TOAST CON ANNULLA
+   ══════════════════════════════════════════════════════════════ */
+function toast(msg, kind, sub){
+  const t = $('toast');
+  t.innerHTML = '<span><b>' + msg + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span>';
+  t.className = 'toast on' + (kind ? ' ' + kind : '');
+  clearTimeout(annullaT);
+  annullaT = setTimeout(() => { t.classList.remove('on'); t.innerHTML = ''; }, sub ? 6000 : 2800);
+}
+function toastAnnulla(msg, sub, azione){
+  const t = $('toast');
+  t.innerHTML = '<span><b>' + msg + '</b><small>' + sub + '</small></span>';
+  const b = document.createElement('button');
+  b.className = 'annulla';
+  b.textContent = 'Annulla';
+  b.onclick = () => { clearTimeout(annullaT); t.classList.remove('on'); t.innerHTML=''; azione(); };
+  t.appendChild(b);
+  t.className = 'toast on';
+  clearTimeout(annullaT);
+  annullaT = setTimeout(() => { t.classList.remove('on'); t.innerHTML=''; }, 6000);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   4. IMMAGINI
+   ══════════════════════════════════════════════════════════════ */
+function ridimensiona(img, lato, q){
+  const c = document.createElement('canvas');
+  const r = Math.min(lato / img.width, lato / img.height, 1);
+  c.width  = Math.max(1, Math.round(img.width  * r));
+  c.height = Math.max(1, Math.round(img.height * r));
+  const g = c.getContext('2d');
+  g.imageSmoothingQuality = 'high';
+  g.drawImage(img, 0, 0, c.width, c.height);
+  return { url:c.toDataURL('image/jpeg', q), w:c.width, h:c.height };
+}
+
+// trasforma un file immagine in record pronto per il database
+async function preparaFoto(file){
+  let bmp;
+  try{
+    bmp = await createImageBitmap(file);
+  }catch(e){
+    throw new Error('Immagine non leggibile');
+  }
+  const piccola = ridimensiona(bmp, THUMB, 0.6);
+  const grande  = ridimensiona(bmp, MAX_EDGE, QUALITY);
+  bmp.close && bmp.close();
+  const blob = await (await fetch(grande.url)).blob();
+  return { blob, thumb:piccola.url, w:grande.w, h:grande.h };
+}
+
+/* ══════════════════════════════════════════════════════════════
+   5. ELENCO
+   ══════════════════════════════════════════════════════════════ */
+async function carica(){
+  CANTIERI = await DB.tutti();
+  CANTIERI.sort((a,b) => (b.updatedAt||0) - (a.updatedAt||0));
+  disegnaElenco();
+  disegnaConteggi();
+  await disegnaQuota();
+}
+
+function disegnaConteggi(){
+  $('nTutti').textContent  = CANTIERI.length;
+  $('nCorso').textContent  = CANTIERI.filter(c => c.stato !== 'finito').length;
+  $('nFinito').textContent = CANTIERI.filter(c => c.stato === 'finito').length;
+}
+
+function disegnaElenco(){
+  const box = $('lista');
+  const vis = filtro === 'tutti' ? CANTIERI
+            : CANTIERI.filter(c => (filtro === 'finito' ? c.stato === 'finito' : c.stato !== 'finito'));
+
+  if(!vis.length){
+    box.innerHTML = CANTIERI.length
+      ? '<div class="vuoto"><div class="ic">📂</div><div class="t">Nessun cantiere in questa vista</div></div>'
+      : '<div class="vuoto"><div class="ic">🏗</div><div class="t">Ancora nessun cantiere</div>' +
+        '<p>Crea il primo cantiere, poi carica foto e file mentre lavori: resta tutto sul telefono, anche senza rete.</p>' +
+        '<button class="btn btn-p" onclick="nuovoCantiere()">＋ Nuovo cantiere</button></div>';
+    return;
+  }
+
+  box.innerHTML = '';
+  for(const c of vis){
+    const foto = c.coverThumb || '';
+    const nFoto = c.nFoto || 0, nFile = c.nFile || 0;
+    const d = document.createElement('div');
+    d.className = 'cnt';
+    d.onclick = () => apriCantieri(c.id);
+    d.innerHTML =
+      '<div class="thumb">' + (foto ? '<img src="' + foto + '" alt="">' : '🏗') + '</div>' +
+      '<div class="corpo">' +
+        '<div class="nome">' + esc(c.nome || 'Senza nome') + '</div>' +
+        '<div class="sub">' + esc(c.cliente || 'Nessun cliente') + (c.indirizzo ? ' · ' + esc(c.indirizzo) : '') + '</div>' +
+        '<div class="meta">' +
+          '<span class="badge ' + (c.stato === 'finito' ? 'finito">Finito' : 'corso">In corso') + '</span>' +
+          (nFoto ? '<span class="badge neutro">📷 ' + nFoto + '</span>' : '') +
+          (nFile ? '<span class="badge neutro">📎 ' + nFile + '</span>' : '') +
+          '<span class="badge neutro">' + (dataIt(c.dataInizio || c.createdAt)) + '</span>' +
+        '</div>' +
+      '</div>';
+    box.appendChild(d);
+  }
+}
+
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+async function disegnaQuota(){
+  if(!navigator.storage || !navigator.storage.estimate) return;
+  try{
+    const e = await navigator.storage.estimate();
+    const used = e.usage || 0, quota = e.quota || 0;
+    if(!quota) return;
+    const p = Math.min(100, (used / quota) * 100);
+    const b = $('qBar');
+    b.style.width = Math.max(1, p) + '%';
+    b.className = p > 90 ? 'crit' : (p > 70 ? 'warn' : '');
+    $('qTxt').textContent = numIt(used);
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════════════════
+   6. DETTAGLIO
+   ══════════════════════════════════════════════════════════════ */
+async function nuovoCantiere(){
+  const c = blankCantiere();
+  await DB.salvaC(c);
+  await carica();
+  await apriCantieri(c.id);
+  toast('Cantiere creato', '', 'Metti il nome e comincia a caricare le foto');
+}
+
+async function apriCantieri(id){
+  const c = await DB.cantiere(id);
+  if(!c){ toast('Cantiere non trovato','err'); return; }
+  apertoId = id;
+
+  $('fNome').value     = c.nome || '';
+  $('fCliente').value  = c.cliente || '';
+  $('fIndirizzo').value= c.indirizzo || '';
+  $('fTelefono').value = c.telefono || '';
+  $('fStato').value    = c.stato || 'in_corso';
+  $('fInizio').value   = c.dataInizio || '';
+  $('fFine').value     = c.dataFine || '';
+  $('fNote').value     = c.note || '';
+
+  MEDIA = await DB.mediaDi(id);
+  MEDIA.sort((a,b) => (a.ordine || 0) - (b.ordine || 0));
+  disegnaDettaglio();
+  disegnaGal();
+
+  $('dHead').innerHTML =
+    '<div class="eyebrow">Cantiere</div>' +
+    '<h1 class="h1">' + esc(c.nome || 'Senza nome') + '</h1>' +
+    '<p class="lead">Le modifiche ai dati si salvano con il pulsante in basso.</p>';
+
+  go('detail');
+}
+
+function disegnaDettaglio(){ /* i dati sono nei campi: niente da ridisegnare */ }
+
+function disegnaGal(){
+  const g = $('gal');
+  $('cntMedia').textContent = MEDIA.length;
+  g.innerHTML = '';
+
+  if(!MEDIA.length){
+    g.innerHTML = '<div style="grid-column:1/-1;color:var(--dim);font-size:.86rem;padding:10px 0">' +
+                  'Nessuna foto o file. Usa i pulsanti qui sopra.</div>';
+    return;
+  }
+
+  MEDIA.forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'mt';
+    if(m.tipo === 'foto'){
+      d.innerHTML = '<img src="' + m.thumb + '" alt="">' +
+                    '<span class="del" data-i="' + i + '">✕</span>' +
+                    '<span class="tipo">' + (m.w || 0) + '×' + (m.h || 0) + '</span>';
+    }else{
+      d.innerHTML = '<div class="file"><span class="ic">' + iconaFile(m.mime) + '</span>' +
+                    '<span class="nm">' + esc(m.nome) + '</span></div>' +
+                    '<span class="del" data-i="' + i + '">✕</span>' +
+                    '<span class="tipo">' + estensione(m.nome) + ' · ' + numIt(m.size) + '</span>';
+    }
+    d.onclick = e => {
+      if(e.target.classList.contains('del')){ eliminaMedia(i); return; }
+      apriMedia(m.id);
+    };
+    g.appendChild(d);
+  });
+}
+
+async function salvaDati(){
+  if(!apertoId) return;
+  const c = await DB.cantiere(apertoId);
+  if(!c) return;
+  c.nome      = $('fNome').value.trim();
+  c.cliente   = $('fCliente').value.trim();
+  c.indirizzo = $('fIndirizzo').value.trim();
+  c.telefono  = $('fTelefono').value.trim();
+  c.stato     = $('fStato').value;
+  c.dataInizio= $('fInizio').value;
+  c.dataFine  = $('fFine').value;
+  c.note      = $('fNote').value;
+
+  if(!c.nome){
+    toast('Metti almeno il nome del cantiere','err');
+    $('fNome').focus();
+    return;
+  }
+  // passando a finito senza data, si propone oggi
+  if(c.stato === 'finito' && !c.dataFine){
+    c.dataFine = new Date().toISOString().slice(0,10);
+    $('fFine').value = c.dataFine;
+  }
+
+  c.updatedAt = now();
+  await DB.salvaC(c);
+  await aggiornaRiepilogo(apertoId);
+  await carica();
+  $('dHead').innerHTML =
+    '<div class="eyebrow">Cantiere</div><h1 class="h1">' + esc(c.nome) + '</h1>' +
+    '<p class="lead">Le modifiche ai dati si salvano con il pulsante in basso.</p>';
+  toast('Dati salvati', '', c.stato === 'finito' ? 'Cantiere segnato come finito il ' + dataIt(c.dataFine) : '');
+}
+
+async function aggiornaRiepilogo(id){
+  const media = await DB.mediaDi(id);
+  const foto = media.filter(m => m.tipo === 'foto');
+  const c = await DB.cantiere(id);
+  if(!c) return;
+  c.nFoto = foto.length;
+  c.nFile = media.length - foto.length;
+  c.coverThumb = foto.length ? (foto[0].thumb || '') : '';
+  await DB.salvaC(c);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   7. CARICAMENTO
+   ══════════════════════════════════════════════════════════════ */
+async function aggiungiFoto(lista){
+  if(!apertoId || !lista || !lista.length) return;
+  const c = await DB.cantiere(apertoId);
+  if(!c){ toast('Apri un cantiere prima di caricare','err'); return; }
+
+  toast('Preparo ' + lista.length + (lista.length === 1 ? ' foto' : ' foto') + '…');
+  let ok = 0, fallite = 0, ordine = MEDIA.length;
+
+  for(const file of lista){
+    if(!/^image\//.test(file.type)){ fallite++; continue; }
+    try{
+      const { blob, thumb, w, h } = await preparaFoto(file);
+      await DB.salvaM({
+        id:uid(), cantiereId:apertoId, tipo:'foto',
+        nome:file.name || 'foto.jpg', mime:'image/jpeg',
+        size:blob.size, blob, thumb, w, h,
+        ordine:ordine++, createdAt:now()
+      });
+      ok++;
+    }catch(e){
+      fallite++;
+    }
+  }
+
+  await ricaricaMedia();
+  await aggiornaRiepilogo(apertoId);
+  await carica();
+
+  if(ok && fallite)      toast(ok + ' foto aggiunte', '', fallite + ' non leggibili e saltate');
+  else if(ok)            toast(ok === 1 ? 'Foto aggiunta' : ok + ' foto aggiunte', '', 'Ridimensionate per risparmiare spazio');
+  else                   toast('Nessuna foto aggiunta','err','Formato non leggibile');
+}
+
+async function aggiungiFile(lista){
+  if(!apertoId || !lista || !lista.length) return;
+  if(!await DB.cantiere(apertoId)){ toast('Apri un cantiere prima di allegare','err'); return; }
+
+  let ok = 0, saltati = 0, ordine = MEDIA.length;
+  for(const file of lista){
+    if(file.size > MAX_FILE){ saltati++; continue; }
+    try{
+      await DB.salvaM({
+        id:uid(), cantiereId:apertoId, tipo:'file',
+        nome:file.name, mime:file.type || '', size:file.size,
+        blob:file, thumb:null, ordine:ordine++, createdAt:now()
+      });
+      ok++;
+    }catch(e){ saltati++; }
+  }
+
+  await ricaricaMedia();
+  await aggiornaRiepilogo(apertoId);
+  await carica();
+
+  if(ok && saltati)  toast(ok + ' file allegati', '', saltati + ' oltre 25 MB, saltati');
+  else if(ok)        toast(ok === 1 ? 'File allegato' : ok + ' file allegati', '', 'Totale ' + numIt(ok && MEDIA.reduce((s,m) => s + (m.size||0), 0)));
+  else               toast('Nessun file allegato','err','File troppo grande o non valido');
+}
+
+async function ricaricaMedia(){
+  MEDIA = await DB.mediaDi(apertoId);
+  MEDIA.sort((a,b) => (a.ordine || 0) - (b.ordine || 0));
+  disegnaGal();
+  await disegnaQuota();
+}
+
+function eliminaMedia(i){
+  const m = MEDIA[i];
+  if(!m) return;
+  const copia = { ...m };
+  MEDIA.splice(i,1);
+  disegnaGal();
+  toastAnnulla(
+    (m.tipo === 'foto' ? 'Foto' : 'File') + ' eliminato',
+    m.nome || '',
+    async () => {
+      MEDIA.splice(i, 0, copia);
+      await DB.salvaM(copia);
+      await ricaricaMedia();
+      await aggiornaRiepilogo(apertoId);
+      await carica();
+    }
+  );
+  (async () => {
+    try{
+      await DB.delM(m.id);
+      await aggiornaRiepilogo(apertoId);
+      await carica();
+    }catch(e){}
+  })();
+}
+
+async function eliminaCantieri(){
+  const c = CANTIERI.find(x => x.id === apertoId);
+  if(!c) return;
+  if(!confirm('Eliminare «' + (c.nome || 'questo cantiere') + '»?\n\nAndranno via anche tutte le foto e i file.')) return;
+
+  const backupC = { ...c };
+  const backupM = MEDIA.slice();
+  const idx = CANTIERI.findIndex(x => x.id === apertoId);
+
+  CANTIERI.splice(idx, 1);
+  apertoId = null;
+  MEDIA = [];
+  await carica();
+  go('list');
+
+  toastAnnulla('Cantiere eliminato', backupC.nome || '', async () => {
+    CANTIERI.splice(idx, 0, backupC);
+    await DB.salvaC(backupC);
+    for(const m of backupM) await DB.salvaM(m);
+    await carica();
+    apriCantieri(backupC.id);
+  });
+
+  (async () => {
+    for(const m of backupM) await DB.delM(m.id);
+    await DB.delC(backupC.id);
+    await carica();
+  })();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   8. LIGHTBOX
+   ══════════════════════════════════════════════════════════════ */
+async function apriMedia(id){
+  const m = await DB.media(id);
+  if(!m) return;
+  lbId = id;
+  $('lbTitolo').textContent = m.nome || '';
+  $('lbScarica').style.display = 'block';
+
+  if(urlTemp){ URL.revokeObjectURL(urlTemp); urlTemp = null; }
+  urlTemp = URL.createObjectURL(m.blob);
+  const box = $('lbImg');
+  box.innerHTML = '';
+
+  if(m.tipo === 'foto'){
+    const im = document.createElement('img');
+    im.src = urlTemp; im.alt = m.nome || '';
+    box.appendChild(im);
+  }else if(/(pdf)/.test(m.mime || '')){
+    const f = document.createElement('iframe');
+    f.src = urlTemp; f.title = m.nome || '';
+    box.appendChild(f);
+  }else{
+    const d = document.createElement('div');
+    d.style.cssText = 'text-align:center;color:#8089a8';
+    d.innerHTML = '<div style="font-size:52px">' + iconaFile(m.mime) + '</div>' +
+                  '<div style="margin-top:10px">' + esc(m.nome) + '</div>' +
+                  '<div style="font-size:.82rem;margin-top:4px">' + numIt(m.size) + '</div>';
+    box.appendChild(d);
+  }
+  $('lb').classList.add('on');
+}
+
+function chiudiLb(){
+  $('lb').classList.remove('on');
+  $('lbImg').innerHTML = '';
+  if(urlTemp){ URL.revokeObjectURL(urlTemp); urlTemp = null; }
+  lbId = null;
+}
+
+async function scarica(){
+  if(!lbId) return;
+  const m = await DB.media(lbId);
+  if(!m) return;
+  const u = URL.createObjectURL(m.blob);
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = m.nome || (m.tipo === 'foto' ? 'foto.jpg' : 'documento');
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(u), 4000);
+  toast('Salvo in scarichi', '', m.nome);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   9. ESPORTAZIONE
+   ══════════════════════════════════════════════════════════════ */
+function logoV(doc, x, y, size){
+  const s = size / 40;
+  const X = v => x + v[0] * s;
+  const Y = v => y + size - v[1] * s;
+  doc.setFillColor(74,142,194);
+  doc.triangle(X([20,2]),Y([20,2]), X([38,34]),Y([38,34]), X([2,34]),Y([2,34]),'F');
+  doc.setFillColor(58,58,74);
+  doc.triangle(X([20,2]),Y([20,2]), X([38,34]),Y([38,34]), X([20,34]),Y([20,34]),'F');
+  const pts = [[15,21],[19,12],[23,21],[21,21],[23,28],[17,28],[19,21]];
+  const seg = [];
+  for(let i = 1; i < pts.length; i++) seg.push([(pts[i][0]-pts[i-1][0])*s, -(pts[i][1]-pts[i-1][1])*s]);
+  doc.setFillColor(0,212,170);
+  doc.lines(seg, X(pts[0]), Y(pts[0]), [1,1], 'F', true);
+}
+
+// jsPDF accetta una data URL, non un elemento <img>
+function blobADataUrl(blob){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload  = () => res(fr.result);
+    fr.onerror = () => rej(new Error('file non leggibile'));
+    fr.readAsDataURL(blob);
+  });
+}
+
+async function pdf(){
+  const c = await DB.cantiere(apertoId);
+  if(!c) return;
+  if(!window.jspdf){
+    toast('La libreria PDF non è disponibile','err','Serve la rete la prima volta. Le foto si vedono comunque.');
+    return;
+  }
+  toast('Compongo la relazione…');
+
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit:'mm', format:'a4' });
+    const M = 14, W = 210, L = W - M * 2;
+    let y = 0;
+
+    const piede = () => {
+      const n = doc.getNumberOfPages();
+      for(let i = 1; i <= n; i++){
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128,137,168);
+        doc.text('Valve Electronics™ · ' + (c.nome || 'Cantiere') + ' · pagina ' + i + ' di ' + n, M, 289);
+      }
+    };
+    const nuovaPagina = () => { doc.addPage(); y = 18; };
+
+    // ── copertina ──
+    doc.setFillColor(26,26,46);
+    doc.rect(0, 0, W, 62, 'F');
+    logoV(doc, M, 8, 22);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(17);
+    doc.setTextColor(238,240,248);
+    doc.text('Relazione di cantiere', M, 40);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(0,212,170);
+    doc.text((c.stato === 'finito' ? 'CANTIERE FINITO' : 'CANTIERE IN CORSO'), M, 50);
+
+    y = 74;
+    doc.setTextColor(30,30,40);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(20);
+    const titolo = doc.splitTextToSize(c.nome || 'Senza nome', L);
+    doc.text(titolo, M, y);
+    y += titolo.length * 9;
+
+    y += 4;
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.setTextColor(90,90,105);
+    const righe = [];
+    if(c.cliente)   righe.push('Cliente: ' + c.cliente);
+    if(c.indirizzo) righe.push('Indirizzo: ' + c.indirizzo);
+    if(c.telefono)  righe.push('Telefono: ' + c.telefono);
+    if(c.dataInizio) righe.push('Inizio: ' + dataIt(c.dataInizio));
+    if(c.dataFine)   righe.push('Fine: ' + dataIt(c.dataFine));
+    righe.push('Stato: ' + (c.stato === 'finito' ? 'Finito' : 'In corso'));
+    for(const r of righe){
+      doc.text(r, M, y); y += 6;
+    }
+
+    if(c.note){
+      y += 4;
+      doc.setDrawColor(220,220,230);
+      doc.line(M, y, M + L, y);
+      y += 8;
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(11);
+      doc.setTextColor(30,30,40);
+      doc.text('Note', M, y);
+      y += 6;
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+      doc.setTextColor(60,60,75);
+      const note = doc.splitTextToSize(c.note, L);
+      for(const r of note){
+        if(y > 275){ nuovaPagina(); }
+        doc.text(r, M, y); y += 5.5;
+      }
+    }
+
+    // ── foto ──
+    const foto = MEDIA.filter(m => m.tipo === 'foto');
+    const altri = MEDIA.filter(m => m.tipo !== 'foto');
+
+    if(foto.length){
+      y += 10;
+      if(y > 250) nuovaPagina();
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(13);
+      doc.setTextColor(30,30,40);
+      doc.text('Foto (' + foto.length + ')', M, y);
+      y += 8;
+
+      const colW = (L - 8) / 2;
+      const colH = 62;
+      let col = 0;
+
+      for(let i = 0; i < foto.length; i++){
+        if(y + colH > 272){ nuovaPagina(); col = 0; }
+        const x = M + col * (colW + 8);
+        try{
+          // a jsPDF va passata la data URL: con l'elemento IMG fallisce
+          const dataUrl = await blobADataUrl(foto[i].blob);
+          const aw = foto[i].w || 4, ah = foto[i].h || 3;   // dimensioni gia' salvate
+          const k = Math.min(colW / aw, colH / ah);
+          const w = aw * k, h = ah * k;
+          doc.addImage(dataUrl, 'JPEG', x + (colW - w) / 2, y, w, h);
+          doc.setDrawColor(215,215,225);
+          doc.rect(x, y, colW, colH);
+          doc.setFontSize(7);
+          doc.setTextColor(130,130,145);
+          doc.text(String(i + 1) + '/' + foto.length, x + 2, y + colH + 4);
+        }catch(e){
+          doc.setFontSize(8);
+          doc.setTextColor(200,60,60);
+          doc.text('foto non disponibile', x + 2, y + 12);
+          console.warn('[cantieri] foto non inserita nel PDF:', e && e.message);
+        }
+        col++;
+        if(col === 2){ col = 0; y += colH + 9; }
+      }
+      if(col !== 0) y += colH + 9;
+    }
+
+    if(altri.length){
+      if(y + 30 > 272) nuovaPagina();
+      y += 4;
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(13);
+      doc.setTextColor(30,30,40);
+      doc.text('File allegati (' + altri.length + ')', M, y);
+      y += 7;
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(9);
+      for(const a of altri){
+        if(y > 275) nuovaPagina();
+        doc.setTextColor(70,70,85);
+        doc.text('• ' + (a.nome || 'file') + '  (' + estensione(a.nome) + ', ' + numIt(a.size) + ')', M, y);
+        y += 5.5;
+      }
+    }
+
+    piede();
+    const nomeFile = 'cantieri-' + (c.nome || 'senza-nome').replace(/[^\w\-]+/g,'-').slice(0,40).toLowerCase() + '.pdf';
+    doc.save(nomeFile);
+    toast('Relazione PDF scaricata', '', nomeFile);
+  }catch(e){
+    toast('PDF non riuscito','err', String(e.message || e));
+  }
+}
+
+function b64(blob){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(fr.result);
+    fr.onerror = () => rej(fr.error);
+    fr.readAsDataURL(blob);
+  });
+}
+
+async function backup(){
+  const c = await DB.cantiere(apertoId);
+  if(!c) return;
+  toast('Preparo il backup…');
+  try{
+    const media = await DB.mediaDi(apertoId);
+    const out = { formato:'valve-cantieri', versione:1, esportato:new Date().toISOString(),
+                  cantiere:c, media:[] };
+    for(const m of media){
+      out.media.push({ ...m, blob: await b64(m.blob) });
+    }
+    const testo = JSON.stringify(out);
+    const blob = new Blob([testo],{type:'application/json'});
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = u;
+    a.download = 'backup-' + (c.nome || 'cantiere').replace(/[^\w\-]+/g,'-').slice(0,40).toLowerCase() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 4000);
+    toast('Backup creato', '', numIt(blob.size) + ' — contiene anche le immagini');
+  }catch(e){
+    toast('Backup non riuscito','err', String(e.message || e));
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   10. NAVIGAZIONE E AVVIO
+   ══════════════════════════════════════════════════════════════ */
+function go(v){
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
+  $('foot').style.display = (v === 'detail') ? 'block' : 'none';
+  window.scrollTo(0, 0);
+}
+
+async function init(){
+  try{
+    db = await openDB();
+  }catch(e){
+    toast('Database non disponibile','err','Riprova ricaricando la pagina');
+    return;
+  }
+  // ripulisce eventuali URL non liberati
+  window.addEventListener('beforeunload', () => { if(urlTemp) URL.revokeObjectURL(urlTemp); });
+
+  $('inFoto').onchange     = e => { aggiungiFoto([...e.target.files]); e.target.value = ''; };
+  $('inFotoLib').onchange  = e => { aggiungiFoto([...e.target.files]); e.target.value = ''; };
+  $('inFile').onchange     = e => { aggiungiFile([...e.target.files]); e.target.value = ''; };
+
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    filtro = c.dataset.f;
+    document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === c));
+    disegnaElenco();
+  });
+
+  $('lb').onclick = e => { if(e.target === $('lb')) chiudiLb(); };
+
+  window.addEventListener('online',  () => { $('offBadge').className = 'off'; $('offTxt').textContent = 'in locale'; });
+  window.addEventListener('offline', () => { $('offBadge').className = 'off offline'; $('offTxt').textContent = 'offline'; });
+
+  await carica();
+  go('list');
+}
+
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
