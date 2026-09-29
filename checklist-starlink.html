@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
 :root{
   --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
@@ -253,7 +253,16 @@ canvas.sig{background:#f8f9fb;border:1px solid var(--b1);border-radius:4px;width
 
 </main>
 
-<script>
+<script>// La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con parole
+// chiare che lasciare un errore muto quando l'utente tocca il bottone.
+function senzaPdf(){
+  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
+          + 'il resto della pagina funziona anche senza.';
+  if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof alert === 'function') alert(msg);
+  return true;
+}
+
 const $ = id => document.getElementById(id);
 
 /* =======================================================================
@@ -541,6 +550,7 @@ function clearForm(){
    PDF
    ======================================================================= */
 function genPDF(){
+  if(senzaPdf()) return;
   const doc = new jspdf.jsPDF({unit:'mm', format:'a4'});
   const W = 210, H = 297, M = 14;
   const CW = W - M * 2;
@@ -651,7 +661,7 @@ function genPDF(){
     doc.line(M, H - 14, W - M, H - 14);
     doc.setFontSize(6.8);
     doc.setTextColor(...MUT);
-    doc.text('Valve Electronics  |  info@valveelectronics.it', M, H - 10);
+    doc.text('Valve Electronics(TM)', M, H - 10);
     doc.text('Pagina ' + (doc.getNumberOfPages()), W - M, H - 10, {align:'right'});
   }
 

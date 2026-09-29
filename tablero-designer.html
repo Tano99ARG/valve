@@ -13,7 +13,7 @@
 <title>Valve Electronics — Progettazione Quadri Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
 :root{
   --bg:#0c0e16;--surf:#12151f;--panel:#181b28;--card:#1e2235;--card2:#222640;
@@ -302,7 +302,7 @@ body {
 
 <!-- LEFT PANEL -->
 <div class="lp">
-  <div class="lp-search"><input id="rail-q" type="text" placeholder="Cerca componente…" oninput="buildRail()"></div>
+  <div class="lp-search"><input id="rail-q" type="text" placeholder="Cerca componente…" oninput="buildRail()" aria-label="Cerca"></div>
   <div class="lp-cats" id="lp-cats"></div>
   <div class="lp-list" id="lp-list"></div>
 </div>
@@ -1450,7 +1450,7 @@ const CATALOG=[
   // ── DISTRIBUCIÓN: cables ──
   {id:'cable-ref',cat:'Conductores',name:'Conductor / cable',sub:'Etiqueta de sección de cable',w:60,h:20,
    ports:[{id:'A',t:'COM',pos:'lft'},{id:'B',t:'COM',pos:'rgt'}],
-   specs:['Sezione: 1.5 – 240mm²','Cu aislación PVC/XLPE','Unipolar o multipolar','Ampacidad según norma AEA'],
+   specs:['Sezione: 1.5 – 240mm²','Cu aislación PVC/XLPE','Unipolar o multipolar','Ampacità secondo CEI 64-8'],
    svg:`<svg viewBox="0 0 60 20" width="60" height="20">
      <line x1="2" y1="10" x2="58" y2="10" stroke="#b87333" stroke-width="4"/>
      <line x1="2" y1="10" x2="58" y2="10" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="1,3" opacity=".5"/>
@@ -2460,8 +2460,9 @@ function openPDF(){
 }
 function closePDF(){document.getElementById('mpdf').classList.remove('open')}
 
-function genPDF(){
+function genPDF(){  if(senzaPdf()) return;
   const {jsPDF}=window.jspdf;
+
   const hoja=document.getElementById('pdf-hoja').value;
   const land=hoja.includes('Horizontal');
   const a3=hoja.includes('A3');
@@ -2718,6 +2719,18 @@ let tt;
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),2600)}
 </script>
 <script>
+// La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con
+// parole chiare che lasciare un errore muto quando tocca il bottone.
+// chiare che lasciare un errore muto quando l'utente tocca il bottone.
+function senzaPdf(){
+  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
+          + 'il resto della pagina funziona anche senza.';
+  if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof alert === 'function') alert(msg);
+  return true;
+}
+
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});

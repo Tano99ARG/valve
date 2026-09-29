@@ -303,7 +303,7 @@ ol.steps li{margin-bottom:7px}
   </div>
   <div class="srow">
     <span class="ic">🔍</span>
-    <input id="q" type="search" placeholder="Cerca nome, SKU o codice a barre" oninput="renderCat()">
+    <input id="q" type="search" placeholder="Cerca nome, SKU o codice a barre" oninput="renderCat()" aria-label="Cerca nome, SKU o codice a barre">
   </div>
   <div class="chips" id="cats"></div>
   <div class="cardlist" id="list"></div>
@@ -543,7 +543,7 @@ ol.steps li{margin-bottom:7px}
       </div>
       <div class="srow" style="margin-bottom:9px">
         <span class="ic">🔍</span>
-        <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…" oninput="renderIns()">
+        <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…" oninput="renderIns()" aria-label="Cerca tubo, cavo, 12, 0,6 mm…">
       </div>
       <div class="chips" id="insCats" style="margin-bottom:0;padding-bottom:2px"></div>
       <div id="insBulk" style="display:none;margin-top:10px">
@@ -557,7 +557,7 @@ ol.steps li{margin-bottom:7px}
 <div class="toast" id="toast"></div>
 
 <script src="js/insumi.js"></script>
-<script src="js/vendor/zxing.min.js"></script>
+<!-- ZXing (328 KB) si carica solo quando si avvia lo scanner: vedi caricaZXing() -->
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
@@ -583,6 +583,27 @@ function openDB(){
 }
 function st(name, mode){ return db.transaction(name, mode).objectStore(name); }
 function pReq(req){ return new Promise((res, rej) => { req.onsuccess = () => res(req.result); req.onerror = () => rej(req.error); }); }
+
+// Una scrittura che fallisce e' la peggior cosa possa capitare in un
+// magazzino: il numero cambia a schermo ma non resta salvato, e l'utente
+// non se ne accorge fino al prossimo riavvio. Ogni errore in scrittura
+// passa di qui e viene detto.
+let ultimoErroreScrittura = 0;
+function scriviSicuro(azione, descrizione){
+  return Promise.resolve()
+    .then(azione)
+    .catch(function(e){
+      const ora = Date.now();
+      if(ora - ultimoErroreScrittura > 4000){     // non martellare l'utente
+        ultimoErroreScrittura = ora;
+        const pieno = e && (e.name === 'QuotaExceededError' || /quota/i.test(String(e.message||'')));
+        toast(pieno ? 'Spazio del telefono esaurito' : 'Salvataggio non riuscito', 'err',
+              pieno ? 'Non ho potuto salvare ' + descrizione + ': libera spazio e riprova.'
+                    : descrizione + ': salvataggio non riuscito, riprova.');
+      }
+      throw e;
+    });
+}
 
 const DB = {
   all:   ()    => pReq(st('products','readonly').getAll()),
@@ -725,6 +746,22 @@ async function fileToThumb(file){
    ══════════════════════════════════════════════════════════════ */
 let controls = null, scanning = false, lastCode = 0, lastCodeT = 0;
 
+let zxingPromessa = null;
+// Carica il lettore di codici a richiesta, una volta sola.
+function caricaZXing(){
+  if(window.ZXing) return Promise.resolve();
+  if(zxingPromessa) return zxingPromessa;
+  zxingPromessa = new Promise(function(res, rej){
+    const s = document.createElement('script');
+    s.src = 'js/vendor/zxing.min.js';
+    s.async = true;
+    s.onload  = function(){ window.ZXing ? res() : rej(new Error('lettore non disponibile')); };
+    s.onerror = function(){ zxingPromessa = null; rej(new Error('lettore non scaricabile')); };
+    document.head.appendChild(s);
+  });
+  return zxingPromessa;
+}
+
 function beep(){
   try{
     if(!beepCtx) beepCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -748,8 +785,16 @@ async function startScan(){
   $('ret').style.display = 'none';
 
   if(!window.ZXing){
-    box.style.display = 'flex';
-    $('camerrtxt').textContent = 'Lettore di codici non caricato. Sei offline? Ricarica la pagina con la rete attiva.';
+    // Il lettore pesa 328 KB: chi non scansiona non lo scarica. La prima
+    // volta serve la rete, poi il service worker lo tiene in locale.
+    $('camerrtxt').textContent = 'Preparo il lettore di codici\u2026';
+    caricaZXing()
+      .then(function(){ return startScan(); })
+      .catch(function(){
+        box.style.display = 'flex';
+        $('camerrtxt').textContent = 'Lettore di codici non disponibile. Serve la rete la prima volta: '
+          + 'usa l\'inserimento manuale del codice.';
+      });
     return;
   }
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -924,7 +969,7 @@ async function bump(id, d){
   if(!p) return;
   p.qty = Math.max(0, (Number(p.qty)||0) + d);
   p.updatedAt = now(); p.dirty = true;
-  await DB.put(p);
+  await scriviSicuro(function(){ return DB.put(p); }, 'la quantita');
   showScanResult(p.barcode || p.sku || p.id, p);
   renderAll();
   scheduleSync();
@@ -1166,7 +1211,7 @@ function applicaOcr(nome, testo){
   if(nome)  p.name = nome;
   if(testo) p.etichetta = testo;
   p.updatedAt = now(); p.dirty = true;
-  DB.put(p).then(() => {
+  scriviSicuro(function(){ return DB.put(p); }, 'il prodotto').then(() => {
     renderAll(); scheduleSync();
     showScanResult(p.barcode || p.sku || p.id, p);
     toast('Prodotto aggiornato', '', nome || 'il testo dell\'etichetta ora è cercabile');
@@ -1204,7 +1249,7 @@ async function salvaFotoProdotto(id, file){
     if(!p){ toast('Prodotto non trovato','err'); return; }
     p.thumb = thumb;
     p.updatedAt = now(); p.dirty = true;
-    await DB.put(p);
+    await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
     await DB.putPhoto(p.id, blob);
     renderAll();
     scheduleSync();
@@ -1451,7 +1496,7 @@ async function saveProductUI(){
 
   const idx = PRODUCTS.findIndex(x => x.id === p.id);
   if(idx >= 0) PRODUCTS[idx] = p; else PRODUCTS.push(p);
-  await DB.put(p);
+  await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
   if(editingPhoto){ await DB.putPhoto(p.id, editingPhoto); }
 
   closeSheet();
@@ -1542,7 +1587,7 @@ async function saveEndpoint(){
   CFG.endpoint = $('ep').value.trim();
   CFG.photo = $('optPhoto').checked;
   CFG.lastSync = await DB.getMeta('lastSync') || 0;
-  await DB.setMeta('cfg', CFG);
+  await scriviSicuro(function(){ return DB.setMeta('cfg', CFG); }, 'le impostazioni');
   renderSyncState();
   toast(CFG.endpoint ? 'Endpoint salvato' : 'Endpoint vuoto', CFG.endpoint ? 'ok' : 'err');
 }
@@ -1569,12 +1614,12 @@ function merge(remote){
     const i = PRODUCTS.findIndex(x => x.id === rp.id);
     if(i < 0){
       PRODUCTS.push(rp);
-      DB.put(rp);
+      scriviSicuro(function(){ return DB.put(rp); }, 'il prodotto');
       added++;
     } else if(rp.updatedAt > PRODUCTS[i].updatedAt){
       rp.dirty = false;
       PRODUCTS[i] = rp;
-      DB.put(rp);
+      scriviSicuro(function(){ return DB.put(rp); }, 'il prodotto');
       updated++;
     }
   });
@@ -1615,14 +1660,14 @@ async function syncNow(manual){
       const okIds = new Set(pj.ids || dirty.map(d => d.id));
       dirty.forEach(d => {
         const p = PRODUCTS.find(x => x.id === d.id);
-        if(p && okIds.has(d.id)){ p.dirty = false; DB.put(p); }
+        if(p && okIds.has(d.id)){ p.dirty = false; scriviSicuro(function(){ return DB.put(p); }, 'il prodotto'); }
       });
       sent = pj.written || dirty.length;
     }
 
     const t = j.now || Date.now();
     syncErr = null;
-    await DB.setMeta('lastSync', t);
+    await scriviSicuro(function(){ return DB.setMeta('lastSync', t); }, 'lo stato di sincronizzazione');
     CFG.lastSync = t;
     renderSyncState();
     if(manual){
@@ -1723,7 +1768,7 @@ async function insAdd(sku){
   p.minQty   = it.un === 'mt' ? 10 : 2;
   const idx = PRODUCTS.findIndex(x => x.sku === it.sku);
   if(idx >= 0){ toast('Aggiornato: ' + it.sku, 'ok'); } else { PRODUCTS.push(p); }
-  await DB.put(p);
+  await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
   renderAll();
   scheduleSync();
   renderIns();
@@ -1739,7 +1784,7 @@ async function insQty(sku, d){
   if(!p) return;
   p.qty = Math.max(0, (Number(p.qty)||0) + d);
   p.updatedAt = now(); p.dirty = true;
-  await DB.put(p);
+  await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
   renderAll(); scheduleSync(); renderIns();
 }
 
@@ -1757,7 +1802,7 @@ async function bulkIns(){
     p.unit = it.un || 'pz'; p.price = it.acq; p.sellPrice = it.ven;
     p.qty = 0; p.minQty = it.un === 'mt' ? 10 : 2;
     PRODUCTS.push(p);
-    await DB.put(p);
+    await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
   }
   renderAll(); scheduleSync(); renderIns();
   toast(nuovi + ' articoli inseriti', 'ok');
@@ -1814,7 +1859,7 @@ async function importJSON(inp){
       p.dirty = true; p.updatedAt = now();
       const i = PRODUCTS.findIndex(x => x.id === p.id);
       if(i >= 0) PRODUCTS[i] = p; else PRODUCTS.push(p);
-      await DB.put(p); n++;
+      await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto'); n++;
     }
     if(d.photos){
       for(const id in d.photos){
@@ -1833,10 +1878,10 @@ async function wipe(){
   if(!confirm('Sei sicuro? Non si può annullare.')) return;
   for(const p of PRODUCTS){
     p.deleted = true; p.dirty = true; p.updatedAt = now();
-    await DB.put(p);
+    await scriviSicuro(function(){ return DB.put(p); }, 'il prodotto');
     await DB.delPhoto(p.id);
   }
-  await DB.setMeta('lastSync', 0);
+  await scriviSicuro(function(){ return DB.setMeta('lastSync', 0); }, 'lo stato di sincronizzazione');
   CFG.lastSync = 0;
   renderAll(); scheduleSync();
   toast('Magazzino svuotato');

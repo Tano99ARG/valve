@@ -74,8 +74,6 @@ body { background: var(--black); color: var(--white); font-family: var(--font-b)
 .topbar-title { font-family: var(--font-d); font-size: 1.15rem; font-weight: 700; letter-spacing: .05em; }
 .topbar-right { display: flex; align-items: center; gap: 14px; }
 .topbar-date { font-size: .84rem; color: var(--muted); }
-.btn-wpp { display: inline-flex; align-items: center; gap: 7px; background: #25D366; color: #fff; font-family: var(--font-d); font-size: .82rem; font-weight: 700; letter-spacing: .05em; text-decoration: none; padding: 7px 14px; border-radius: 3px; transition: opacity .2s; }
-.btn-wpp:hover { opacity: .85; }
 .hamburger { display: none; background: none; border: none; color: var(--white); font-size: 1.4rem; cursor: pointer; padding: 4px; }
 
 /* ── CONTENT ── */
@@ -290,10 +288,6 @@ body {
     </div>
     <div class="topbar-right">
       <span class="topbar-date" id="topbar-date"></span>
-      <a href="https://wa.me/5491151736190" class="btn-wpp" target="_blank" rel="noopener" aria-label="WhatsApp">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.526 5.858L0 24l6.296-1.506A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.034-1.386l-.36-.214-3.737.893.927-3.634-.235-.373A9.818 9.818 0 1112 21.818z"/></svg>
-        WhatsApp
-      </a>
     </div>
   </header>
 
@@ -445,7 +439,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">🏗</span><div class="tool-name">Cantieri</div></div>
         <p class="tool-desc">Ogni installazione con le sue foto, i suoi file e le note del lavoro. In corso o finito.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('cantieri.html','Cantieri');return false;">
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('cantieri.html','Cantieri');return false;">
           🏗 Apri i cantieri
         </label>
       </div>
@@ -453,7 +447,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">📄</span><div class="tool-name">Relazione PDF</div></div>
         <p class="tool-desc">Dal bottone in basso, in ogni cantiere: relazione su più pagine con dati, note e foto, pronta da mandare al cliente.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <button class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('cantieri.html','Cantieri — relazione PDF')">📄 Apri e genera</button>
+        <button class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('cantieri.html','Cantieri — relazione PDF')">📄 Apri e genera</button>
       </div>
     </div>
   </div>
@@ -470,7 +464,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Scansiona</div></div>
         <p class="tool-desc">Fotocamera e codici a barre. Il punto di partenza per contare le giacenze.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#scan','Magazzino — Scansiona');return false;">
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('magazzino.html#scan','Magazzino — Scansiona');return false;">
           📷 Apri lo scanner
         </label>
       </div>
@@ -478,7 +472,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">📚</span><div class="tool-name">Catalogo</div></div>
         <p class="tool-desc">Tutti gli articoli con ricerca e filtri. Modifica prezzi, giacenze e scorte minime.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#cat','Magazzino — Catalogo');return false;">
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('magazzino.html#cat','Magazzino — Catalogo');return false;">
           📚 Apri il catalogo
         </label>
       </div>
@@ -486,7 +480,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">📉</span><div class="tool-name">Scorte</div></div>
         <p class="tool-desc">Valore del magazzino, articoli sotto il minimo da riordinare ed esauriti.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#stock','Magazzino — Scorte');return false;">
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('magazzino.html#stock','Magazzino — Scorte');return false;">
           📉 Vedi le scorte
         </label>
       </div>
@@ -494,7 +488,7 @@ body {
         <div class="tool-header"><span class="tool-icon" aria-hidden="true">⚙️</span><div class="tool-name">Impostazioni</div></div>
         <p class="tool-desc">Sincronizzazione con il foglio Google, soglia di allerta scorte e listino insumi.</p>
         <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-        <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('magazzino.html#set','Magazzino — Impostazioni');return false;">
+        <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('magazzino.html#set','Magazzino — Impostazioni');return false;">
           ⚙️ Apri le impostazioni
         </label>
       </div>
@@ -509,7 +503,7 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">⚡</span><div class="tool-name">Editor quadri</div></div>
           <p class="tool-desc">Quadri elettrici con componenti reali: interruttori, contattori, relè, PLC, strumenti di misura. Esporta in PDF.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('tablero-designer.html','Editor quadri elettrici');return false;">
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('tablero-designer.html','Editor quadri elettrici');return false;">
             ▦ Apri editor
           </label>
         </div>
@@ -517,7 +511,7 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Layout telecamere</div></div>
           <p class="tool-desc">Schema di posizionamento telecamere IP su planimetria. Angoli di copertura e tipi di lente.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('telecamere-designer.html','Layout telecamere');return false;">
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('telecamere-designer.html','Layout telecamere');return false;">
             📷 Apri editor
           </label>
         </div>
@@ -525,7 +519,7 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">☀️</span><div class="tool-name">Dimensionamento solare</div></div>
           <p class="tool-desc">Calcolatrice FV: consumi, sito, pannelli, inverter, autoconsumo, payback e detrazione. Confronto fra 3 scenari ed export PDF.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('dimensionamento-solare.html','Dimensionamento solare');return false;">
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('dimensionamento-solare.html','Dimensionamento solare');return false;">
             ☀️ Apri calcolatrice
           </label>
         </div>
@@ -533,7 +527,7 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">❄️</span><div class="tool-name">Carico termico</div></div>
           <p class="tool-desc">Carico termico per locale: perdite, guadagni, finestre e carichi interni. Stima split necessario e consumo annuo, con export PDF.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('carico-termico.html','Carico termico');return false;">
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('carico-termico.html','Carico termico');return false;">
             ❄️ Apri calcolatrice
           </label>
         </div>
@@ -541,7 +535,7 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">🛰️</span><div class="tool-name">Checklist Starlink</div></div>
           <p class="tool-desc">Protocollo di installazione in 8 fasi: sopralluogo con analisi ostacoli, montaggio, alimentazione, configurazione rete, collaudo e consegna. Si salva da sola e si esporta in PDF.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="abrirHerramientaDirecta('checklist-starlink.html','Checklist Starlink');return false;">
+          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('checklist-starlink.html','Checklist Starlink');return false;">
             🛰️ Apri protocollo
           </label>
         </div>
@@ -549,7 +543,7 @@ body {
       <div class="tool-iframe-wrap" id="tool-iframe-wrap">
         <div class="tool-iframe-bar">
           <div class="tool-iframe-title" id="tool-iframe-title">Strumento</div>
-          <button class="tool-iframe-close" onclick="cerrarHerramienta()">✕ Chiudi</button>
+          <button class="tool-iframe-close" onclick="chiudiStrumento()">✕ Chiudi</button>
         </div>
         <iframe class="tool-iframe" id="tool-iframe" title="Herramienta"></iframe>
       </div>
@@ -574,7 +568,7 @@ body {
         <button class="pill" data-cat="PLO">Idraulica</button>
         <button class="pill" data-cat="GEN">Generale</button>
       </div>
-      <input type="text" class="search-input" id="manual-search" placeholder="Cerca manuale, apparecchio, marca..." oninput="renderManuales()">
+      <input type="text" class="search-input" id="manual-search" placeholder="Cerca manuale, apparecchio, marca..." oninput="renderManuales()" aria-label="Cerca">
       <div class="manual-list" id="manual-list"></div>
       <label class="upload-zone">
         <div class="upload-zone-icon" aria-hidden="true">📂</div>
@@ -588,7 +582,7 @@ body {
     <div class="view" id="view-tips">
       <div class="view-header">
         <div><div class="view-eyebrow">Conoscenza del team</div><div class="view-title">Consigli e tutorial</div></div>
-        <button class="btn btn-primary" onclick="abrirModalTip()">+ Aggiungi</button>
+        <button class="btn btn-primary" onclick="apriModalTip()">+ Aggiungi</button>
       </div>
       <div class="pills" id="pills-tips">
         <button class="pill active" data-tipo="todos">Tutti</button>
@@ -605,7 +599,7 @@ body {
 <!-- MODAL AGREGAR TIP -->
 <div class="modal-overlay" id="modal-tip" role="dialog" aria-modal="true" aria-labelledby="modal-tip-title">
   <div class="modal">
-    <button class="modal-close" onclick="cerrarModalTip()" aria-label="Chiudi">✕</button>
+    <button class="modal-close" onclick="chiudiModalTip()" aria-label="Chiudi">✕</button>
     <div class="modal-title" id="modal-tip-title">Aggiungi consiglio / tutorial</div>
     <div class="form-row"><label class="form-label" for="tip-titulo">Titolo</label><input class="form-input" type="text" id="tip-titulo" placeholder="Es: Come testare un contattore con multimetro"></div>
     <div class="form-grid2">
@@ -626,11 +620,23 @@ body {
     </div>
     <div class="form-row"><label class="form-label" for="tip-desc">Descrizione / contenuto</label><textarea class="form-textarea" id="tip-desc" style="min-height:120px" placeholder="Descrivi il consiglio, il problema risolto, la procedura, ecc."></textarea></div>
     <div class="form-row"><label class="form-label" for="tip-link">Link (opzionale)</label><input class="form-input" type="url" id="tip-link" placeholder="https://..."></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;font-size:1rem;padding:12px;" onclick="guardarTip()">Salva consiglio</button>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;font-size:1rem;padding:12px;" onclick="salvaTip()">Salva consiglio</button>
   </div>
 </div>
 
 <script>
+// I dati salvati vivevano sotto un nome con il brand precedente. Sposto tutto
+// sul nome nuovo senza perdere nulla: si legge il nuovo, se non c'e' si prende
+// il vecchio e lo ricopia.
+(function migraChiavi(){
+  var coppie = [['apex_tips','valve_tips'], ['apex_manuales_meta','valve_manuali_meta']];
+  try{
+    coppie.forEach(function(c){
+      var vecchio = localStorage.getItem(c[0]);
+      if(vecchio && !localStorage.getItem(c[1])) localStorage.setItem(c[1], vecchio);
+    });
+  }catch(e){}
+})();
 'use strict';
 
 // ── CONSTANTES ──────────────────────────────────────────────
@@ -694,14 +700,14 @@ function logRecent(name) {
 }
 
 // ── HERRAMIENTAS / PLANOS ────────────────────────────────────
-function abrirHerramientaDirecta(src, nombre) {
+function apriStrumento(src, nombre) {
   document.getElementById('tool-iframe-title').textContent = nombre;
   document.getElementById('tool-iframe').src = src;
   const wrap = document.getElementById('tool-iframe-wrap');
   wrap.style.display = 'block';
   wrap.scrollIntoView({ behavior: 'smooth' });
 }
-function abrirHerramienta(e, nombre) {
+function apriStrumentoDaFile(e, nombre) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -715,7 +721,7 @@ function abrirHerramienta(e, nombre) {
   };
   reader.readAsText(file);
 }
-function cerrarHerramienta() {
+function chiudiStrumento() {
   const iframe = document.getElementById('tool-iframe');
   if(iframe.src.startsWith('blob:')) URL.revokeObjectURL(iframe.src);
   iframe.src = '';
@@ -729,12 +735,12 @@ let manuales = [];
 let filtroCat = 'todos';
 let debounceTimer;
 
-try { manuales = JSON.parse(localStorage.getItem('apex_manuales_meta') || '[]'); } catch(e) { manuales = []; }
+try { manuales = JSON.parse(localStorage.getItem('valve_manuali_meta') || '[]'); } catch(e) { manuales = []; }
 
-function guardarMetaManuales() {
+function salvaMetaManuali() {
   // Solo guardamos metadatos (no el contenido binario)
   const meta = manuales.map(({ id, nombre, tipo, categoria, fecha }) => ({ id, nombre, tipo, categoria, fecha }));
-  try { localStorage.setItem('apex_manuales_meta', JSON.stringify(meta)); } catch(e) {}
+  try { localStorage.setItem('valve_manuali_meta', JSON.stringify(meta)); } catch(e) {}
 }
 
 function detectarCategoria(nombre) {
@@ -756,7 +762,7 @@ function agregarManuales(e) {
       const url = URL.createObjectURL(new Blob([ev.target.result], { type: file.type || 'application/octet-stream' }));
       manualBlobs[id] = url;
       manuales.push({ id, nombre: file.name.replace(/\.[^.]+$/, ''), tipo: file.name.split('.').pop().toUpperCase(), categoria: detectarCategoria(file.name), fecha: new Date().toLocaleDateString('it-IT') });
-      guardarMetaManuales();
+      salvaMetaManuali();
       renderManuales();
     };
     reader.readAsArrayBuffer(file);
@@ -793,14 +799,14 @@ function _renderManuales() {
         <div class="manual-meta"><span class="manual-cat">${CAT_LABELS[m.categoria] || m.categoria}</span><span>${m.tipo}</span><span>${m.fecha}</span>${!canOpen ? '<span style="color:#e74c3c;font-size:.7rem;">⚠ Ricarica per aprire</span>' : ''}</div>
       </div>
       <div class="manual-actions">
-        <button class="btn btn-sm-primary" onclick="abrirManual('${m.id}')" ${canOpen ? '' : 'disabled title="Ricarica il file per aprire"'}>Apri</button>
+        <button class="btn btn-sm-primary" onclick="apriManuale('${m.id}')" ${canOpen ? '' : 'disabled title="Ricarica il file per aprire"'}>Apri</button>
         <button class="btn btn-sm-ghost" onclick="eliminarManual('${m.id}')">✕</button>
       </div>`;
     list.appendChild(el);
   });
 }
 
-function abrirManual(id) {
+function apriManuale(id) {
   const url = manualBlobs[id];
   if (!url) { alert('Questo manuale non è disponibile in questa sessione. Carica di nuovo il file.'); return; }
   window.open(url, '_blank');
@@ -809,7 +815,7 @@ function eliminarManual(id) {
   if (!confirm('Eliminare questo manuale?')) return;
   if (manualBlobs[id]) { URL.revokeObjectURL(manualBlobs[id]); delete manualBlobs[id]; }
   manuales = manuales.filter(m => m.id !== id);
-  guardarMetaManuales();
+  salvaMetaManuali();
   renderManuales();
 }
 
@@ -825,18 +831,18 @@ document.getElementById('pills-manuales').addEventListener('click', e => {
 let filtroTipo = 'todos';
 let tips = [];
 
-try { tips = JSON.parse(localStorage.getItem('apex_tips') || '[]'); } catch(e) { tips = []; }
+try { tips = JSON.parse(localStorage.getItem('valve_tips') || '[]'); } catch(e) { tips = []; }
 
 if (!tips.length) {
   tips = [
     { id: 1, titulo: 'Verificar tensión ANTES de medir corriente', tipo: 'alerta', servicio: 'Eléctrico', desc: 'Antes de pasar el multímetro a modo amperímetro, confirmá que no haya tensión en el circuito. Un amperímetro en paralelo sobre tensión destruye el instrumento y puede causar un arco eléctrico.', link: '', fecha: '14/06/2025' },
     { id: 2, titulo: 'Compresor trabado vs capacitor muerto en split', tipo: 'tip', servicio: 'Aire acondicionado', desc: 'Si el equipo no arranca y el compresor zumba: cortá la alimentación, descargá el capacitor con una resistencia de 10 kΩ y medí capacitancia. Por debajo del 10% del valor nominal → capacitor. Valor correcto → compresor trabado o en corte térmico.', link: '', fecha: '10/06/2025' },
-    { id: 3, titulo: 'Orientación óptima de Starlink en Argentina', tipo: 'tuto', servicio: 'Starlink', desc: 'En latitudes AR (-34° a -55°), el dish debe apuntar al norte geográfico con inclinación de 30°–50° según latitud. Usá la app Starlink para verificar obstrucciones antes de definir el punto de montaje definitivo.', link: '', fecha: '05/06/2025' }
+    { id: 3, titulo: 'Orientazione ottima di Starlink in Italia', tipo: 'tuto', servicio: 'Starlink', desc: 'In Italia (36°–47° N) l\'antenna punta verso sud, verso l\'equatore, con un\'inclinazione di circa 25°–40° secondo la latitudine: più ci si allontana dai satelliti, meno. Usa l\'app Starlink sul posto per verificare le ostruzioni prima di scegliere il punto di montaggio definitivo.', link: '', fecha: '05/06/2025' }
   ];
-  try { localStorage.setItem('apex_tips', JSON.stringify(tips)); } catch(e) {}
+  try { localStorage.setItem('valve_tips', JSON.stringify(tips)); } catch(e) {}
 }
 
-function saveTips() { try { localStorage.setItem('apex_tips', JSON.stringify(tips)); } catch(e) {} }
+function saveTips() { try { localStorage.setItem('valve_tips', JSON.stringify(tips)); } catch(e) {} }
 
 function renderTips() {
   const filtrados = filtroTipo === 'todos' ? tips : tips.filter(t => t.tipo === filtroTipo);
@@ -873,10 +879,10 @@ document.getElementById('pills-tips').addEventListener('click', e => {
   renderTips();
 });
 
-function abrirModalTip() { document.getElementById('modal-tip').classList.add('open'); }
-function cerrarModalTip() { document.getElementById('modal-tip').classList.remove('open'); }
+function apriModalTip() { document.getElementById('modal-tip').classList.add('open'); }
+function chiudiModalTip() { document.getElementById('modal-tip').classList.remove('open'); }
 
-function guardarTip() {
+function salvaTip() {
   const titulo = document.getElementById('tip-titulo').value.trim();
   const desc   = document.getElementById('tip-desc').value.trim();
   if (!titulo || !desc) { alert('Compila almeno il titolo e la descrizione.'); return; }
@@ -889,7 +895,7 @@ function guardarTip() {
     fecha:    new Date().toLocaleDateString('it-IT')
   });
   saveTips();
-  cerrarModalTip();
+  chiudiModalTip();
   ['tip-titulo','tip-desc','tip-link'].forEach(id => document.getElementById(id).value = '');
   renderTips();
 }
@@ -907,8 +913,8 @@ function escHtml(str) {
 }
 
 // ── MODAL CLOSE ON ESC / BACKDROP ───────────────────────────
-document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModalTip(); });
-document.getElementById('modal-tip').addEventListener('click', e => { if (e.target === e.currentTarget) cerrarModalTip(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') chiudiModalTip(); });
+document.getElementById('modal-tip').addEventListener('click', e => { if (e.target === e.currentTarget) chiudiModalTip(); });
 
 // ── INIT ─────────────────────────────────────────────────────
 renderManuales();

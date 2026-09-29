@@ -13,7 +13,7 @@
   <title>Valve Electronics — Designer Telecamere</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
   <style>
     /* ═══════════════════════════════════════════════════════════════
        PALETTE VALVE ELECTRONICS
@@ -219,7 +219,7 @@
 
   <!-- LEFT PANEL — Catalogo componenti -->
   <div class="lp" id="lp">
-    <div class="lp-search"><input id="comp-q" type="text" placeholder="Cerca componente…" oninput="buildCatalog()"></div>
+    <div class="lp-search"><input id="comp-q" type="text" placeholder="Cerca componente…" oninput="buildCatalog()" aria-label="Cerca"></div>
     <div class="lp-cats" id="lp-cats"></div>
     <div class="lp-list" id="lp-list"></div>
   </div>
@@ -323,6 +323,18 @@
 <button id="mobile-menu-btn" style="display:none;position:fixed;bottom:20px;left:20px;z-index:200;width:50px;height:50px;border-radius:50%;background:var(--ora);color:#fff;border:none;font-size:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,.3)" onclick="toggleMobileMenu()">☰</button>
 
 <script>
+// La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con
+// parole chiare che lasciare un errore muto quando tocca il bottone.
+// chiare che lasciare un errore muto quando l'utente tocca il bottone.
+function senzaPdf(){
+  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
+          + 'il resto della pagina funziona anche senza.';
+  if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof alert === 'function') alert(msg);
+  return true;
+}
+
+
 // ═══════════════════════════════════════════════════════════════
 //  MOBILE MENU — Hamburger per smartphone
 // ═══════════════════════════════════════════════════════════════
@@ -901,8 +913,9 @@ function clearAll(confirm=true){
 function openPDF(){document.getElementById('mpdf').classList.add('open')}
 function closePDF(){document.getElementById('mpdf').classList.remove('open')}
 
-function genPDF(){
+function genPDF(){  if(senzaPdf()) return;
   const {jsPDF}=window.jspdf;
+
   const orientation=document.getElementById('pdf-hoja').value.includes('Verticale')?'p':'l';
   const doc=new jsPDF({orientation,unit:'mm',format:'a4'});
 

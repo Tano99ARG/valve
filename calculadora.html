@@ -495,7 +495,7 @@ body {
           <div class="res-main"><span class="res-lbl">Paneles necesarios</span><span class="res-val" id="fv-out">—</span></div>
           <div class="res-sub"><div class="res-line">Potenza da installare <b id="fv-pot">—</b></div><div class="res-line">Generazione stimata <b id="fv-gen">—</b></div></div>
         </div>
-        <p class="note">HSP tipico in Argentina: 3.5 (sud) a 5.5 (nord). Il rendimento include perdite per temperatura, cablaggio e invertitore.</p>
+        <p class="note">HSP tipico in Italia: 3.2 (nord) a 4.6 (sud). Il rendimento include perdite per temperatura, cablaggio e invertitore.</p>
       </div>
     </div>
 
@@ -760,7 +760,7 @@ function calcFD(){
   const sys=$('fd-sys').value;
   const inst=ilum+tug+tue+coc;
   if(inst===0){$('fd-out').textContent='—';$('fd-inst').textContent='—';$('fd-i').textContent='—';$('fd-br').textContent='—';return;}
-  // Factor de demanda orientativo (criterio AEA simplificado)
+  // Fattore di richiesta orientativo (criterio CEI 64-8 semplificato)
   const dIlum=ilum*1.0;
   const dTug= tug<=3000 ? tug : 3000+(tug-3000)*0.35;
   const dTue= tue*0.75;

@@ -13,8 +13,8 @@
 <title>Valve Electronics ELECTRONICS — Preventivatore</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/insumi.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 <style>
 :root{
   --navy:#1B2A4A; --navy2:#1a2235; --navy3:#0f1623;
@@ -317,7 +317,7 @@ body {
     <div class="srow">
       <div class="swrap">
         <span class="sico">🔍</span>
-        <input id="srch" type="text" placeholder="Cerca per codice, nome o descrizione..." oninput="rCat()">
+        <input id="srch" type="text" placeholder="Cerca per codice, nome o descrizione..." oninput="rCat()" aria-label="Cerca">
       </div>
       <select id="csel" onchange="rCat()" style="width:auto;min-width:130px"></select>
     </div>
@@ -917,7 +917,7 @@ function buildPreview(){
       <div>
         <div class="docconame">Valve Electronics <span>ELECTRONICS</span></div>
         <div class="doccosub">Soluzioni tecniche per abitazioni e attivita'</div>
-        <div class="doccocont">02 1234567 · info@valveelectronics.it · Italia</div>
+        
       </div>
       <div class="doctblock">
         <div class="doctype">${isP?'PREVENTIVO':'SCONTRINO / FATTURA'}</div>
@@ -986,7 +986,7 @@ function buildPreview(){
       </div>
     </div>
     <div class="docftr">
-      Valve Electronics ELECTRONICS &nbsp;·&nbsp; 02 1234567 &nbsp;·&nbsp; info@valveelectronics.it &nbsp;·&nbsp; Italia
+      Valve Electronics ELECTRONICS &nbsp;·&nbsp; Italia
     </div>`;
 }
 
@@ -1158,7 +1158,7 @@ async function savePDF(doc, filename){
     const a=document.createElement('a');
     a.href=url; a.target='_blank'; a.rel='noopener';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    showToast('📄 PDF abierto — tocá ⬆ Compartir para enviarlo por WhatsApp');
+    showToast('📄 PDF aperto — usa ⬆ Condividi per inviarlo');
     return;
   }
 
@@ -1207,7 +1207,7 @@ function genPDF(){
   doc.text('Soluzioni tecniche per abitazioni e aziende',M+25,21);
   doc.setFontSize(7);
   doc.setTextColor(120,140,175);
-  doc.text('+39 02 0000000  |  info@valveelectronics.it',M+25,26);
+  doc.text('Valve Electronics',M+25,26);
 
   // Doc type + number right
   doc.setFontSize(13);
@@ -1353,7 +1353,7 @@ function genPDF(){
     doc.setFillColor(0,212,170);doc.rect(0,285,W,1.5,'F');
     doc.setFillColor(27,42,74);doc.rect(0,286.5,W,10.5,'F');
     doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(106,120,160);
-    doc.text('Valve Electronics  |  +39 02 0000000  |  info@valveelectronics.it',W/2,292.5,{align:'center'});
+    doc.text('Valve Electronics',W/2,292.5,{align:'center'});
     if(pages>1){doc.setTextColor(150,150,150);doc.text(`Pag. ${p}/${pages}`,W-M,292.5,{align:'right'});}
   }
 
@@ -1375,7 +1375,7 @@ function pdfHeader(doc, titulo, subtitulo){
   doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(170,190,215);
   doc.text('Soluzioni tecniche per abitazioni e aziende',47,24);
   doc.setFontSize(7.5); doc.setTextColor(120,140,175);
-  doc.text('+39 02 0000000  |  info@valveelectronics.it',47,30.5);
+  doc.text('Valve Electronics',47,30.5);
   doc.setFillColor(...ora); doc.rect(0,42,W,2,'F');
   doc.setFillColor(240,242,248); doc.rect(0,44,W,16,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(...navy);
@@ -1462,7 +1462,7 @@ function pdfFooter(doc,page,total){
   doc.setFillColor(...ora); doc.rect(0,285,W,1.2,'F');
   doc.setFillColor(...navy); doc.rect(0,286.2,W,10.8,'F');
   doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.setTextColor(106,120,160);
-  doc.text('Valve Electronics(TM)  |  +39 02 0000000  |  info@valveelectronics.it',W/2,291,{align:'center'});
+  doc.text('Valve Electronics',W/2,291,{align:'center'});
   doc.setTextColor(140,150,170);
   doc.text('Documento per uso interno — Compilare a mano',W/2,294.5,{align:'center'});
   if(total>1){ doc.text(`Pag. ${page}/${total}`,196,294.5,{align:'right'}); }
@@ -1747,7 +1747,7 @@ if ('serviceWorker' in navigator) {
       <div class="srow" style="position:relative;margin-bottom:9px">
         <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…"
           oninput="renderIns()" style="width:100%;background:var(--navy3,#11141d);border:1px solid #2a2e42;
-          color:#eef0f8;padding:12px 12px 12px 36px;border-radius:8px;font-size:15px;outline:none">
+          color:#eef0f8;padding:12px 12px 12px 36px;border-radius:8px;font-size:15px;outline:none" aria-label="Cerca tubo, cavo, 12, 0,6 mm…">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8089a8">🔍</span>
       </div>
       <div id="insCats" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch"></div>
