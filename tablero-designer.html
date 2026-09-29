@@ -404,6 +404,11 @@ body {
 
 .pbtn{background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.32);color:var(--ver);font-family:var(--fd);font-size:.72rem;font-weight:700;padding:8px 10px;border-radius:5px;cursor:pointer}
 .pbtn:hover{background:rgba(0,212,170,.22)}
+
+/* Componente che fa parte del circuito evidenziato: si stacca dal fondo
+   con un alone, senza toccare i colori del simbolo. */
+.placed.nelcirc{filter:drop-shadow(0 0 0 var(--ver)) drop-shadow(0 0 7px rgba(0,212,170,.75));z-index:3}
+.placed.nelcirc .placed-body{border-color:var(--ver)!important}
 </style>
 </head>
 <body>
@@ -455,7 +460,10 @@ body {
     <button class="tb-btn" id="tb-pan" title="Pan (P)" onclick="setTool('pan')">✋</button>
     <button class="tb-btn" id="tb-wire" title="Traccia conduttore (W)" onclick="setTool('wire')">✏</button>
     <div class="tsep"></div>
-    <button class="tb-btn" onclick="doZoom(1.2)" title="Zoom +">+</button>
+    <button class="tb-btn" id="tb-undo" onclick="annulla()" title="Annulla (Ctrl+Z)" style="opacity:.35">↶</button>
+      <button class="tb-btn" id="tb-redo" onclick="ripristina()" title="Risolto (Ctrl+Y)" style="opacity:.35">↷</button>
+      <div class="tsep"></div>
+      <button class="tb-btn" onclick="doZoom(1.2)" title="Zoom +">+</button>
     <span class="zoom-lbl" id="zlbl">100%</span>
     <button class="tb-btn" onclick="doZoom(.83)" title="Zoom -">−</button>
     <button class="tb-btn" onclick="fitView()" title="Inquadra">⊡</button>
@@ -530,6 +538,7 @@ body {
 <div class="stbar">
   <div class="sti"><div class="sti-dot"></div>Valve Electronics Quadri v2.0</div>
   <div class="sti" id="st-comp">Componenti: 0</div>
+  <div class="sti" id="st-undo">0/0</div>
   <div class="sti" id="st-wire">Conduttori: 0</div>
   <div class="sti" id="st-tab">Vista: Fisica</div>
   <div class="sti" id="st-tool">Strumento: Seleziona</div>
@@ -1761,6 +1770,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   // Si inquadra dopo il primo disegno: il foglio e' 3200x2400 e, senza
   // questo, si parte sempre nell'angolo in alto a sinistra con il 100% zoom.
   requestAnimationFrame(()=>fitView(.6));
+  azzeraStorico();
   avviaMobile();
 });
 
@@ -2025,6 +2035,198 @@ function avviaMobile(){
   addEventListener('orientationchange', ()=>setTimeout(avvisaRotazione, 250));
 }
 
+// ══════════════════════════════════════════════════════════════
+//  ANNULLA / RIPRISTINA
+//  In un editor la mancanza di Ctrl+Z è la prima cosa che si
+//  nota: si sente subito amatoriale. Lo stato è una fotografia
+//  completa del disegno, presa PRIMA di ogni modifica.
+// ══════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════
+//  ANNULLA / RIPRISTINA
+//  In un editor la mancanza di Ctrl+Z è la prima cosa che si
+//  nota: si sente subito amatoriale.
+//
+//  Lo stato è una fotografia completa del disegno, e si prende
+//  DOPO ogni modifica. Prenderla prima lascerebbe fuori lo stato
+//  finale, e il ripristino non riuscirebbe a tornare indietro del
+//  tutto. Le modifiche di testo successive si accorpano in un solo
+//  passo, altrimenti ogni lettera ne creerebbe uno.
+// ══════════════════════════════════════════════════════════════
+
+const STORICO = { passi:[], indice:-1, limite:80, ultimo:{motivo:'', quando:0, id:''} };
+
+function fotografia(){
+  return JSON.stringify({
+    placed: S.placed, wires: S.wires, rails: S.rails,
+    nextId: S.nextId, sel: S.sel, selWire: S.selWire, selRail: S.selRail,
+    zoom: S.zoom, tx: S.tx||0, ty: S.ty||0,
+  });
+}
+function segnaCambio(motivo, id){
+  const foto = fotografia();
+  const ora = Date.now();
+  const stessa = STORICO.ultimo.motivo === (motivo||'')
+              && STORICO.ultimo.id === (id||'')
+              && (ora - STORICO.ultimo.quando) < 1500;
+  if(stessa && STORICO.indice >= 0){
+    STORICO.passi[STORICO.indice] = foto;          // si sostituisce
+  } else {
+    if(STORICO.indice >= 0 && STORICO.passi[STORICO.indice] === foto){
+      STORICO.ultimo = { motivo:motivo||'', quando:ora, id:id||'' };
+      return;                                        // niente di nuovo
+    }
+    STORICO.passi = STORICO.passi.slice(0, STORICO.indice+1);
+    STORICO.passi.push(foto);
+    if(STORICO.passi.length > STORICO.limite) STORICO.passi.shift();
+    STORICO.indice = STORICO.passi.length-1;
+  }
+  STORICO.ultimo = { motivo:motivo||'', quando:ora, id:id||'' };
+  aggiornaStatoAnnulla();
+}
+function riprendiStato(foto){
+  const d = JSON.parse(foto);
+  S.placed = d.placed; S.wires = d.wires; S.rails = d.rails;
+  S.nextId = d.nextId; S.sel = d.sel; S.selWire = d.selWire; S.selRail = d.selRail;
+  S.zoom = d.zoom; S.tx = d.tx; S.ty = d.ty;
+  S.circuito = null;
+  renderAll(); renderRails(); renderWires(); renderBridges(); updateSB();
+  applicaVista();
+  if(S.sel) renderCompProps(S.sel);
+  aggiornaStatoAnnulla();
+}
+function annulla(){
+  if(STORICO.indice <= 0){ toast('Niente da annullare'); return; }
+  STORICO.ultimo = { motivo:'', quando:0, id:'' };   // la modifica seguente non si accorpa
+  STORICO.indice--;
+  riprendiStato(STORICO.passi[STORICO.indice]);
+  toast('Annullato');
+}
+function ripristina(){
+  if(STORICO.indice >= STORICO.passi.length-1){ toast('Niente da ripristinare'); return; }
+  STORICO.ultimo = { motivo:'', quando:0, id:'' };
+  STORICO.indice++;
+  riprendiStato(STORICO.passi[STORICO.indice]);
+  toast('Risolto');
+}
+function aggiornaStatoAnnulla(){
+  const a=document.getElementById('tb-undo'), r=document.getElementById('tb-redo');
+  if(a) a.style.opacity = STORICO.indice>0 ? '1' : '.35';
+  if(r) r.style.opacity = STORICO.indice<STORICO.passi.length-1 ? '1' : '.35';
+  const barra=document.getElementById('st-undo');
+  if(barra) barra.textContent = `${STORICO.indice}/${STORICO.passi.length-1}`;
+}
+function azzeraStorico(){
+  STORICO.passi = [fotografia()];
+  STORICO.indice = 0;
+  STORICO.ultimo = { motivo:'', quando:0, id:'' };
+  aggiornaStatoAnnulla();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  COPIA / INCOLLA e TAG IEC
+// ══════════════════════════════════════════════════════════════
+
+const APP = { copia:null, offset:{dx:40, dy:40} };
+
+function copiaSelezionato(){
+  const p = S.placed.find(x=>x.id===S.sel);
+  if(!p) return;
+  APP.copia = JSON.parse(JSON.stringify(p));
+  toast(`Copiato ${p.tag || CATALOG.find(c=>c.id===p.cid)?.name || 'componente'}`);
+}
+function incollaCopione(){
+  if(!APP.copia) return;
+  const p = JSON.parse(JSON.stringify(APP.copia));
+  p.id = `p${S.nextId++}`;
+  p.x += APP.offset.dx; p.y += APP.offset.dy;
+  // un tag copiato non deve stare due volte sullo stesso quadro
+  if(p.tag) p.tag = p.tag + ' copia';
+  S.placed.push(p);
+  APP.offset.dx += 20; APP.offset.dy += 20;
+  renderP(p); renderAll(); updateSB(); sel(p.id);
+  autoConnect();
+}
+
+// ── Tag secondo IEC 81346-2 ────────────────────────────────
+// La lettera dice che cos'è il componente, il numero lo distingue
+// dagli altri dello stesso tipo. È la convenzione che si trova su
+// ogni disegno elettrico, e rifiuta il tag a mano.
+// Q protezione, F fusibile, K comando, M motore, S pulsante,
+// H spia, T trasformatore, X morsetti, G alimentatore, P presentazione
+const LETTERA_IEC = [
+  [/differenziale/i,            'ID'],
+  [/guardamotore/i,             'QM'],
+  [/interruttore|fusibile|portafusibile|scaricatore/i, 'QF'],
+  [/sezionatore/i,              'QS'],
+  [/contattore|avviatore|teleinterruttore/i, 'KM'],
+  [/relè termico|timer|interruttore di posizione/i, 'KT'],
+  [/relè ausiliario|relè di sicurezza/i, 'KA'],
+  [/motore/i,                   'M'],
+  [/pulsante|selettore/i,       'S'],
+  [/spia|pilota/i,              'HL'],
+  [/trasformatore/i,            'T'],
+  [/alimentatore/i,             'G'],
+  [/inverter|vfd/i,             'U'],
+  [/morsetto|terminale|pressacavo|prensa/i, 'X'],
+  [/toma|presa|tomacorriente/i,'X'],
+  [/barra/i,                    'B'],
+  [/compressore|evaporatore/i,  'KM'],
+  [/batteria/i,                 'B'],
+  [/contatore/i,                'KW'],
+  [/sensore|pt100|temporizador|timer/i, 'B'],
+];
+function letteraIEC(nome){
+  for(const [re,l] of LETTERA_IEC) if(re.test(nome)) return l;
+  return 'X';
+}
+// Il numero successivo per quella lettera, saltando i tag gia' presenti.
+function prossimoNumero(lettera){
+  const usati = S.placed.map(p=>{
+    const m = new RegExp('^'+lettera.replace(/[-]/g,'')+'\\s*(\\d+)\\b','i').exec(p.tag||'');
+    return m ? parseInt(m[1],10) : 0;
+  });
+  return usati.reduce((a,b)=>Math.max(a,b),0) + 1;
+}
+function tagSuggerito(comp){
+  const l = letteraIEC(comp.name + ' ' + (comp.sub||''));
+  return l + prossimoNumero(l);
+}
+
+// ── Evidenzia il circuito di un conduttore ────────────────
+/* Un circuito non e' un filo: e' tutto quello che c'e' a monte e a
+   valle finche' si incontra un punto di interruzione. Selezionando
+   un conduttore si accende tutto il percorso, e in pratica si vede subito
+   se il collegamento e' quello che si crede. */
+function circuitoDi(idWire){
+  const w = S.wires.find(x=>x.id===idWire);
+  if(!w) return {conduttori:new Set(), componenti:new Set()};
+  const cond = new Set([idWire]), comp = new Set();
+  if(w.fromId) comp.add(w.fromId);
+  if(w.toId)   comp.add(w.toId);
+  // cammina avanti e indietro finche' i collegamenti proseguono
+  let cambiato = true;
+  while(cambiato){
+    cambiato = false;
+    S.wires.forEach(x=>{
+      if(cond.has(x.id)) return;
+      // basta che uno dei due estremi sia gia' nel circuito: e' cosi' che
+      // la propagazione prosegue verso il basso, verso l'alto e di lato
+      if(comp.has(x.fromId) || comp.has(x.toId)){
+        cond.add(x.id);
+        if(x.fromId) comp.add(x.fromId);
+        if(x.toId)   comp.add(x.toId);
+        cambiato = true;
+      }
+    });
+  }
+  return { conduttori:cond, componenti:comp };
+}
+function evidenziaCircuito(){
+  if(!S.selWire){ S.circuito = null; return; }
+  S.circuito = circuitoDi(S.selWire);
+}
+
 function setupCanvas(){
   cvs.addEventListener('dragover',e=>e.preventDefault());
   cvs.addEventListener('drop',e=>{
@@ -2125,6 +2327,7 @@ function onMove(e){
   }
 }
 function onUp(){
+  if(S.drag || S.railDrag || S.railResize) segnaCambio();
   if(S.pan){S.pan=null;return}
   if(S.railDrag){S.railDrag=null;return}
   if(S.railResize){S.railResize=null;return}
@@ -2136,6 +2339,8 @@ function onUp(){
     autoConnect();
     return;
   }
+  if(!S.drag && !S.railDrag && !S.railResize) return;
+  segnaCambio('trascina');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2145,7 +2350,10 @@ function place(cid,x,y,silent){
   const comp=CATALOG.find(c=>c.id===cid);if(!comp)return;
   const p={
     id:`p${S.nextId++}`,cid,x,y,
-    label:comp.name,tag:'',rot:0,
+    // Il tag se lo propose la convenzione IEC 81346-2: QF per un
+    // magnetotermico, KM per un contattore, X per un morsetto. Si
+    // cambia come si vuole, ma si parte gia' col nome giusto.
+    label:comp.name,tag:tagSuggerito(comp),rot:0,
     props:{In:'',Vn:'',curva:'',desc:'',cable:'',pot:'',lung:'',uso:'',fase:'',sens:''},
     portPos:{} // cache of absolute port positions
   };
@@ -2157,7 +2365,8 @@ function place(cid,x,y,silent){
   // try auto-connect to bus/neighbor
   autoConnect();
   updateSB();
-  if(!silent)toast(`${comp.name} agregado`);
+  if(!silent)toast(`${comp.name} aggiunto`);
+  segnaCambio('posa', p.id);
   return p;
 }
 
@@ -2188,6 +2397,7 @@ function renderP(p){
     });
     el.addEventListener('click',e=>{e.stopPropagation();sel(p.id)});
   }
+  if(S.circuito && S.circuito.componenti.has(p.id)) el.classList.add('nelcirc');
   el.style.left=p.x+'px';
   el.style.top=p.y+'px';
   el.style.transform=`rotate(${p.rot||0}deg)`;
@@ -2358,12 +2568,15 @@ function renderWires(){
     // hit
     const hit=document.createElementNS('http://www.w3.org/2000/svg','path');
     hit.setAttribute('d',pstr);hit.setAttribute('class','wire-hit');
-    hit.addEventListener('click',e=>{e.stopPropagation();S.selWire=w.id;desel();renderWires();});
+    hit.addEventListener('click',e=>{e.stopPropagation();S.selWire=w.id;desel();evidenziaCircuito();renderWires();renderAll();});
+  if(!w.id) S.circuito=null;
     // visible
     const line=document.createElementNS('http://www.w3.org/2000/svg','path');
     line.setAttribute('d',pstr);
     line.setAttribute('class',`wire-ph wire-${w.type}`);
-    line.setAttribute('stroke',isSel?'var(--ora)':col);
+    const nelCircuito = S.circuito && S.circuito.conduttori.has(w.id);
+    line.setAttribute('stroke',isSel?'var(--ora)':(nelCircuito?'#F4B720':col));
+    if(nelCircuito) line.setAttribute('stroke-width','2.6');
     line.setAttribute('stroke-width',isSel?'3':'2');
     if(w.type==='N')line.setAttribute('stroke-dasharray','8 4');
     if(w.type==='PE')line.setAttribute('stroke-dasharray','12 3 3 3');
@@ -2487,6 +2700,7 @@ function addDinRail(){
   renderRails();
   fitView();
   toast('Guida DIN aggiunta — trascinala per metterla a posto');
+    segnaCambio('guida');
 }
 
 function renderRails(){
@@ -2543,6 +2757,7 @@ function delRail(id){
   S.selRail=null;
   renderRails();
   toast('Guida eliminata');
+    segnaCambio('cancella');
 }
 
 // Snap a component vertically onto the nearest rail and clip-mount it
@@ -2583,6 +2798,7 @@ function sel(id){
   apriPropsSeMobile();
 }
 function desel(){
+  S.circuito=null;
   if(S.sel){const e=document.getElementById('pl_'+S.sel);if(e)e.classList.remove('sel')}
   S.sel=null;S.selWire=null;
   if(S.selRail){S.selRail=null;renderRails();}
@@ -2594,11 +2810,13 @@ function delById(id){
   S.wires=S.wires.filter(w=>w.fromId!==id&&w.toId!==id);
   document.getElementById('pl_'+id)?.remove();
   desel();renderWires();renderBridges();updateSB();
+    segnaCambio('cancella', id);
 }
 function delWire(){
   if(!S.selWire)return;
   S.wires=S.wires.filter(w=>w.id!==S.selWire);
   S.selWire=null;renderWires();updateSB();
+    segnaCambio('cancella');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2612,7 +2830,7 @@ function renderCompProps(id){
   <div class="rp-body">
     ${comp&&comp.specs&&comp.specs.length?`<div class="spec-block"><div class="spec-hdr">${esc(comp.name)}<span class="spec-cat">${esc(comp.cat)}</span></div>${comp.specs.map(s=>{const parts=s.split(':');return parts.length>1?`<div class="spec-line">▸ ${esc(parts[0])}: <b>${esc(parts.slice(1).join(':').trim())}</b></div>`:`<div class="spec-line">▸ ${esc(s)}</div>`}).join('')}</div>`:''}
     <div class="prow"><div class="plbl">Etichetta</div><input class="pinp" id="pr-lbl" value="${esc(p.label)}" oninput="upProp('label',this.value,'${id}')" aria-label="Etiqueta"></div>
-    <div class="prow"><div class="plbl">Tag / Riferimento</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')" aria-label="Tag / Riferimento"></div>
+    <div class="prow"><div class="plbl">Tag / Riferimento</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2, X1…" oninput="upProp('tag',this.value,'${id}')" aria-label="Tag / Riferimento"></div>
     <div class="psep"></div>
     <div class="prow"><div class="plbl">Corriente nominal</div><input class="pinp" id="pr-in" value="${esc(p.props.In||'')}" placeholder="16A, 63A…" oninput="upNested('In',this.value,'${id}')" aria-label="Corriente nominal"></div>
     <div class="pgrid2">
@@ -2655,14 +2873,15 @@ function renderCompProps(id){
     <button class="btn" style="width:100%;justify-content:center;background:rgba(231,76,60,.12);color:#e74c3c;border:1px solid rgba(231,76,60,.25)" onclick="delById('${id}')">🗑 Elimina</button>
   </div>`;
 }
-function upProp(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p[k]=v;renderP(p);const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');}
-function upNested(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p.props[k]=v;}
+function upProp(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p[k]=v;renderP(p);const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');segnaCambio('proprieta', id);}
+function upNested(k,v,id){const p=S.placed.find(p=>p.id===id);if(!p)return;p.props[k]=v;segnaCambio('proprieta', id);}
 function rot(id,deg){
   const p=S.placed.find(p=>p.id===id);if(!p)return;
   p.rot=((p.rot||0)+deg+360)%360;
   renderP(p);
   const e=document.getElementById('pl_'+id);if(e)e.classList.add('sel');
   setTimeout(()=>{updatePortCache(p);moveWires(p);renderWires();},50);
+  segnaCambio('ruota', id);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2792,6 +3011,7 @@ function loadProj(e){
       if(d.meta){document.getElementById('p-nom').value=d.meta.nom||'';document.getElementById('p-obra').value=d.meta.obra||'';document.getElementById('p-tec').value=d.meta.tec||'';}
       renderAll();renderWires();renderBridges();renderRails();updateSB();
       setTimeout(()=>{refreshAllPortCaches();renderWires();},200);
+      azzeraStorico();
       toast('Progetto caricato');
     }catch{toast('Errore nel caricamento');}
   };
@@ -2806,6 +3026,7 @@ function clearAll(){
   if(S.placed.length&&!confirm('Svuotare tutto?'))return;
   resetCanvas();
   desel();updateSB();toast('Tablero limpiado');
+    segnaCambio('svuota');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2946,6 +3167,13 @@ function setupKeys(){
     if(e.key==='-')doZoom(.83);
     if(e.key==='f'||e.key==='F')fitView();
   if(e.key==='v'||e.key==='V')apriVerifica();
+  // Annulla e risolto: con Ctrl e anche con Cmd, che è quello che c'è
+  // su Mac e sui tasti esterni su Windows.
+  if((e.ctrlKey||e.metaKey) && !e.shiftKey && (e.key==='z'||e.key==='Z')){ e.preventDefault(); annulla(); }
+  else if((e.ctrlKey||e.metaKey) && (e.key==='y'||e.key==='Y'||(e.shiftKey&&(e.key==='z'||e.key==='Z')))){ e.preventDefault(); ripristina(); }
+  else if((e.ctrlKey||e.metaKey) && (e.key==='c'||e.key==='C') && S.sel){ e.preventDefault(); copiaSelezionato(); }
+  else if((e.ctrlKey||e.metaKey) && (e.key==='v'||e.key==='V') && APP.copia){ e.preventDefault(); incollaCopione(); }
+  else if(e.key==='Escape'){ chiudiFogli(); }
   });
   document.getElementById('mpdf').addEventListener('click',e=>{if(e.target===e.currentTarget)closePDF()});
   document.getElementById('mver').addEventListener('click',e=>{if(e.target===e.currentTarget)chiudiVerifica()});
@@ -3389,6 +3617,7 @@ function assegnaValori(){
     if(p.props.lung===undefined || p.props.lung==='') p.props.lung = ruoloDi(c)==='carico' ? '25' : '—';
     n++;
   });
+  segnaCambio('valori');
   renderAll(); updateSB();
   toast(n? `Valori tipici assegnati a ${n} componenti${senza? `, ${senza} senza valori tipici`:''}` : 'Nessun componente riconosciuto', n?'ok':'err');
 }
