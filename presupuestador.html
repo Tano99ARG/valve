@@ -17,33 +17,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 <style>
 :root{
-  --navy:#1B2A4A; --navy2:#1a2235; --navy3:#0f1623;
-  --ora:#00D4AA; --ora2:#FFF0E0;
-  --txt:#e8eaf0; --dim:#8899bb; --muted:#4a5a7a;
-  --brd:#2a3550; --grn:#2a5c2a; --grnT:#7fd87f;
+  /* Palette Valve, come negli altri moduli. --grn e --grnT restano
+     propri perche' servono al verde di conferma, non al colore del brand. */
+  --black:#0a0c12; --surf:#11141d; --panel:#171b27; --card:#1d2130; --card2:#222740;
+  --b1:#2a2e42; --b2:#363b56;
+  --ora:#00D4AA; --ora2:#ff9a3c; --blu:#008F6E; --blu2:#6aaee8;
+  --w:#eef0f8; --dim:#8089a8; --mut:#454d6a;
+  --grn:#2ecc71; --grnT:#7fd87f;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{font-family:'Barlow',sans-serif;background:var(--navy3);color:var(--txt);font-size:14px;line-height:1.5}
+body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--w);font-size:14px;line-height:1.5}
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:var(--navy3)}
+::-webkit-scrollbar-track{background:var(--surf)}
 ::-webkit-scrollbar-thumb{background:var(--ora);border-radius:3px}
-input,select,textarea{font-family:inherit;font-size:13px;color:var(--txt);background:var(--navy3);border:1px solid var(--brd);border-radius:6px;padding:8px 12px;outline:none;transition:border-color .15s;width:100%}
+input,select,textarea{font-family:inherit;font-size:13px;color:var(--w);background:var(--surf);border:1px solid var(--b1);border-radius:6px;padding:8px 12px;outline:none;transition:border-color .15s;width:100%}
 input:focus,select:focus,textarea:focus{border-color:var(--ora)}
 input[type="number"]{-moz-appearance:textfield}
 input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type="radio"]{width:auto;accent-color:var(--ora)}
-select option{background:var(--navy2)}
+select option{background:var(--black)}
 
 /* NAV */
-.nav{position:sticky;top:0;z-index:200;background:var(--navy2);border-bottom:2px solid var(--ora);display:flex;align-items:center;padding:0 16px;flex-wrap:wrap;gap:0}
+.nav{position:sticky;top:0;z-index:200;background:var(--black);border-bottom:2px solid var(--ora);display:flex;align-items:center;padding:0 16px;flex-wrap:wrap;gap:0}
 .nav-brand{display:flex;align-items:center;gap:9px;padding:9px 0;margin-right:20px;flex-shrink:0}
 .nav-logo{width:33px;height:33px;background:linear-gradient(135deg,#2e6ee6,var(--ora));border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#fff;letter-spacing:.5px;line-height:1.2;text-align:center;flex-direction:column}
 .nav-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;color:#fff;letter-spacing:1px;white-space:nowrap}
 .nav-name span{color:var(--ora)}
 .nav-tabs{display:flex}
 .nav-tab{padding:11px 16px;background:none;border:none;color:var(--dim);font-weight:500;font-size:13px;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
-.nav-tab:hover{color:var(--txt)}
+.nav-tab:hover{color:var(--w)}
 .nav-tab.active{color:var(--ora);font-weight:700;border-bottom-color:var(--ora)}
 .nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
 .badge{background:var(--ora);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
@@ -52,9 +55,9 @@ select option{background:var(--navy2)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:7px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;text-decoration:none}
 .btn-primary{background:var(--ora);color:#fff}
 .btn-primary:hover{background:#e06810}
-.btn-secondary{background:var(--navy);border:1.5px solid var(--ora);color:var(--ora)}
+.btn-secondary{background:var(--panel);border:1.5px solid var(--ora);color:var(--ora)}
 .btn-secondary:hover{background:#1e3060}
-.btn-ghost{background:none;border:1px solid var(--brd);color:var(--dim)}
+.btn-ghost{background:none;border:1px solid var(--b1);color:var(--dim)}
 .btn-ghost:hover{border-color:var(--ora);color:var(--ora)}
 .btn-sm{padding:5px 10px;font-size:12px;border-radius:5px}
 .btn-del{display:flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;background:rgba(220,80,80,.13);border:1.5px solid rgba(220,80,80,.45);border-radius:8px;color:#e07070;cursor:pointer;font-size:16px;line-height:1;padding:0;transition:all .15s;font-family:inherit}
@@ -62,50 +65,50 @@ select option{background:var(--navy2)}
 .btn-del:active{transform:scale(.92)}
 
 /* CARDS */
-.card{background:var(--navy2);border:1px solid var(--brd);border-radius:10px;padding:14px}
+.card{background:var(--black);border:1px solid var(--b1);border-radius:10px;padding:14px}
 .card-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--ora);letter-spacing:1px;margin-bottom:11px;display:flex;align-items:center;gap:8px}
 
 /* LAYOUT */
 #view-builder{display:grid;grid-template-columns:1fr 355px;min-height:calc(100vh - 52px)}
 .bleft{padding:18px;overflow-y:auto;max-height:calc(100vh - 52px)}
-.bright{background:var(--navy2);border-left:1px solid var(--brd);padding:14px;overflow-y:auto;max-height:calc(100vh - 52px);display:flex;flex-direction:column;gap:12px;position:sticky;top:52px}
+.bright{background:var(--black);border-left:1px solid var(--b1);padding:14px;overflow-y:auto;max-height:calc(100vh - 52px);display:flex;flex-direction:column;gap:12px;position:sticky;top:52px}
 
 /* SEARCH */
 .srow{display:flex;gap:8px;margin-bottom:12px}
 .swrap{flex:1;position:relative}
 .swrap input{padding-left:34px}
-.sico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.sico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:14px;pointer-events:none}
 .cpills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
-.cpill{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid var(--brd);color:var(--muted);cursor:pointer;transition:all .15s;background:none;font-family:inherit}
+.cpill{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:600;border:1.5px solid var(--b1);color:var(--mut);cursor:pointer;transition:all .15s;background:none;font-family:inherit}
 .cpill:hover{border-color:var(--ora);color:var(--ora)}
 .cpill.act{background:var(--ora);border-color:var(--ora);color:#fff}
 .clist{display:flex;flex-direction:column;gap:4px}
-.citem{display:flex;align-items:center;gap:10px;background:var(--navy2);border:1px solid var(--brd);border-radius:7px;padding:9px 12px;cursor:pointer;transition:all .15s}
+.citem{display:flex;align-items:center;gap:10px;background:var(--black);border:1px solid var(--b1);border-radius:7px;padding:9px 12px;cursor:pointer;transition:all .15s}
 .citem:hover{border-color:var(--ora);transform:translateX(2px)}
 .citem.inc{background:#1c2d1c;border-color:#3a6a3a}
-.icode{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--ora);background:var(--navy3);padding:3px 6px;border-radius:4px;min-width:64px;text-align:center;flex-shrink:0}
+.icode{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--ora);background:var(--surf);padding:3px 6px;border-radius:4px;min-width:64px;text-align:center;flex-shrink:0}
 .iinfo{flex:1;min-width:0}
-.iname{font-weight:600;font-size:12px;color:var(--txt);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iname{font-weight:600;font-size:12px;color:var(--w);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .iname.inc{color:var(--grnT)}
-.idesc{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idesc{font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .imeta{text-align:right;min-width:82px;flex-shrink:0}
 .iprice{font-weight:700;font-size:12px;color:var(--ora)}
-.itime{font-size:10px;color:var(--muted)}
-.iadd{width:26px;height:26px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--navy);border:1px solid var(--ora);color:var(--ora)}
+.itime{font-size:10px;color:var(--mut)}
+.iadd{width:26px;height:26px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--panel);border:1px solid var(--ora);color:var(--ora)}
 .iadd.added{background:#253825;border-color:var(--grnT);color:var(--grnT)}
 
 /* CART */
 .citems{display:flex;flex-direction:column;gap:7px}
-.crt{background:var(--navy3);border:1px solid var(--brd);border-radius:7px;padding:9px 11px}
+.crt{background:var(--surf);border:1px solid var(--b1);border-radius:7px;padding:9px 11px}
 .crth{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;gap:6px}
 .crtcode{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--ora)}
-.crtname{font-size:12px;font-weight:600;color:var(--txt);line-height:1.3}
+.crtname{font-size:12px;font-weight:600;color:var(--w);line-height:1.3}
 .crtrow{display:flex;align-items:center;gap:6px}
-.qctrl{display:flex;align-items:center;gap:1px;background:var(--navy2);border-radius:5px;padding:2px 3px;flex-shrink:0}
+.qctrl{display:flex;align-items:center;gap:1px;background:var(--black);border-radius:5px;padding:2px 3px;flex-shrink:0}
 .qbtn{background:none;border:none;color:var(--ora);cursor:pointer;font-size:15px;padding:0 4px;line-height:1;font-family:inherit}
 .qval{font-size:12px;min-width:20px;text-align:center}
 .pwrap{position:relative;flex:1}
-.pwrap .psym{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px}
+.pwrap .psym{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:11px}
 .pwrap input{padding-left:16px;font-size:12px}
 .crtsub{font-size:12px;font-weight:700;color:var(--ora);min-width:76px;text-align:right;flex-shrink:0}
 
@@ -116,20 +119,20 @@ select option{background:var(--navy2)}
 .matrow .mqty{width:52px;text-align:center}
 .matrow .mprice{width:100px}
 .mprw{position:relative}
-.mprw .psym{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:11px}
+.mprw .psym{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--mut);font-size:11px}
 .mprw input{padding-left:15px}
 .matsub{font-size:11px;color:var(--ora);font-weight:700;min-width:70px;text-align:right;flex-shrink:0}
 
 /* TOTALS */
 .totbox{display:flex;flex-direction:column;gap:4px}
 .trow{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:3px 0}
-.trow.sub{color:var(--dim);border-bottom:1px solid var(--brd);padding-bottom:7px}
-.trow.grand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:19px;color:var(--ora);background:var(--navy);border-radius:7px;padding:9px 13px !important;margin-top:4px}
+.trow.sub{color:var(--dim);border-bottom:1px solid var(--b1);padding-bottom:7px}
+.trow.grand{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:19px;color:var(--ora);background:var(--panel);border-radius:7px;padding:9px 13px !important;margin-top:4px}
 
 /* DISCOUNT */
 .discrow{display:flex;gap:7px;align-items:center}
-.dtbtns{display:flex;border-radius:5px;overflow:hidden;border:1px solid var(--brd);flex-shrink:0}
-.dtbtn{padding:6px 11px;font-size:12px;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--muted);transition:all .15s}
+.dtbtns{display:flex;border-radius:5px;overflow:hidden;border:1px solid var(--b1);flex-shrink:0}
+.dtbtn{padding:6px 11px;font-size:12px;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;color:var(--mut);transition:all .15s}
 .dtbtn.act{background:var(--ora);color:#fff}
 
 /* PREVIEW */
@@ -137,7 +140,7 @@ select option{background:var(--navy2)}
 #view-preview.show{display:block}
 .pacts{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
 .docwrap{max-width:820px;margin:0 auto;background:#fff;color:#16162A;border-radius:3px;box-shadow:0 8px 48px rgba(0,0,0,.6);overflow:hidden}
-.dochdr{background:var(--navy);padding:18px 26px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.dochdr{background:var(--panel);padding:18px 26px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .docconame{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:#fff;letter-spacing:2px}
 .docconame span{color:var(--ora)}
 .doccosub{font-size:10px;color:#aabbd0;margin-top:2px}
@@ -149,11 +152,11 @@ select option{background:var(--navy2)}
 .docobar{height:3px;background:var(--ora)}
 .docbody{padding:18px 26px}
 .docsec{margin-bottom:14px}
-.docsect{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--navy);letter-spacing:1px;border-bottom:1.5px solid var(--navy);padding-bottom:3px;margin-bottom:7px}
+.docsect{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--panel);letter-spacing:1px;border-bottom:1.5px solid var(--panel);padding-bottom:3px;margin-bottom:7px}
 .docgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;font-size:11px}
 .docgrid .lbl{color:#8899AA;font-weight:600}
 table.dtbl{width:100%;border-collapse:collapse;font-size:11px}
-table.dtbl th{background:var(--navy);color:#fff;padding:7px 9px;text-align:left;font-size:10px;letter-spacing:.3px}
+table.dtbl th{background:var(--panel);color:#fff;padding:7px 9px;text-align:left;font-size:10px;letter-spacing:.3px}
 table.dtbl th.r{text-align:right}
 table.dtbl th.c{text-align:center}
 table.dtbl td{padding:6px 9px;border-bottom:1px solid #eee}
@@ -161,28 +164,28 @@ table.dtbl td.r{text-align:right}
 table.dtbl td.c{text-align:center}
 table.dtbl tr:nth-child(even) td{background:#f8f9fc}
 .tcod{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;color:var(--ora)}
-.tnam{font-weight:600;color:var(--navy);font-size:11px}
+.tnam{font-weight:600;color:var(--panel);font-size:11px}
 .tdsc{font-size:9px;color:#999;margin-top:1px}
 .doctots{display:flex;justify-content:flex-end;margin-bottom:14px}
 .doctotsin{min-width:255px}
 .tot-r{display:flex;justify-content:space-between;padding:5px 0;font-size:11px;border-bottom:1px solid #eee}
-.tot-grand{display:flex;justify-content:space-between;background:var(--navy);color:#fff;border-radius:5px;padding:9px 13px;margin-top:7px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px}
+.tot-grand{display:flex;justify-content:space-between;background:var(--panel);color:#fff;border-radius:5px;padding:9px 13px;margin-top:7px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px}
 .tot-grand span:last-child{color:var(--ora)}
 .doccg{display:grid;grid-template-columns:1fr 1fr;gap:5px 18px;font-size:10px}
 .doccg .lbl{color:#8899AA;font-weight:600}
 .docnotes{font-size:10px;font-style:italic;color:#666;margin-top:5px}
 .docsigs{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin:28px 0 12px}
-.docsig{border-top:1.5px solid var(--navy);padding-top:5px;text-align:center;font-size:10px;color:#8899AA}
-.docftr{background:var(--navy);padding:9px 26px;text-align:center;font-size:9px;color:#6a7a9a;border-top:2px solid var(--ora)}
+.docsig{border-top:1.5px solid var(--panel);padding-top:5px;text-align:center;font-size:10px;color:#8899AA}
+.docftr{background:var(--panel);padding:9px 26px;text-align:center;font-size:9px;color:#6a7a9a;border-top:2px solid var(--ora)}
 
 /* EMPTY */
-.empty{text-align:center;padding:32px 16px;color:var(--muted)}
+.empty{text-align:center;padding:32px 16px;color:var(--mut)}
 .eico{font-size:36px;margin-bottom:8px;opacity:.5}
 
 /* RESPONSIVE */
 @media(max-width:768px){
   #view-builder{grid-template-columns:1fr}
-  .bright{position:static;max-height:none;border-left:none;border-top:1px solid var(--brd)}
+  .bright{position:static;max-height:none;border-left:none;border-top:1px solid var(--b1)}
   .bleft{max-height:none}
   .nav-tab{padding:9px 11px;font-size:12px}
   .nav-name{font-size:13px}
@@ -214,7 +217,7 @@ table.dtbl tr:nth-child(even) td{background:#f8f9fc}
   /* catalogo: niente troncamento, si legge tutto */
   .icode{font-size:12px;min-width:72px;padding:5px 7px}
   .iname{font-size:15px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.35;margin-bottom:3px}
-  .idesc{font-size:13px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45;color:var(--muted)}
+  .idesc{font-size:13px;white-space:normal;overflow:visible;text-overflow:clip;line-height:1.45;color:var(--mut)}
   .clist{gap:7px}
   .citem{padding:12px;gap:11px;align-items:flex-start}
   .iprice{font-size:15px}
@@ -287,9 +290,12 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Preventivatore</h1>
 
 <div class="toast" id="toast"><span id="toast-msg"></span><button class="toast-act" id="toast-act">Annulla</button></div>
 <!-- NAV -->
@@ -319,7 +325,7 @@ body {
         <span class="sico">🔍</span>
         <input id="srch" type="text" placeholder="Cerca per codice, nome o descrizione..." oninput="rCat()" aria-label="Cerca">
       </div>
-      <select id="csel" onchange="rCat()" style="width:auto;min-width:130px"></select>
+      <select id="csel" onchange="rCat()" style="width:auto;min-width:130px" aria-label="Modalita di pagamento"></select>
     </div>
     <div class="cpills" id="pills"></div>
     <div class="clist" id="clist"></div>
@@ -332,15 +338,15 @@ body {
     <div class="card">
       <div class="card-title">👤 DATI DEL CLIENTE</div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <input id="cn" placeholder="Nome / Ragione sociale" oninput="syncPreview()">
-        <input id="ca" placeholder="Indirizzo e località" oninput="syncPreview()">
+        <input id="cn" placeholder="Nome / Ragione sociale" oninput="syncPreview()" aria-label="Nome / Ragione sociale">
+        <input id="ca" placeholder="Indirizzo e località" oninput="syncPreview()" aria-label="Indirizzo e località">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-          <input id="cp" placeholder="Telefono" oninput="syncPreview()">
-          <input id="ce" placeholder="Email" oninput="syncPreview()">
+          <input id="cp" placeholder="Telefono" oninput="syncPreview()" aria-label="Telefono">
+          <input id="ce" placeholder="Email" oninput="syncPreview()" aria-label="Email">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
-          <input id="cc" placeholder="P. IVA (opzionale)" oninput="syncPreview()">
-          <input id="proj" placeholder="Cantiere / Progetto" oninput="syncPreview()">
+          <input id="cc" placeholder="P. IVA (opzionale)" oninput="syncPreview()" aria-label="P. IVA (opzionale)">
+          <input id="proj" placeholder="Cantiere / Progetto" oninput="syncPreview()" aria-label="Cantiere / Progetto">
         </div>
       </div>
     </div>
@@ -348,7 +354,7 @@ body {
     <!-- MANO DE OBRA -->
     <div class="card">
       <div class="card-title">🔧 MANODOPERA
-        <span style="margin-left:auto;font-weight:400;font-size:10px;color:var(--muted)">clicca nel catalogo</span>
+        <span style="margin-left:auto;font-weight:400;font-size:10px;color:var(--mut)">clicca nel catalogo</span>
       </div>
       <div class="citems" id="citems">
         <div class="empty"><div class="eico">📋</div><div style="font-size:12px">Nessuna voce</div></div>
@@ -362,9 +368,9 @@ body {
         <button class="btn btn-ghost btn-sm" onclick="addMat()">+ Aggiungi</button>
       </div>
       <div id="matrows">
-        <div style="font-size:12px;color:var(--muted);text-align:center;padding:6px 0">Nessun materiale caricato</div>
+        <div style="font-size:12px;color:var(--mut);text-align:center;padding:6px 0">Nessun materiale caricato</div>
       </div>
-      <div id="matsub" style="display:none;text-align:right;font-size:12px;color:var(--dim);margin-top:7px;padding-top:7px;border-top:1px solid var(--brd)">
+      <div id="matsub" style="display:none;text-align:right;font-size:12px;color:var(--dim);margin-top:7px;padding-top:7px;border-top:1px solid var(--b1)">
         Subtotale materiali: <strong id="matsubv" style="color:var(--ora)">€0</strong>
       </div>
     </div>
@@ -375,20 +381,20 @@ body {
       <div class="totbox">
         <div class="trow sub"><span>Subtotale M.O.</span><span id="tmo">€0</span></div>
         <div class="trow" style="color:var(--dim)"><span>Subtotale materiali</span><span id="tmat">€0</span></div>
-        <div class="trow" style="padding:7px 0;border-bottom:1px solid var(--brd)">
-          <span style="font-size:11px;color:var(--muted)">Sconto</span>
+        <div class="trow" style="padding:7px 0;border-bottom:1px solid var(--b1)">
+          <span style="font-size:11px;color:var(--mut)">Sconto</span>
           <div class="discrow">
             <div class="dtbtns">
               <button class="dtbtn act" id="dP" onclick="setDT('%')">%</button>
               <button class="dtbtn" id="dF" onclick="setDT('€')">€</button>
             </div>
-            <input type="number" id="dval" value="0" min="0" style="width:68px;text-align:right" oninput="recalc()">
+            <input type="number" id="dval" value="0" min="0" style="width:68px;text-align:right" oninput="recalc()" aria-label="Valore dello sconto">
             <span id="dlbl" style="font-size:11px;color:#e08040;min-width:64px;text-align:right"></span>
           </div>
         </div>
         <div class="trow grand"><span>TOTALE</span><span id="tgrand">€0</span></div>
       </div>
-      <p style="font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:9px;padding-top:8px;border-top:1px solid var(--brd)">
+      <p style="font-size:10.5px;color:var(--mut);line-height:1.5;margin-top:9px;padding-top:8px;border-top:1px solid var(--b1)">
         I prezzi del listino sono <strong>indicativi e riferiti alla media di mercato 2026</strong>, IVA esclusa.
         Il preventivo definitivo emana sempre dal sopralluogo tecnico.
       </p>
@@ -399,7 +405,7 @@ body {
       <div class="card-title">⚙️ OPZIONI DEL DOCUMENTO</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:5px">Tipo di documento</div>
+          <div style="font-size:11px;color:var(--mut);margin-bottom:5px">Tipo di documento</div>
           <div style="display:flex;gap:14px">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
               <input type="radio" name="dt" value="presupuesto" checked onchange="setDT2(this.value)"> Preventivo
@@ -410,8 +416,8 @@ body {
           </div>
         </div>
         <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Modalità di pagamento</div>
-          <select id="pay" onchange="syncPreview()">
+          <div style="font-size:11px;color:var(--mut);margin-bottom:4px">Modalità di pagamento</div>
+          <select id="pay" onchange="syncPreview()" aria-label="Come si paga">
             <option>50% acconto — 50% a completamento</option>
             <option>100% all'inizio del lavoro</option>
             <option>100% a completamento</option>
@@ -420,17 +426,17 @@ body {
           </select>
         </div>
         <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Note / Osservazioni</div>
-          <textarea id="notes" rows="2" placeholder="Chiarimenti, condizioni speciali..." oninput="syncPreview()" style="resize:vertical"></textarea>
+          <div style="font-size:11px;color:var(--mut);margin-bottom:4px">Note / Osservazioni</div>
+          <textarea id="notes" rows="2" placeholder="Chiarimenti, condizioni speciali..." oninput="syncPreview()" style="resize:vertical" aria-label="Chiarimenti e condizioni"></textarea>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Validità (giorni)</div>
-            <input type="number" id="valid" value="30" min="1" oninput="syncPreview()">
+            <div style="font-size:11px;color:var(--mut);margin-bottom:4px">Validità (giorni)</div>
+            <input type="number" id="valid" value="30" min="1" oninput="syncPreview()" aria-label="Validità (giorni)">
           </div>
           <div>
-            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">N° documento</div>
-            <input type="text" id="pnum" oninput="syncPreview()">
+            <div style="font-size:11px;color:var(--mut);margin-bottom:4px">N° documento</div>
+            <input type="text" id="pnum" oninput="syncPreview()" aria-label="N° documento">
           </div>
         </div>
       </div>
@@ -783,7 +789,7 @@ function updMat(id,f,v){
 }
 function renderMats(){
   if(!mats.length){
-    $('matrows').innerHTML=`<div style="font-size:12px;color:var(--muted);text-align:center;padding:6px 0">Nessun materiale caricato</div>`;
+    $('matrows').innerHTML=`<div style="font-size:12px;color:var(--mut);text-align:center;padding:6px 0">Nessun materiale caricato</div>`;
     $('matsub').style.display='none';recalc();return;
   }
   $('matrows').innerHTML=mats.map(m=>`
@@ -897,7 +903,7 @@ function buildPreview(){
       <td class="c">u.</td>
       <td class="c">${it.qty}</td>
       <td class="r">${fmt(it.unitPrice)}</td>
-      <td class="r" style="font-weight:700;color:var(--navy)">${fmt(it.unitPrice*it.qty)}</td>
+      <td class="r" style="font-weight:700;color:var(--panel)">${fmt(it.unitPrice*it.qty)}</td>
     </tr>`).join('');
 
   const matRows=mats.filter(m=>m.desc||m.price>0).map(m=>`
@@ -1052,7 +1058,7 @@ function renderIns(){
 
   const box = $('insList');
   if(!rows.length){
-    box.innerHTML = '<div style="text-align:center;padding:34px 14px;color:var(--muted);font-size:13px">' +
+    box.innerHTML = '<div style="text-align:center;padding:34px 14px;color:var(--mut);font-size:13px">' +
       'Nessun articolo corrisponde alla ricerca.</div>';
     return;
   }
@@ -1737,7 +1743,7 @@ if ('serviceWorker' in navigator) {
 </script>
 <!-- ══════════ LISTINO INSUMI ══════════ -->
 <div id="insOverlay" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.66)">
-  <div style="position:absolute;left:0;right:0;bottom:0;max-height:92vh;background:var(--navy2,#1d2130);
+  <div style="position:absolute;left:0;right:0;bottom:0;max-height:92vh;background:var(--black,#1d2130);
     border-radius:14px 14px 0 0;border-top:1px solid #2a2e42;display:flex;flex-direction:column">
     <div style="padding:12px 14px;border-bottom:1px solid #2a2e42">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
@@ -1746,7 +1752,7 @@ if ('serviceWorker' in navigator) {
       </div>
       <div class="srow" style="position:relative;margin-bottom:9px">
         <input id="insq" type="search" placeholder="Cerca tubo, cavo, 12, 0,6 mm…"
-          oninput="renderIns()" style="width:100%;background:var(--navy3,#11141d);border:1px solid #2a2e42;
+          oninput="renderIns()" style="width:100%;background:var(--surf,#11141d);border:1px solid #2a2e42;
           color:#eef0f8;padding:12px 12px 12px 36px;border-radius:8px;font-size:15px;outline:none" aria-label="Cerca tubo, cavo, 12, 0,6 mm…">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#8089a8">🔍</span>
       </div>

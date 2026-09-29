@@ -150,21 +150,21 @@ canvas.sig{background:#f8f9fb;border:1px solid var(--b1);border-radius:4px;width
       <div class="fgrid">
         <div class="fld"><label class="flbl" for="tecnico">Tecnico</label><input class="inp" id="tecnico" placeholder="Nome installatore"></div>
         <div class="fld"><label class="flbl" for="tipo-lavoro">Tipo di intervento</label>
-          <select class="sel" id="tipo-lavoro">
+          <select class="sel" id="tipo-lavoro" aria-label="Tipo di intervento">
             <option>Nuova installazione</option>
             <option>Sostituzione di impianto esistente</option>
             <option>Spostamento parabola esistente</option>
             <option>Assistenza / ricerca guasti</option>
           </select></div>
         <div class="fld"><label class="flbl" for="piano">Servizio</label>
-          <select class="sel" id="piano">
+          <select class="sel" id="piano" aria-label="Servizio">
             <option>Standard</option>
             <option>Performance</option>
             <option>High Performance</option>
             <option>Roam (veicolo)</option>
           </select></div>
         <div class="fld"><label class="flbl" for="kit">Composizione del kit</label>
-          <select class="sel" id="kit">
+          <select class="sel" id="kit" aria-label="Composizione del kit">
             <option>Solo parabola + router</option>
             <option>Parabola + router + kit secondario</option>
             <option>Accessori: PoE / switch / prolunga</option>
@@ -370,7 +370,7 @@ function buildSection(n){
         '<button class="copt na"   data-st="na"  data-id="' + id + '">N/A</button>' +
       '</div>' +
       '<div class="citem-note" id="note-' + id + '">' +
-        '<input type="text" placeholder="Annotazione per questo punto" data-note="' + id + '">' +
+        '<input type="text" placeholder="Annotazione per questo punto" data-note="' + id + '" aria-label="Annotazione">' +
       '</div>';
     box.appendChild(el);
   });

@@ -16,18 +16,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 <style>
 :root{
-  --bg:#0c0e16;--surf:#12151f;--panel:#181b28;--card:#1e2235;--card2:#222640;
-  --b1:#2a2e45;--b2:#353a58;--b3:#454a68;
+  /* Palette Valve allineata agli altri moduli. --b3, --pur, --L1..3,
+     --N, --PE, --PH restano: sono colori di livello e di fase. */
+  --black:#0a0c12;--surf:#11141d;--panel:#171b27;--card:#1d2130;--card2:#222740;
+  --b1:#2a2e42;--b2:#363b56;--b3:#454a68;
   --ora:#00D4AA;--ora2:#ff9a3c;--blu:#008F6E;--blu2:#6aaee8;
-  --grn:#27ae60;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;
-  --w:#e8eaf4;--dim:#7a82a8;--mut:#3a3f5a;
+  --grn:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pur:#9b59b6;
+  --w:#eef0f8;--dim:#8089a8;--mut:#454d6a;
   --L1:#c0392b;--L2:#27ae60;--L3:#2980b9;
   --N:#3498db;--PE:#27ae60;--PH:#c0392b;
   --fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif;--fm:'Share Tech Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;display:flex;flex-direction:column;user-select:none}
+body{background:var(--black);color:var(--w);font-family:var(--fb);font-size:13px;display:flex;flex-direction:column;user-select:none}
 
 /* ── TOPBAR ── */
 .topbar{height:48px;background:var(--surf);border-bottom:1px solid var(--b1);display:flex;align-items:center;flex-shrink:0;z-index:60}
@@ -75,7 +77,7 @@ body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;di
 .comp-info .cs{font-size:.65rem;color:var(--dim);margin-top:1px}
 
 /* ── CANVAS AREA ── */
-.ca{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.ca{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--black)}
 .ctb{height:36px;background:var(--panel);border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:4px;padding:0 10px;flex-shrink:0}
 .tb-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:3px;cursor:pointer;color:var(--dim);font-size:.85rem;transition:all .15s}
 .tb-btn:hover{background:var(--card);color:var(--w);border-color:var(--b1)}
@@ -95,12 +97,12 @@ body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;di
 
 .cscroll{flex:1;overflow:auto;position:relative;cursor:crosshair}
 .cscroll::-webkit-scrollbar{width:8px;height:8px}
-.cscroll::-webkit-scrollbar-track{background:var(--bg)}
+.cscroll::-webkit-scrollbar-track{background:var(--black)}
 .cscroll::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
 
 #cvs{
   position:relative;width:3200px;height:2400px;
-  background-color:var(--bg);
+  background-color:var(--black);
   background-image:
     linear-gradient(rgba(74,142,194,.06) 1px,transparent 1px),
     linear-gradient(90deg,rgba(74,142,194,.06) 1px,transparent 1px),
@@ -122,7 +124,7 @@ body{background:var(--bg);color:var(--w);font-family:var(--fb);font-size:13px;di
 .placed.sel .del-btn{display:flex}
 
 /* ── PORTS ── */
-.port{position:absolute;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);cursor:crosshair;transition:transform .1s,background .1s;z-index:5}
+.port{position:absolute;width:9px;height:9px;border-radius:50%;border:2px solid var(--black);cursor:crosshair;transition:transform .1s,background .1s;z-index:5}
 .port:hover,.port.active{transform:scale(1.6);z-index:6}
 .port[data-t="L1"]{background:var(--L1)}
 .port[data-t="L2"]{background:var(--L2)}
@@ -267,9 +269,12 @@ body {
   .tb-brand{font-size:.8rem}
   .btn{font-size:.7rem;padding:8px 10px}
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Editor quadri elettrici</h1>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -344,17 +349,17 @@ body {
   <div class="rp-hdr">Proprietà</div>
   <!-- PROYECTO siempre visible -->
   <div class="rp-body" id="proj-fields">
-    <div class="prow"><div class="plbl">Quadro</div><input class="pinp" id="p-nom" type="text" placeholder="Quadro Generale"></div>
-    <div class="prow"><div class="plbl">Cantiere / Cliente</div><input class="pinp" id="p-obra" type="text" placeholder="Indirizzo o cliente"></div>
+    <div class="prow"><div class="plbl">Quadro</div><input class="pinp" id="p-nom" type="text" placeholder="Quadro Generale" aria-label="Quadro"></div>
+    <div class="prow"><div class="plbl">Cantiere / Cliente</div><input class="pinp" id="p-obra" type="text" placeholder="Indirizzo o cliente" aria-label="Cantiere / Cliente"></div>
     <div class="pgrid2">
       <div class="prow"><div class="plbl">Tensione</div>
-        <select class="pinp pinp-sel" id="p-ten"><option>220V</option><option>380V</option><option>220/380V</option><option>110V</option></select>
+        <select class="pinp pinp-sel" id="p-ten" aria-label="Tensione"><option>220V</option><option>380V</option><option>220/380V</option><option>110V</option></select>
       </div>
       <div class="prow"><div class="plbl">Sistema</div>
-        <select class="pinp pinp-sel" id="p-sis"><option>Monofásico</option><option>Trifásico</option><option>Bifásico</option></select>
+        <select class="pinp pinp-sel" id="p-sis" aria-label="Sistema"><option>Monofásico</option><option>Trifásico</option><option>Bifásico</option></select>
       </div>
     </div>
-    <div class="prow"><div class="plbl">Tecnico</div><input class="pinp" id="p-tec" type="text" placeholder="Nome"></div>
+    <div class="prow"><div class="plbl">Tecnico</div><input class="pinp" id="p-tec" type="text" placeholder="Nome" aria-label="Tecnico"></div>
   </div>
   <div class="psep" style="margin:0 12px"></div>
   <!-- Propiedades del componente seleccionado -->
@@ -381,18 +386,18 @@ body {
     <div class="mtitle">Esporta planimetria PDF</div>
     <div class="mrow"><label class="mlbl" for="pdf-tit">Titolo della planimetria</label><input class="minp" id="pdf-tit" type="text" placeholder="Planimetria quadro elettrico"></div>
     <div class="mgrid2">
-      <div class="mrow"><label class="mlbl">N° planimetria</label><input class="minp" id="pdf-num" type="text" placeholder="PE-001"></div>
-      <div class="mrow"><label class="mlbl">Revisione</label><input class="minp" id="pdf-rev" type="text" placeholder="A"></div>
+      <div class="mrow"><label class="mlbl">N° planimetria</label><input class="minp" id="pdf-num" type="text" placeholder="PE-001" aria-label="PE-001"></div>
+      <div class="mrow"><label class="mlbl">Revisione</label><input class="minp" id="pdf-rev" type="text" placeholder="A" aria-label="Revisione"></div>
     </div>
     <div class="mgrid2">
       <div class="mrow"><label class="mlbl">Foglio</label>
-        <select class="minp" id="pdf-hoja"><option>A4 Orizzontale</option><option>A4 Verticale</option><option>A3 Orizzontale</option></select>
+        <select class="minp" id="pdf-hoja" aria-label="Formato della pagina"><option>A4 Orizzontale</option><option>A4 Verticale</option><option>A3 Orizzontale</option></select>
       </div>
       <div class="mrow"><label class="mlbl">Scala</label>
-        <select class="minp" id="pdf-esc"><option>S/E</option><option>1:10</option><option>1:20</option><option>1:50</option></select>
+        <select class="minp" id="pdf-esc" aria-label="Scala"><option>S/E</option><option>1:10</option><option>1:20</option><option>1:50</option></select>
       </div>
     </div>
-    <div class="mrow"><label class="mlbl">Osservazioni</label><input class="minp" id="pdf-obs" type="text" placeholder="Note per il cartellino"></div>
+    <div class="mrow"><label class="mlbl">Osservazioni</label><input class="minp" id="pdf-obs" type="text" placeholder="Note per il cartellino" aria-label="Note per il cartellino"></div>
     <div class="macts">
       <button class="btn btn-ghost" onclick="closePDF()">Annulla</button>
       <button class="btn btn-ora" onclick="genPDF()">📄 Genera PDF</button>
@@ -2184,16 +2189,16 @@ function renderCompProps(id){
   el.innerHTML=`
   <div class="rp-body">
     ${comp&&comp.specs&&comp.specs.length?`<div class="spec-block"><div class="spec-hdr">${esc(comp.name)}<span class="spec-cat">${esc(comp.cat)}</span></div>${comp.specs.map(s=>{const parts=s.split(':');return parts.length>1?`<div class="spec-line">▸ ${esc(parts[0])}: <b>${esc(parts.slice(1).join(':').trim())}</b></div>`:`<div class="spec-line">▸ ${esc(s)}</div>`}).join('')}</div>`:''}
-    <div class="prow"><div class="plbl">Etiqueta</div><input class="pinp" id="pr-lbl" value="${esc(p.label)}" oninput="upProp('label',this.value,'${id}')"></div>
-    <div class="prow"><div class="plbl">Tag / Referencia</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')"></div>
+    <div class="prow"><div class="plbl">Etichetta</div><input class="pinp" id="pr-lbl" value="${esc(p.label)}" oninput="upProp('label',this.value,'${id}')" aria-label="Etiqueta"></div>
+    <div class="prow"><div class="plbl">Tag / Referencia</div><input class="pinp" id="pr-tag" value="${esc(p.tag||'')}" placeholder="QF1, KM2…" oninput="upProp('tag',this.value,'${id}')" aria-label="Tag / Referencia"></div>
     <div class="psep"></div>
-    <div class="prow"><div class="plbl">Corriente nominal</div><input class="pinp" id="pr-in" value="${esc(p.props.In||'')}" placeholder="16A, 63A…" oninput="upNested('In',this.value,'${id}')"></div>
+    <div class="prow"><div class="plbl">Corriente nominal</div><input class="pinp" id="pr-in" value="${esc(p.props.In||'')}" placeholder="16A, 63A…" oninput="upNested('In',this.value,'${id}')" aria-label="Corriente nominal"></div>
     <div class="pgrid2">
-      <div class="prow"><div class="plbl">Tensione</div><input class="pinp" id="pr-vn" value="${esc(p.props.Vn||'')}" placeholder="220V" oninput="upNested('Vn',this.value,'${id}')"></div>
-      <div class="prow"><div class="plbl">Curva</div><input class="pinp" id="pr-cur" value="${esc(p.props.curva||'')}" placeholder="C / B / D" oninput="upNested('curva',this.value,'${id}')"></div>
+      <div class="prow"><div class="plbl">Tensione</div><input class="pinp" id="pr-vn" value="${esc(p.props.Vn||'')}" placeholder="220V" oninput="upNested('Vn',this.value,'${id}')" aria-label="Tensione"></div>
+      <div class="prow"><div class="plbl">Curva</div><input class="pinp" id="pr-cur" value="${esc(p.props.curva||'')}" placeholder="C / B / D" oninput="upNested('curva',this.value,'${id}')" aria-label="Curva"></div>
     </div>
-    <div class="prow"><div class="plbl">Sección cable</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')"></div>
-    <div class="prow"><div class="plbl">Circuito / Descripción</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')"></div>
+    <div class="prow"><div class="plbl">Sección cable</div><input class="pinp" id="pr-cab" value="${esc(p.props.cable||'')}" placeholder="2.5mm², 6mm²…" oninput="upNested('cable',this.value,'${id}')" aria-label="Sección cable"></div>
+    <div class="prow"><div class="plbl">Circuito / Descripción</div><input class="pinp" id="pr-desc" value="${esc(p.props.desc||'')}" placeholder="Circuito luces, motor bomba…" oninput="upNested('desc',this.value,'${id}')" aria-label="Circuito / Descripción"></div>
     <div class="psep"></div>
     <div class="prow"><div class="plbl">Rotar</div>
       <div style="display:flex;gap:6px">

@@ -249,9 +249,12 @@ ol.steps li{margin-bottom:7px}
 .toast.ok{border-color:var(--grn)}
 
 @media(pointer:coarse){button,input,select,textarea{min-height:44px}input,select,textarea{font-size:16px!important}}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Magazzino</h1>
 
 <header class="top">
   <svg class="lg" viewBox="0 0 40 40" aria-hidden="true"><polygon points="20,2 38,34 2,34" fill="#4A8EC2" opacity=".75"/><polygon points="20,2 38,34 20,34" fill="#3a3a4a" opacity=".8"/><path d="M15,21 L19,12 L23,21 L21,21 L23,28 L17,28 L19,21 Z" fill="#00D4AA"/></svg>
@@ -337,7 +340,7 @@ ol.steps li{margin-bottom:7px}
     <p>Decidi quando l'app deve segnalarti che un articolo è in esaurimento. Con la soglia unica non devi impostare il minimo sugli articoli uno per uno.</p>
     <div class="fld">
       <label class="flbl" for="alertMode">Quando segnalare</label>
-      <select class="inp" id="alertMode" onchange="salvaAlert()">
+      <select class="inp" id="alertMode" onchange="salvaAlert()" aria-label="Quando segnalare">
         <option value="articolo">Usa la scorta minima di ogni articolo</option>
         <option value="globale">Una soglia unica per tutti gli articoli</option>
         <option value="esaurito">Solo gli articoli completamente esauriti</option>
@@ -349,12 +352,10 @@ ol.steps li{margin-bottom:7px}
       <div style="font-size:.78rem;color:var(--dim);margin-top:5px">Vengono segnalati gli articoli con giacenza <b>pari o inferiore</b> a questo numero.</div>
     </div>
     <div class="sw">
-      <input type="checkbox" id="alertZero" onchange="salvaAlert()">
-      <div>Segnala sempre anche gli articoli a zero<small>Utile se vuoi sapere subito cosa &egrave; finito, indipendentemente dalla soglia scelta.</small></div>
+      <input type="checkbox" id="alertZero" aria-label="Segnala sempre anche gli articoli a zero">Segnala sempre anche gli articoli a zero<small>Utile se vuoi sapere subito cosa &egrave; finito, indipendentemente dalla soglia scelta.</small></div>
     </div>
     <div class="sw">
-      <input type="checkbox" id="alertBanner" onchange="salvaAlert()">
-      <div>Mostra l'avviso in cima all'app<small>Una barra in evidenza sulle schede Scansiona e Catalogo, e il numero accanto al nome nella scheda del browser.</small></div>
+      <input type="checkbox" id="alertBanner" aria-label="Mostra l'avviso in cima all'app">Una barra in evidenza sulle schede Scansiona e Catalogo, e il numero accanto al nome nella scheda del browser.</small></div>
     </div>
     <div id="alertAnteprima" style="font-size:.82rem;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)"></div>
   </div>
@@ -367,8 +368,7 @@ ol.steps li{margin-bottom:7px}
       <input class="inp" id="ep" type="url" inputmode="url" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off">
     </div>
     <div class="sw">
-      <input type="checkbox" id="optPhoto">
-      <div>Sincronizza anche le miniature<small>Foto a 200px nel foglio. Consuma quota e rende il foglio più pesante: usalo solo se ti serve vedere le immagini anche dal PC.</small></div>
+      <input type="checkbox" id="optPhoto" aria-label="Sincronizza anche le miniature">Foto a 200px nel foglio. Consuma quota e rende il foglio più pesante: usalo solo se ti serve vedere le immagini anche dal PC.</small></div>
     </div>
     <div style="display:flex;gap:9px;flex-wrap:wrap">
       <button class="btn btn-p btn-sm" onclick="saveEndpoint()">Salva</button>
@@ -460,7 +460,7 @@ ol.steps li{margin-bottom:7px}
       </div>
       <div class="fld">
         <label class="flbl" for="fUnit">Unità</label>
-        <select class="inp" id="fUnit">
+        <select class="inp" id="fUnit" aria-label="Unità">
           <option value="pz">pezzo</option>
           <option value="mt">metro</option>
           <option value="kg">chilo</option>

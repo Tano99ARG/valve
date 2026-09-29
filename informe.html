@@ -94,9 +94,12 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Relazione tecnica di visita</h1>
 
 <div class="top">
   <div class="logo">
@@ -120,21 +123,21 @@ body {
     <div class="sect-hd"><span class="sect-tt">📋 Dati del servizio</span></div>
     <div class="sect-bd">
       <div class="fgrid">
-        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale"></div>
-        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date"></div>
+        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale" aria-label="Cliente"></div>
+        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date" aria-label="Data"></div>
       </div>
-      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo"></div>
+      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo" aria-label="Indirizzo / Cantiere"></div>
       <div class="fgrid">
-        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico"></div>
+        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico" aria-label="Tecnico"></div>
         <div class="fld"><span class="flbl">Tipo di servizio</span>
-          <select class="sel" id="tipo-serv">
+          <select class="sel" id="tipo-serv" aria-label="Tipo di servizio">
             <option>Elettrico</option><option>Solare / Energie rinnovabili</option>
             <option>Climatizzazione / Aria condizionata</option><option>Refrigerazione</option>
             <option>Sicurezza / Telecamere</option><option>Reti / Connettività</option>
             <option>Automazione</option><option>Idraulica / Gas</option><option>Generatori</option>
           </select></div>
       </div>
-      <div class="fld"><span class="flbl">N° ordine / riferimento (opzionale)</span><input class="inp" id="orden" type="text" placeholder="OS-0001"></div>
+      <div class="fld"><span class="flbl">N° ordine / riferimento (opzionale)</span><input class="inp" id="orden" type="text" placeholder="OS-0001" aria-label="N° ordine / riferimento (opzionale)"></div>
     </div>
   </div>
 
@@ -142,11 +145,11 @@ body {
   <div class="sect">
     <div class="sect-hd"><span class="sect-tt">🔍 Diagnosi</span></div>
     <div class="sect-bd">
-      <div class="fld"><span class="flbl">Motivo della visita</span><textarea class="txt" id="motivo" placeholder="Reclamo del cliente, manutenzione programmata, nuovo impianto…" style="min-height:60px"></textarea></div>
-      <div class="fld"><span class="flbl">Diagnosi riscontrata</span><textarea class="txt" id="diagnostico" placeholder="Descrizione tecnica dello stato riscontrato e la causa del problema…"></textarea></div>
-      <div class="fld"><span class="flbl">Interventi effettuati</span><textarea class="txt" id="tareas" placeholder="Dett degli interventi realizzati durante la visita…"></textarea></div>
-      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Elenco materiali e ricambi impiegati…" style="min-height:55px"></textarea></div>
-      <div class="fld"><span class="flbl">Raccomandazioni</span><textarea class="txt" id="recomendazioni" placeholder="Raccomandazioni tecniche per il cliente, prossimi passi…" style="min-height:60px"></textarea></div>
+      <div class="fld"><span class="flbl">Motivo della visita</span><textarea class="txt" id="motivo" placeholder="Reclamo del cliente, manutenzione programmata, nuovo impianto…" style="min-height:60px" aria-label="Motivo della visita"></textarea></div>
+      <div class="fld"><span class="flbl">Diagnosi riscontrata</span><textarea class="txt" id="diagnostico" placeholder="Descrizione tecnica dello stato riscontrato e la causa del problema…" aria-label="Diagnosi"></textarea></div>
+      <div class="fld"><span class="flbl">Interventi effettuati</span><textarea class="txt" id="tareas" placeholder="Dett degli interventi realizzati durante la visita…" aria-label="Attivita da svolgere"></textarea></div>
+      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Elenco materiali e ricambi impiegati…" style="min-height:55px" aria-label="Elenco dei materiali e ricambi impiegati"></textarea></div>
+      <div class="fld"><span class="flbl">Raccomandazioni</span><textarea class="txt" id="recomendazioni" placeholder="Raccomandazioni tecniche per il cliente, prossimi passi…" style="min-height:60px" aria-label="Raccomandazioni tecniche per il cliente"></textarea></div>
     </div>
   </div>
 
@@ -157,7 +160,7 @@ body {
       <label class="photo-drop">
         <div class="pd-ico">📷</div>
         <div class="pd-txt">Tocca per aggiungere foto del lavoro svolto</div>
-        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(event)">
+        <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(event)" aria-label="Aggiungi foto della relazione">
       </label>
       <div class="photo-grid" id="photo-grid"></div>
     </div>
@@ -167,7 +170,7 @@ body {
   <div class="sect">
     <div class="sect-hd"><span class="sect-tt">✍️ Conformità del cliente</span></div>
     <div class="sect-bd">
-      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome"></div>
+      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome" aria-label="Nome di chi firma"></div>
       <div class="sig-wrap">
         <span class="flbl">Firma</span>
         <canvas class="sig" id="sigpad"></canvas>

@@ -94,9 +94,12 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Scheda di normativa</h1>
 
 <div class="top">
   <div class="logo">
@@ -118,7 +121,7 @@ body {
     <p id="cat-desc">Punti chiave di riferimento rapido da consultare in cantiere.</p>
   </div>
   <div class="disclaimer">⚠️ Questa scheda è una <b>guida rapida di riferimento</b> per la consultazione in cantiere. Non sostituisce la lettura completa della normativa vigente (CEI, UNI, IEC) né il criterio professionale dell'installatore abilitato. In caso di dubbi normativi, consultare il testo ufficiale aggiornato.</div>
-  <div class="searchbar"><input type="text" id="search" placeholder="Cerca per tema…" oninput="render()"></div>
+  <div class="searchbar"><input type="text" id="search" placeholder="Cerca per tema…" oninput="render()" aria-label="Cerca per tema…"></div>
   <div class="ngrid" id="grid"></div>
 </div>
 

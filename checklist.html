@@ -99,9 +99,12 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Checklist di manutenzione</h1>
 
 <div class="top">
   <div class="logo">
@@ -125,23 +128,23 @@ body {
     <div class="sect-hd"><span class="sect-tt">📋 Dati del servizio</span></div>
     <div class="sect-bd">
       <div class="fgrid">
-        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale"></div>
-        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date"></div>
+        <div class="fld"><span class="flbl">Cliente</span><input class="inp" id="cliente" type="text" placeholder="Nome / Ragione sociale" aria-label="Cliente"></div>
+        <div class="fld"><span class="flbl">Data</span><input class="inp" id="fecha" type="date" aria-label="Data"></div>
       </div>
-      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo"></div>
+      <div class="fld"><span class="flbl">Indirizzo / Cantiere</span><input class="inp" id="direccion" type="text" placeholder="Indirizzo completo" aria-label="Indirizzo / Cantiere"></div>
       <div class="fgrid">
-        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico"></div>
-        <div class="fld"><span class="flbl">Prossima manutenzione</span><input class="inp" id="proximo" type="date"></div>
+        <div class="fld"><span class="flbl">Tecnico</span><input class="inp" id="tecnico" type="text" placeholder="Nome del tecnico" aria-label="Tecnico"></div>
+        <div class="fld"><span class="flbl">Prossima manutenzione</span><input class="inp" id="proximo" type="date" aria-label="Prossima manutenzione"></div>
       </div>
       <div class="fgrid">
         <div class="fld"><span class="flbl">Tipo di apparecchio</span>
-          <select class="sel" id="tipo-equipo" onchange="buildChecklist()">
+          <select class="sel" id="tipo-equipo" onchange="buildChecklist()" aria-label="Tipo di apparecchio">
             <option value="ac">Aria condizionata (split)</option>
             <option value="heladera">Frigorifero / freezer commerciale</option>
             <option value="generador">Generatore</option>
             <option value="tablero">Quadro elettrico (preventivo)</option>
           </select></div>
-        <div class="fld"><span class="flbl">Apparecchio (marca / modello)</span><input class="inp" id="equipo-info" type="text" placeholder="Es: Split 3500W Inverter"></div>
+        <div class="fld"><span class="flbl">Apparecchio (marca / modello)</span><input class="inp" id="equipo-info" type="text" placeholder="Es: Split 3500W Inverter" aria-label="Apparecchio (marca / modello)"></div>
       </div>
     </div>
   </div>
@@ -159,8 +162,8 @@ body {
   <div class="sect">
     <div class="sect-hd"><span class="sect-tt">📝 Conclusione e materiali</span></div>
     <div class="sect-bd">
-      <div class="fld"><span class="flbl">Conclusione generale</span><textarea class="txt" id="conclusion" placeholder="Stato generale dell'apparecchio, osservazioni rilevanti…"></textarea></div>
-      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Filtri, gas, ricambi…" style="min-height:50px"></textarea></div>
+      <div class="fld"><span class="flbl">Conclusione generale</span><textarea class="txt" id="conclusion" placeholder="Stato generale dell'apparecchio, osservazioni rilevanti…" aria-label="Conclusioni della visita"></textarea></div>
+      <div class="fld"><span class="flbl">Materiali / ricambi utilizzati</span><textarea class="txt" id="materiales" placeholder="Filtri, gas, ricambi…" style="min-height:50px" aria-label="Materiali utilizzati"></textarea></div>
     </div>
   </div>
 
@@ -168,7 +171,7 @@ body {
   <div class="sect">
     <div class="sect-hd"><span class="sect-tt">✍️ Conformità del cliente</span></div>
     <div class="sect-bd">
-      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome"></div>
+      <div class="fld"><span class="flbl">Nome di chi firma</span><input class="inp" id="firmante" type="text" placeholder="Nome e cognome" aria-label="Nome di chi firma"></div>
       <div class="sig-wrap">
         <span class="flbl">Firma</span>
         <canvas class="sig" id="sigpad"></canvas>
@@ -255,7 +258,7 @@ function renderChecklist(){
         <button class="copt na ${checkState[i].status==='na'?'on':''}" onclick="setStatus(${i},'na')">— N/A</button>
       </div>
       <div class="citem-note ${checkState[i].status==='warn'?'show':''}" id="note-wrap-${i}">
-        <input type="text" placeholder="Osservazione…" value="${esc(checkState[i].note)}" oninput="checkState[${i}].note=this.value">
+        <input type="text" placeholder="Osservazione…" value="${esc(checkState[i].note)}" aria-label="Osservazione" oninput="checkState[${i}].note=this.value">
       </div>
     </div>`).join('');
   updateSummary();

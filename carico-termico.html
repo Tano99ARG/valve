@@ -22,7 +22,7 @@
       --grigio-medio: #2A2A3E;
       --grigio-chiaro: #3A3A4E;
       --bianco: #FFFFFF;
-      --nero: #0D0D1A;
+      --nero: #0a0c12;
       --rosso: #FF4757;
       --arancio: #FF6B35;
       --giallo: #FFD93D;
@@ -629,9 +629,12 @@
     .tooltip:hover::after {
       opacity: 1;
     }
-  </style>
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
+</style>
 </head>
 <body>
+<h1 class="sr-only">Carico termico</h1>
   <!-- ===== TOPBAR ===== -->
   <header class="topbar">
     <div class="topbar-logo">
@@ -688,21 +691,21 @@
       <div class="panel-section">
         <div class="panel-section-title">Locale</div>
         <div class="form-group">
-          <label>Nome locale</label>
+          <label for="locale-nome"label>Nome locale</label>
           <input type="text" id="locale-nome" value="Locale 1" placeholder="Es. Soggiorno">
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Lunghezza (m)</label>
+            <label for="locale-lunghezza"label>Lunghezza (m)</label>
             <input type="number" id="locale-lunghezza" value="5" min="0" step="0.1">
           </div>
           <div class="form-group">
-            <label>Larghezza (m)</label>
+            <label for="locale-larghezza"label>Larghezza (m)</label>
             <input type="number" id="locale-larghezza" value="4" min="0" step="0.1">
           </div>
         </div>
         <div class="form-group">
-          <label>Altezza (m)</label>
+          <label for="locale-altezza"label>Altezza (m)</label>
           <input type="number" id="locale-altezza" value="2.7" min="0" step="0.1">
         </div>
       </div>
@@ -712,7 +715,7 @@
         <div class="panel-section-title">Isolamento</div>
         <div class="form-group">
           <label>Tipo parete</label>
-          <select id="isolamento-tipo">
+          <select id="isolamento-tipo" aria-label="Tipo parete">
             <option value="mattoni">Mattoni forati 30cm</option>
             <option value="pietra">Pietra naturale</option>
             <option value="legno">Legno massello</option>
@@ -721,7 +724,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Trasmittanza U (W/m²K)</label>
+          <label for="isolamento-u"label>Trasmittanza U (W/m²K)</label>
           <input type="number" id="isolamento-u" value="0.35" min="0" step="0.01" readonly>
         </div>
       </div>
@@ -730,16 +733,16 @@
       <div class="panel-section">
         <div class="panel-section-title">Pareti</div>
         <div class="form-group">
-          <label>Numero pareti</label>
+          <label for="pareti-numero"label>Numero pareti</label>
           <input type="number" id="pareti-numero" value="4" min="0" max="10">
         </div>
         <div class="form-group">
-          <label>Superficie totale (m²)</label>
+          <label for="pareti-superficie"label>Superficie totale (m²)</label>
           <input type="number" id="pareti-superficie" value="50" min="0" step="0.1">
         </div>
         <div class="form-group">
           <label>Orientamento dominante</label>
-          <select id="pareti-orientamento">
+          <select id="pareti-orientamento" aria-label="Orientamento dominante">
             <option value="N">Nord</option>
             <option value="S" selected>Sud</option>
             <option value="E">Est</option>
@@ -752,16 +755,16 @@
       <div class="panel-section">
         <div class="panel-section-title">Finestre</div>
         <div class="form-group">
-          <label>Numero finestre</label>
+          <label for="finestre-numero"label>Numero finestre</label>
           <input type="number" id="finestre-numero" value="2" min="0" max="20">
         </div>
         <div class="form-group">
-          <label>Superficie totale (m²)</label>
+          <label for="finestre-superficie"label>Superficie totale (m²)</label>
           <input type="number" id="finestre-superficie" value="6" min="0" step="0.1">
         </div>
         <div class="form-group">
           <label>Tipo vetro</label>
-          <select id="finestre-tipo">
+          <select id="finestre-tipo" aria-label="Tipo vetro">
             <option value="singolo">Vetro singolo</option>
             <option value="doppio" selected>Vetro doppio</option>
             <option value="triplo">Vetro triplo</option>
@@ -773,7 +776,7 @@
       <div class="panel-section">
         <div class="panel-section-title">Occupanti</div>
         <div class="form-group">
-          <label>Numero persone</label>
+          <label for="occupanti-numero"label>Numero persone</label>
           <input type="number" id="occupanti-numero" value="2" min="0" max="100">
         </div>
       </div>
@@ -782,11 +785,11 @@
       <div class="panel-section">
         <div class="panel-section-title">Apparecchiature</div>
         <div class="form-group">
-          <label>Numero apparecchi</label>
+          <label for="apparecchi-numero"label>Numero apparecchi</label>
           <input type="number" id="apparecchi-numero" value="3" min="0" max="50">
         </div>
         <div class="form-group">
-          <label>Potenza totale (W)</label>
+          <label for="apparecchi-potenza"label>Potenza totale (W)</label>
           <input type="number" id="apparecchi-potenza" value="500" min="0" step="10">
         </div>
       </div>
@@ -795,7 +798,7 @@
       <div class="panel-section">
         <div class="panel-section-title">Infiltrazioni</div>
         <div class="form-group">
-          <label>Tasso ricambio aria (volte/ora)</label>
+          <label for="infiltrazioni-tasso"label>Tasso ricambio aria (volte/ora)</label>
           <input type="number" id="infiltrazioni-tasso" value="0.5" min="0" step="0.1">
         </div>
       </div>
@@ -804,15 +807,15 @@
       <div class="panel-section">
         <div class="panel-section-title">Condizioni</div>
         <div class="form-group">
-          <label>Temperatura esterna (°C)</label>
+          <label for="temp-esterna"label>Temperatura esterna (°C)</label>
           <input type="number" id="temp-esterna" value="35" step="0.5">
         </div>
         <div class="form-group">
-          <label>Temperatura desiderata (°C)</label>
+          <label for="temp-desiderata"label>Temperatura desiderata (°C)</label>
           <input type="number" id="temp-desiderata" value="22" step="0.5">
         </div>
         <div class="form-group">
-          <label>Irraggiamento solare (W/m²)</label>
+          <label for="irraggiamento"label>Irraggiamento solare (W/m²)</label>
           <input type="number" id="irraggiamento" value="800" min="0" step="50">
         </div>
       </div>

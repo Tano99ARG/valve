@@ -25,7 +25,7 @@
       --grigio: #1A1A2E;
       --grigio-medio: #2A2A3E;
       --grigio-chiaro: #3A3A4E;
-      --nero: #0D0D1A;
+      --nero: #0a0c12;
       --blu: #4A8EC2;
       --blu-scuro: #2F5F87;
       --arancio: #FF6B35;
@@ -814,6 +814,7 @@
   </style>
 </head>
 <body>
+<h1 class="sr-only">Dimensionamento solare</h1>
 
   <!-- ================= TOPBAR ================= -->
   <header class="topbar">
@@ -912,7 +913,7 @@
 
           <div class="field">
             <label for="citta">Città / località</label>
-            <select id="citta"></select>
+            <select id="citta" aria-label="Città / località"></select>
             <div class="hint" id="hint-citta">—</div>
           </div>
 
@@ -930,7 +931,7 @@
 
           <div class="field">
             <label for="tetto">Tipo di copertura</label>
-            <select id="tetto">
+            <select id="tetto" aria-label="Tipo di copertura">
               <option value="falda">Tetto a falda (ottimale)</option>
               <option value="piano">Tetto piano / pensilina</option>
               <option value="verde">Tetto verde (manto vegetale)</option>
@@ -949,7 +950,7 @@
 
           <div class="field">
             <label for="profilo">Tipologia di consumo (quota consuma diurna)</label>
-            <select id="profilo">
+            <select id="profilo" aria-label="Tipologia di consumo (quota consuma diurna)">
               <option value="residenziale">Residenziale — 45% diurno</option>
               <option value="ufficio">Ufficio — 58% diurno</option>
               <option value="commerciale">Commerciale — 55% diurno</option>

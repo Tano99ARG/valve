@@ -91,9 +91,12 @@ body {
   padding-top: constant(safe-area-inset-top);
   padding-top: env(safe-area-inset-top);
 }
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style>
 </head>
 <body>
+<h1 class="sr-only">Strumenti di misura</h1>
 
 <div class="top">
   <div class="logo">
@@ -114,7 +117,7 @@ body {
     <h2 id="cat-title">Strumenti di misura</h2>
     <p id="cat-desc">Caratteristiche tecniche e applicazioni di campo per categoria.</p>
   </div>
-  <div class="searchbar"><input type="text" id="search" placeholder="Cerca strumento per nome, caratteristica o applicazione…" oninput="render()"></div>
+  <div class="searchbar"><input type="text" id="search" placeholder="Cerca strumento per nome, caratteristica o applicazione…" oninput="render()" aria-label="Cerca strumento per nome, caratteristica o applicazione…"></div>
   <div class="igrid" id="grid"></div>
 </div>
 
