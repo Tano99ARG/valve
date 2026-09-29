@@ -328,7 +328,7 @@ ol.steps li{margin-bottom:7px}
       <button class="btn btn-sm" onclick="exportCSV()">⬇ CSV magazzino</button>
       <button class="btn btn-sm" onclick="exportJSON()">⬇ Backup JSON</button>
       <button class="btn btn-sm" onclick="document.getElementById('impJson').click()">⬆ Importa JSON</button>
-      <input type="file" id="impJson" accept="application/json,.json" style="display:none" onchange="importJSON(this)">
+      <input type="file" id="impJson" accept="application/json,.json" style="display:none" onchange="importJSON(this)" aria-label="Importa il magazzino da file JSON">
     </div>
   </div>
 </section>
@@ -432,7 +432,7 @@ ol.steps li{margin-bottom:7px}
       <div class="ph" id="shPh">📷</div>
       <div style="flex:1">
         <button class="btn btn-sm" onclick="pickPhoto()">Scatta foto</button>
-        <input type="file" id="shFile" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(this)">
+        <input type="file" id="shFile" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(this)" aria-label="Carica la foto dell'articolo">
         <div id="shDelPh" style="display:none;margin-top:7px">
           <button class="btn btn-sm btn-d" onclick="delPhoto()">Rimuovi foto</button>
         </div>

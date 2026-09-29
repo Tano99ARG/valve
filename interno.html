@@ -501,17 +501,17 @@ body {
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">⚡</span><div class="tool-name">Editor quadri</div></div>
           <p class="tool-desc">Quadri elettrici con componenti reali: interruttori, contattori, relè, PLC, strumenti di misura. Esporta in PDF.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('tablero-designer.html','Editor quadri elettrici');return false;">
+          <button class="btn btn-blue" onclick="apriEditor('tablero-designer.html');return false;">
             ▦ Apri editor
-          </label>
+          </button>
         </div>
         <div class="tool-card">
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">📷</span><div class="tool-name">Layout telecamere</div></div>
           <p class="tool-desc">Schema di posizionamento telecamere IP su planimetria. Angoli di copertura e tipi di lente.</p>
           <div class="status"><span class="status-dot ok"></span><span class="status-ok">Disponibile</span></div>
-          <label class="btn btn-blue" style="cursor:pointer;" onclick="apriStrumento('telecamere-designer.html','Layout telecamere');return false;">
+          <button class="btn btn-blue" onclick="apriEditor('telecamere-designer.html');return false;">
             📷 Apri editor
-          </label>
+          </button>
         </div>
         <div class="tool-card">
           <div class="tool-header"><span class="tool-icon" aria-hidden="true">☀️</span><div class="tool-name">Dimensionamento solare</div></div>
@@ -698,6 +698,12 @@ function logRecent(name) {
 }
 
 // ── HERRAMIENTAS / PLANOS ────────────────────────────────────
+// Gli editori hanno bisogno di tutta la finestra: si aprono in una scheda
+// propria, non dentro il riquadro della dashboard.
+function apriEditor(src){
+  const w = window.open(src, '_blank');
+  if(!w) toast('Il browser ha bloccato la finestra', 'err', 'Consenti le finestre popup per questo sito.');
+}
 function apriStrumento(src, nombre) {
   document.getElementById('tool-iframe-title').textContent = nombre;
   document.getElementById('tool-iframe').src = src;

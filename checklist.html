@@ -458,10 +458,14 @@ setupSig();
 // La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con
 // parole chiare che lasciare un errore muto quando tocca il bottone.
 // chiare che lasciare un errore muto quando l'utente tocca il bottone.
+// Restituisce vero solo se la libreria PDF non c'è: va chiamata PRIMA di
+// usare window.jspdf, altrimenti l'errore è illeggibile.
 function senzaPdf(){
-  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
-          + 'il resto della pagina funziona anche senza.';
+  if (window.jspdf && window.jspdf.jsPDF) return false;   // la libreria c'è: si prosegue
+  var msg = 'La libreria PDF non è ancora disponibile. Serve la rete al primo '
+          + 'uso: aspetta qualche secondo e riprova. Il resto della pagina funziona già senza.';
   if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof showToast === 'function') showToast(msg);
   else if (typeof alert === 'function') alert(msg);
   return true;
 }

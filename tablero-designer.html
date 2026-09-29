@@ -271,9 +271,16 @@ body {
 }
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.torna-dash{position:fixed;left:12px;bottom:12px;z-index:60;background:rgba(29,33,48,.95);
+  border:1px solid var(--b1);color:var(--dim);padding:9px 14px;border-radius:9px;font-size:.84rem;
+  text-decoration:none;font-weight:600;display:none;align-items:center;gap:7px}
+.torna-dash.on{display:inline-flex}
+.torna-dash:hover{color:var(--ora);border-color:var(--ora)}
+@media print{.torna-dash{display:none !important}}
 </style>
 </head>
 <body>
+<a class="torna-dash" id="tornaDash" href="interno.html">&#8592; Torna alla dashboard</a>
 <h1 class="sr-only">Editor quadri elettrici</h1>
 
 <!-- TOPBAR -->
@@ -2465,256 +2472,422 @@ function openPDF(){
 }
 function closePDF(){document.getElementById('mpdf').classList.remove('open')}
 
-function genPDF(){  if(senzaPdf()) return;
+function genPDF(){
+  if(senzaPdf()) return;
   const {jsPDF}=window.jspdf;
 
-  const hoja=document.getElementById('pdf-hoja').value;
-  const land=hoja.includes('Horizontal');
-  const a3=hoja.includes('A3');
-  const doc=new jsPDF({orientation:land?'landscape':'portrait',unit:'mm',format:a3?'a3':'a4'});
-  const W=doc.internal.pageSize.getWidth();
-  const H=doc.internal.pageSize.getHeight();
-  const meta=getMeta();
-  const titulo=document.getElementById('pdf-tit').value||'Plano tablero eléctrico';
-  const num=document.getElementById('pdf-num').value||'PE-001';
-  const rev=document.getElementById('pdf-rev').value||'A';
-  const esc_=document.getElementById('pdf-esc').value||'S/E';
-  const obs=document.getElementById('pdf-obs').value;
-  const fecha=new Date().toLocaleDateString('it-IT');
+  const hoja = document.getElementById('pdf-hoja').value;
+  const land = hoja.includes('Horizontal');
+  const a3   = hoja.includes('A3');
+  const doc = new jsPDF({ orientation:land?'landscape':'portrait', unit:'mm', format:a3?'a3':'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = 10;                       // margine
+  const meta = getMeta();
+  const titulo = document.getElementById('pdf-tit').value || 'Schema elettrico';
+  const num    = document.getElementById('pdf-num').value || 'PE-001';
+  const rev    = document.getElementById('pdf-rev').value || 'A';
+  const esc_   = document.getElementById('pdf-esc').value || 'S/E';
+  const obs    = document.getElementById('pdf-obs').value;
+  const dataOggi = new Date().toLocaleDateString('it-IT');
 
-  const NAVY=[27,42,74]; const ORA=[244,121,32]; const BLU=[74,142,194];
-  const GRN=[39,174,96]; const RED=[192,57,43]; const MUT=[100,110,140];
-  const BORD=[42,46,63]; const BG=[13,15,22];
+  // ── colori: fondo chiaro, perché un disegno tecnico si stampa e si legge ──
+  const CARTA   = [255,255,255];
+  const INCHIO  = [28,32,48];
+  const GRIGIO  = [120,130,150];
+  const VERDE   = [0,150,120];        // accento Valve, inchiostrabile
+  const VERDE2  = [0,110,88];
+  const RETE    = [214,220,232];
+  const RIQUADRO= [176,186,204];
+  const COLONNA = [240,243,248];
+  const FASCIA  = [0,212,170];
 
-  // ── PAGE 1: PLANO ──────────────────────────────────────────
-  doc.setFillColor(...BG); doc.rect(0,0,W,H,'F');
+  // testo: mai sotto i 6.5, le etichette non sotto i 7
+  const CORPO = 8.5, ETICHETTA = 7, TITOLO = 15;
 
-  // Subtle grid
-  doc.setDrawColor(...BLU); doc.setLineWidth(.04);
-  for(let x=0;x<W;x+=10){doc.setGState(new doc.GState({opacity:.04}));doc.line(x,0,x,H)}
-  for(let y=0;y<H;y+=10){doc.setGState(new doc.GState({opacity:.04}));doc.line(0,y,W,y)}
-  doc.setGState(new doc.GState({opacity:1}));
+  // ── utilita' ──
+  // I font standard del PDF (Helvetica) non hanno i caratteri tipografici:
+  // le virgolette curve e i puntini di sospensione verrebbero persi.
+  const pulisci = s => String(s).replace(/[\u2018\u2019]/g, "'")
+                                 .replace(/[\u201C\u201D]/g, '"')
+                                 .replace(/\u2026/g, '...');
+  const t = (txt, x, y, o) => doc.text(pulisci(txt), x, y, o || {});
+  // larghezza del blocco testo, per andare a capo
+  const larghezza = (txt, size, bold) => {
+    doc.setFont(bold?'helvetica':'helvetica', bold?'bold':'normal');
+    doc.setFontSize(size);
+    return doc.getTextWidth(pulisci(txt));
+  };
+  const vaACapo = (txt, size, maxW, bold) => {
+    doc.setFont('helvetica', bold?'bold':'normal');
+    doc.setFontSize(size);
+    return doc.splitTextToSize(String(txt||''), maxW);
+  };
+  // Va a capo SOLO sugli spazi. splitTextToSize di jsPDF, quando una parola
+  // non entra, la spezza a meta' ("Interruttor" / "e 1P"): illegibile in un
+  // disegno tecnico, quindi qui l'andata a capo e' fatta a mano.
+  const perParole = (testo, size, maxW, bold) => {
+    const righe = [];
+    let riga = '';
+    testo.split(/\s+/).filter(Boolean).forEach(p=>{
+      const prova = riga ? riga + ' ' + p : p;
+      if(larghezza(prova, size, bold) <= maxW) riga = prova;
+      else { if(riga) righe.push(riga); riga = p; }
+    });
+    if(riga) righe.push(riga);
+    return righe;
+  };
+  // Un testo che entra SEMPRE nel suo riquadro: prova a 7 punti, poi riduce il
+  // corpo, e da ultimo spezza per caratteri (parola singola troppo lunga).
+  const adattaTesto = (txt, size, maxW, bold) => {
+    const testo = String(txt||'');
+    if(!testo) return { righe: [], size: size };
+    const entra = (ls, sz) => ls.every(r => larghezza(r, sz, bold) <= maxW + .01);
+    let righe = perParole(testo, size, maxW, bold);
+    if(entra(righe, size)) return { righe: righe, size: size };
+    for(let s = size - .5; s >= 5; s -= .5){
+      righe = perParole(testo, s, maxW, bold);
+      if(entra(righe, s)) return { righe: righe, size: s };
+    }
+    const piccolo = 5.5;
+    righe = [];
+    let riga = '';
+    for(const ch of testo){
+      if(riga && larghezza(riga + ch, piccolo, bold) > maxW){ righe.push(riga); riga = ch; }
+      else riga += ch;
+    }
+    if(riga) righe.push(riga);
+    return { righe: righe, size: piccolo };
+  };
+  // griglia senza trasparenza: la trasparenza in PDF viene ignorata da molti lettori
+  const griglia = (x0, y0, w, h, passo) => {
+    doc.setDrawColor(...RETE);
+    doc.setLineWidth(.15);
+    for(let x=x0; x<=x0+w; x+=passo) doc.line(x,y0,x,y0+h);
+    for(let y=y0; y<=y0+h; y+=passo) doc.line(x0,y,x0+w,y);
+  };
 
-  // Header band
-  doc.setFillColor(...NAVY); doc.rect(0,0,W,20,'F');
-  doc.setFillColor(...ORA);  doc.rect(0,20,W,.8,'F');
+  // ══════════ PAGINA 1: IL DISEGNO ══════════
+  doc.setFillColor(...CARTA); doc.rect(0,0,W,H,'F');
 
-  // Logo
+  const altTestata = 18, altLegenda = 16, altCartiglio = 22;
+  const areaY = altTestata, areaH = H - altTestata - altLegenda - altCartiglio;
+  const areaX = M, areaW = W - M*2;
+
+  griglia(M, areaY, areaW, areaH, 10);
+  doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.4);
+  doc.rect(M, areaY, areaW, areaH);
+
+  // testata
+  doc.setFillColor(...INCHIO); doc.rect(0,0,W,altTestata,'F');
+  doc.setFillColor(...FASCIA); doc.rect(0,altTestata,W,.7,'F');
   doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
-  doc.text('Valve Electronics',10,13);
-  doc.setTextColor(...ORA); doc.text('ELECTRONICS',28,13);
-  doc.setFontSize(7); doc.setTextColor(...MUT); doc.text('INGENIERÍA ELÉCTRICA',10,18);
+  t('Valve Electronics', M, 8);
+  const larghezzaLogo = larghezza('Valve Electronics', 13, true);
+  doc.setTextColor(0,212,170); t('ELECTRONICS', M + larghezzaLogo + 1.5, 8);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(150,160,185);
+  t('PROGETTAZIONE ELETTRICA', M, 14.5);
 
-  // Título
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(255,255,255);
-  doc.text(titulo.toUpperCase(),W/2,11,{align:'center'});
-  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
-  doc.text(`${meta.nom||''}  ·  ${meta.obra||''}`,W/2,17,{align:'center'});
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+  t(titulo.toUpperCase(), W/2, 9, {align:'center'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+  t([meta.obra, meta.nom].filter(Boolean).join('  ·  '), W/2, 14.5, {align:'center'});
 
-  // N° plano y fecha
-  doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...ORA);
-  doc.text(`N° ${num}  REV:${rev}`,W-8,10,{align:'right'});
-  doc.setTextColor(...MUT); doc.text(fecha,W-8,16,{align:'right'});
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(0,212,170);
+  t('N\u00b0 ' + num + '   REV. ' + rev, W-M, 9, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+  t(dataOggi, W-M, 14.5, {align:'right'});
 
-  // ── ÁREA DE DIAGRAMA ────────────────────────────────────────
-  const diagY=24, diagH=H-24-32;
-  doc.setFillColor(10,13,20); doc.rect(8,diagY,W-16,diagH,'F');
-  doc.setDrawColor(...BLU); doc.setLineWidth(.4); doc.rect(8,diagY,W-16,diagH);
-  // inner grid
-  doc.setDrawColor(...BLU); doc.setLineWidth(.04);
-  for(let gx=8;gx<W-8;gx+=10){doc.setGState(new doc.GState({opacity:.05}));doc.line(gx,diagY,gx,diagY+diagH)}
-  for(let gy=diagY;gy<diagY+diagH;gy+=10){doc.setGState(new doc.GState({opacity:.05}));doc.line(8,gy,W-8,gy)}
-  doc.setGState(new doc.GState({opacity:1}));
-  // Tab label
-  doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(...MUT);
-  doc.text(S.tab==='layout'?'VISTA FÍSICA DEL TABLERO':'DIAGRAMA UNIFILAR',W/2,diagY+5,{align:'center'});
+  // Le etichette si raccolgono qui e si disegnano DOPO i componenti:
+  // dentro il riquadro dei binari o sopra una scatola, altrimenti spariscono.
+  const etichetteConduttori = [];
+  const etichetteBinari = [];
 
-  // ── Render rails ────────────────────────────────────────────
-  if(S.placed.length>0){
-    const xs=S.placed.map(p=>p.x), ys=S.placed.map(p=>p.y);
-    const minX=Math.min(...xs)-30, minY=Math.min(...ys)-30;
-    const maxX=Math.max(...xs)+140, maxY=Math.max(...ys)+140;
-    const cw=maxX-minX, ch=maxY-minY;
-    const aw=W-20, ah=diagH-14;
-    const sf=Math.min(aw/cw,ah/ch,.5);
-    const ox=10+(aw-cw*sf)/2, oy=diagY+10+(ah-ch*sf)/2;
-    const tx=(v)=>ox+(v-minX)*sf, ty=(v)=>oy+(v-minY)*sf;
-
-    // DIN rails
-    S.rails.forEach(r=>{
-      doc.setFillColor(60,66,90); doc.setDrawColor(90,96,130); doc.setLineWidth(.3);
-      doc.rect(tx(r.x),ty(r.y),r.w*sf,4*sf,'FD');
-    });
-
-    // Wires
-    const wcols={L1:[192,57,43],L2:[39,174,96],L3:[41,128,185],N:[100,180,240],PE:[39,174,96]};
-    S.wires.forEach(w=>{
-      if(!w.pts||w.pts.length<2)return;
-      const col=wcols[w.type]||BLU;
-      doc.setDrawColor(...col); doc.setLineWidth(.6);
-      if(w.type==='N')doc.setLineDashPattern([2,1.5],0);
-      else if(w.type==='PE')doc.setLineDashPattern([3,1,1,1],0);
-      else doc.setLineDashPattern([],0);
-      for(let i=0;i<w.pts.length-1;i++){
-        doc.line(tx(w.pts[i].x),ty(w.pts[i].y),tx(w.pts[i+1].x),ty(w.pts[i+1].y));
-      }
-      doc.setLineDashPattern([],0);
-      // wire label
-      const mid=Math.floor(w.pts.length/2);
-      const mx=tx((w.pts[mid-1].x+w.pts[mid].x)/2);
-      const my=ty((w.pts[mid-1].y+w.pts[mid].y)/2)-1.5;
-      doc.setFont('helvetica','bold'); doc.setFontSize(4); doc.setTextColor(...col);
-      doc.text(w.type,mx,my,{align:'center'});
-    });
-
-    // Components
-    S.placed.forEach((p,i)=>{
-      const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
-      const px=tx(p.x), py=ty(p.y);
-      const bw=comp.w*sf, bh=comp.h*sf;
-      // Shadow
-      doc.setFillColor(8,10,16); doc.rect(px+1,py+1,bw,bh,'F');
-      // Body
-      doc.setFillColor(30,34,52); doc.setDrawColor(...BLU); doc.setLineWidth(.3);
-      doc.rect(px,py,bw,bh,'FD');
-      // Tag badge
-      if(p.tag){
-        doc.setFillColor(...ORA);
-        const tw=doc.getTextWidth(p.tag)*4+4;
-        doc.rect(px,py-4*sf,Math.max(tw,bw*.6),3.5*sf,'F');
-        doc.setFont('helvetica','bold'); doc.setFontSize(Math.max(3.5,4*sf)); doc.setTextColor(255,255,255);
-        doc.text(p.tag,px+Math.max(tw,bw*.6)/2,py-1.5*sf,{align:'center'});
-      }
-      // Component name
-      const name=comp.name.length>12?comp.name.substring(0,10)+'…':comp.name;
-      doc.setFont('helvetica','bold'); doc.setFontSize(Math.max(4,5.5*sf)); doc.setTextColor(200,210,240);
-      doc.text(name,px+bw/2,py+bh*.5,{align:'center'});
-      // Spec
-      const spec=[p.props.In,p.props.curva].filter(Boolean).join(' ');
-      if(spec){doc.setFont('helvetica','normal'); doc.setFontSize(Math.max(3,4*sf)); doc.setTextColor(...MUT); doc.text(spec,px+bw/2,py+bh*.7,{align:'center'});}
-      // Description
-      if(p.props.desc){doc.setFont('helvetica','italic'); doc.setFontSize(Math.max(3,3.5*sf)); doc.setTextColor(...MUT); doc.text(p.props.desc.substring(0,18),px+bw/2,py+bh+3*sf,{align:'center'});}
-    });
-  }else{
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...MUT);
-    doc.text('Sin componentes en el tablero',W/2,diagY+diagH/2,{align:'center'});
-  }
-
-  // ── LEYENDA ──────────────────────────────────────────────────
-  const leyY=diagY+diagH+2;
-  doc.setFillColor(12,16,28); doc.rect(8,leyY,W-16,14,'F');
-  doc.setDrawColor(...BORD); doc.setLineWidth(.2); doc.rect(8,leyY,W-16,14);
-  const ley=[{c:[192,57,43],d:false,l:'L1 — Fase R'},{c:[39,174,96],d:false,l:'L2 — Fase S'},{c:[41,128,185],d:false,l:'L3 — Fase T'},{c:[100,180,240],d:true,l:'N — Neutro'},{c:[39,174,96],d:false,l:'PE — Tierra'}];
-  ley.forEach((ly,i)=>{
-    const lx=12+i*44;
-    doc.setDrawColor(...ly.c); doc.setLineWidth(.8);
-    if(ly.d)doc.setLineDashPattern([2,1.5],0);
-    doc.line(lx,leyY+7,lx+12,leyY+7);
-    doc.setLineDashPattern([],0);
-    doc.setFont('helvetica','normal'); doc.setFontSize(5); doc.setTextColor(180,190,220);
-    doc.text(ly.l,lx+14,leyY+8.5);
-  });
-  if(obs){doc.setFont('helvetica','italic'); doc.setFontSize(5); doc.setTextColor(...MUT); doc.text('OBS: '+obs,W-10,leyY+8.5,{align:'right'});}
-
-  // ── CAJETÍN ──────────────────────────────────────────────────
-  const cjY=H-28;
-  doc.setFillColor(10,13,22); doc.rect(0,cjY,W,28,'F');
-  doc.setFillColor(...NAVY); doc.rect(0,cjY,.8,28,'F');
-  doc.setFillColor(...ORA);  doc.rect(0,cjY,W,.6,'F');
-  const fields=[
-    {l:'PROYECTO / CLIENTE',v:meta.obra||'—',w:W*.32},
-    {l:'TABLERO',v:meta.nom||'—',w:W*.18},
-    {l:'SISTEMA',v:`${meta.ten} — ${meta.sis}`,w:W*.14},
-    {l:'TÉCNICO',v:meta.tec||'—',w:W*.12},
-    {l:'ESCALA',v:esc_,w:W*.08},
-    {l:'FECHA',v:fecha,w:W*.1},
-    {l:'N° PLANO / REV.',v:`${num} / ${rev}`,w:W*.06},
-  ];
-  let cx=0;
-  doc.setLineWidth(.2); doc.setDrawColor(...BORD);
-  fields.forEach(f=>{
-    doc.rect(cx,cjY+.5,f.w,27.5);
-    doc.setFont('helvetica','bold'); doc.setFontSize(5); doc.setTextColor(...MUT);
-    doc.text(f.l,cx+2.5,cjY+7);
-    doc.setFont('helvetica','bold'); doc.setFontSize(Math.min(8,7.5*(f.w/36))); doc.setTextColor(240,245,255);
-    doc.text(f.v.substring(0,24),cx+2.5,cjY+18);
-    cx+=f.w;
-  });
-  // Logo en cajetín
-  doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(255,255,255);
-  doc.text('Valve Electronics',cx+(W-cx)/2,cjY+11,{align:'center'});
-  doc.setTextColor(...ORA); doc.text('ELECTRONICS',cx+(W-cx)/2,cjY+19,{align:'center'});
-  doc.setFont('helvetica','normal'); doc.setFontSize(4.5); doc.setTextColor(...MUT);
-  doc.text('INGENIERÍA ELÉCTRICA',cx+(W-cx)/2,cjY+25,{align:'center'});
-
-  // ── PAGE 2: LISTA DE MATERIALES ─────────────────────────────
-  if(S.placed.length>0){
-    doc.addPage(a3?'a3':'a4',land?'landscape':'portrait');
-    doc.setFillColor(...BG); doc.rect(0,0,W,H,'F');
-    doc.setFillColor(...NAVY); doc.rect(0,0,W,18,'F');
-    doc.setFillColor(...ORA);  doc.rect(0,18,W,.8,'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(255,255,255);
-    doc.text('Valve Electronics',10,12); doc.setTextColor(...ORA); doc.text('ELECTRONICS',27,12);
-    doc.setTextColor(255,255,255); doc.text('LISTA DE MATERIALES',W/2,12,{align:'center'});
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...MUT);
-    doc.text(`${titulo}  ·  ${meta.obra||''}  ·  N° ${num}`,W/2,17,{align:'center'});
-
-    // Tabla
-    const tY=24;
-    const cols=[
-      {l:'ÍTEM',w:10},{l:'TAG',w:18},{l:'DESCRIPCIÓN',w:50},{l:'CORRIENTE',w:22},
-      {l:'TENSIÓN',w:20},{l:'CURVA',w:18},{l:'SECCIÓN',w:20},{l:'CIRCUITO',w:W-168}
-    ];
-    // Header
-    doc.setFillColor(...NAVY); doc.rect(8,tY,W-16,8,'F');
-    doc.setDrawColor(...BLU); doc.setLineWidth(.25); doc.rect(8,tY,W-16,8);
-    let hx=8;
-    doc.setFont('helvetica','bold'); doc.setFontSize(5.5); doc.setTextColor(...ORA);
-    cols.forEach(col=>{
-      doc.text(col.l,hx+2,tY+5.5);
-      doc.setDrawColor(...BORD); doc.line(hx+col.w,tY,hx+col.w,tY+8);
-      hx+=col.w;
-    });
-    // Rows
-    let ry=tY+8;
-    S.placed.forEach((p,i)=>{
-      const comp=CATALOG.find(c=>c.id===p.cid);if(!comp)return;
-      if(ry>H-40){doc.addPage(a3?'a3':'a4',land?'landscape':'portrait'); ry=20;}
-      const even=i%2===0;
-      doc.setFillColor(even?16:20,even?20:25,even?36:42); doc.rect(8,ry,W-16,7,'F');
-      doc.setDrawColor(...BORD); doc.setLineWidth(.12); doc.rect(8,ry,W-16,7);
-      let rx=8;
-      const cells=[String(i+1),p.tag||'—',p.label||comp.name,p.props.In||'—',p.props.Vn||meta.ten||'—',p.props.curva||'—',p.props.cable||'—',(p.props.desc||'—').substring(0,35)];
-      doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(215,220,240);
-      cells.forEach((cell,ci)=>{
-        doc.text(String(cell),rx+2,ry+5);
-        doc.setDrawColor(...BORD); doc.line(rx+cols[ci].w,ry,rx+cols[ci].w,ry+7);
-        rx+=cols[ci].w;
+  // ── il disegno, adattato all'area ──
+  if(S.placed.length > 0){
+    // L'ingombro si calcola sui componenti INTERI (non solo sul loro angolo
+    // in alto a sinistra), sui binari e sui conduttori: altrimenti i quadri
+    // larghi sbordano dal riquadro e vengono tagliati in PDF.
+    // Un riquadro di componente non puo' essere piu' stretto di LARGHIORE_MIN,
+    // altrimenti una parola come "Interruttore" non ci entra e verrebbe
+    // spezzata a meta' parola. L'ingombro deve contare anche questa larghezza,
+    // altrimenti i quadri affollati sbordano dal riquadro della pagina.
+    const LARGHIURA_MIN = 20;
+    const ingombro = (suTag, minW) => {
+      const xs = [], ys = [];
+      S.placed.forEach(p=>{
+        const c = CATALOG.find(k=>k.id===p.cid);
+        if(!c) return;
+        xs.push(p.x, p.x + Math.max(c.w, minW));
+        ys.push(p.y, p.y + c.h + (p.tag && suTag ? suTag : 0));
       });
-      ry+=7;
+      S.rails.forEach(r=>{ xs.push(r.x, r.x + r.w); ys.push(r.y, r.y + r.h); });
+      S.wires.forEach(w=>(w.pts||[]).forEach(pt=>{ xs.push(pt.x); ys.push(pt.y); }));
+      if(!xs.length) return {minX:0, minY:0, maxX:1, maxY:1};
+      const m = 12;
+      return { minX: Math.min(...xs)-m, minY: Math.min(...ys)-m,
+               maxX: Math.max(...xs)+m, maxY: Math.max(...ys)+m };
+    };
+
+    // tre passate: la prima stima la scala, le successive ci mettono il tag
+    // e la larghezza minima, che in millimetri dipendono dalla scala
+    let ing = null, sf = 0;
+    for(let k=0;k<3;k++){
+      ing = ingombro(k ? 4.4/sf : 0, k ? LARGHIURA_MIN/sf : 0);
+      sf = Math.min(areaW/(ing.maxX-ing.minX), (areaH-6)/(ing.maxY-ing.minY));
+    }
+
+    const minX = ing.minX, maxX = ing.maxX, minY = ing.minY, maxY = ing.maxY;
+    const ox = M + (areaW - (maxX-minX)*sf)/2;
+    const oy = areaY + 3 + (areaH-6 - (maxY-minY)*sf)/2;
+    const tx = v => ox + (v-minX)*sf;
+    const ty = v => oy + (maxY - v)*sf;      // nel PDF la y cresce in alto
+
+    // Barre DIN. Le scritte "BINARIO n" vengono disegnate DOPO i componenti,
+    // altrimenti un riquadro che copre il binario nasconde la scritta.
+    S.rails.forEach(r=>{
+      doc.setFillColor(226,230,238); doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.35);
+      doc.rect(tx(r.x), ty(r.y+r.h), r.w*sf, Math.max(1.2, r.h*sf), 'FD');
+      if(r.w*sf > 22) etichetteBinari.push({ x: tx(r.x) + r.w*sf/2, y: ty(r.y+r.h/2), s: 'BINARIO ' + (r.n || '') });
     });
-    // Totales por categoría
-    ry+=8;
-    const cats={};
-    S.placed.forEach(p=>{const c=CATALOG.find(cc=>cc.id===p.cid);if(c)cats[c.cat]=(cats[c.cat]||0)+1});
-    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(...ORA);
-    doc.text(`Total de componentes: ${S.placed.length}  ·  Conductores: ${S.wires.length}`,10,ry);
-    ry+=6;
-    Object.entries(cats).forEach(([cat,qty])=>{
-      doc.setFont('helvetica','normal'); doc.setFontSize(6); doc.setTextColor(170,180,210);
-      doc.text(`• ${cat}: ${qty}`,14,ry); ry+=5;
+
+    // conduttori, con spessore leggibile
+    const colori = { L1:[200,45,45], L2:[25,150,70], L3:[30,110,190], N:[70,110,190], PE:[25,150,70] };
+    const tratteggi = { N:[2,1.5], PE:[4,1.5,1,1.5] };
+    S.wires.forEach(w=>{
+      if(!w.pts || w.pts.length < 2) return;
+      const col = colori[w.type] || VERDE;
+      doc.setDrawColor(...col);
+      doc.setLineWidth(1);
+      doc.setLineDashPattern(tratteggi[w.type] || [], 0);
+      for(let i=0; i<w.pts.length-1; i++){
+        doc.line(tx(w.pts[i].x), ty(w.pts[i].y), tx(w.pts[i+1].x), ty(w.pts[i+1].y));
+      }
+      doc.setLineDashPattern([], 0);
+      // L'etichetta del conduttore si disegna DOPO i componenti, con fondo
+      // bianco: deve restare leggibile anche se un riquadro la copre.
+      const m = Math.floor(w.pts.length/2);
+      etichetteConduttori.push({ x: tx((w.pts[m-1].x + w.pts[m].x)/2), y: ty((w.pts[m-1].y + w.pts[m].y)/2),
+                                 s: String(w.type), c: col });
     });
-    // Footer p2
-    doc.setFillColor(10,13,22); doc.rect(0,H-16,W,16,'F');
-    doc.setFillColor(...ORA); doc.rect(0,H-16,W,.5,'F');
-    doc.setFont('helvetica','normal'); doc.setFontSize(5.5); doc.setTextColor(...MUT);
-    doc.text(`Valve Electronics™  ·  ${meta.tec||''}  ·  ${fecha}  ·  Página 2 de 2`,W/2,H-5,{align:'center'});
+
+    // componenti: riquadro leggibile, tag, nome e dati
+    S.placed.forEach((p,i)=>{
+      const comp = CATALOG.find(c=>c.id===p.cid);
+      if(!comp) return;
+      const px = tx(p.x), py = ty(p.y + comp.h);
+      const bw = Math.max(LARGHIURA_MIN, comp.w*sf), bh = Math.max(8, comp.h*sf);
+
+      doc.setFillColor(255,255,255); doc.setDrawColor(...VERDE); doc.setLineWidth(.55);
+      doc.rect(px, py, bw, bh, 'FD');
+
+      // numero di posizione, nell'angolo in alto a sinistra del riquadro
+      doc.setFillColor(...VERDE2);
+      doc.rect(px, py, 4.2, 3.6, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(6); doc.setTextColor(255,255,255);
+      t(String(i+1), px+2.1, py+2.6, {align:'center'});
+
+      // tag sopra il riquadro, non dentro
+      if(p.tag){
+        const tw = Math.max(larghezza(p.tag, ETICHETTA, true) + 2.5, bw*0.7);
+        doc.setFillColor(...VERDE);
+        doc.rect(px, py-4.6, tw, 4.4, 'F');
+        doc.setFont('helvetica','bold'); doc.setFontSize(ETICHETTA); doc.setTextColor(255,255,255);
+        t(p.tag, px + tw/2, py-1.4, {align:'center'});
+      }
+
+      // Il testo parte dal fondo del riquadro e sale: cosi' resta dentro
+      // anche con un riquadro basso, e i dati tecnici compaiono solo se c'e'
+      // ancora spazio (il nome completo e' comunque nella lista componenti).
+      const LIMITE = py + 4.2;                 // sotto il numero di posizione
+      let ny = py + bh - 1;
+      const ad = adattaTesto(comp.name, 7, bw-3, true);
+      const righeNome = ad.righe.slice(0,3);
+      const troncato = ad.righe.length > 3;
+      righeNome.forEach((r,i)=>{
+        const testo = (troncato && i === righeNome.length-1) ? r.slice(0,-1).trimEnd() + '\u2026' : r;
+        doc.setFont('helvetica','bold'); doc.setFontSize(ad.size); doc.setTextColor(...INCHIO);
+        t(testo, px+bw/2, ny, {align:'center'});
+        ny -= 2.8;
+      });
+      const spec = [p.props.In, p.props.curva].filter(Boolean).join(' ');
+      if(spec && LIMITE - ny >= 2.6){
+        const adS = adattaTesto(spec, 6.5, bw-3, false);
+        doc.setFont('helvetica','normal'); doc.setFontSize(adS.size); doc.setTextColor(...GRIGIO);
+        t(adS.righe[0] || '', px+bw/2, ny, {align:'center'});
+      }
+    });
+  } else {
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...GRIGIO);
+    t('Nessun componente nel quadro', W/2, areaY + areaH/2, {align:'center'});
   }
 
-  doc.save(`Valve_Tablero_${(meta.nom||'plano').replace(/\s+/g,'_')}_${num}.pdf`);
+  // ── etichette sopra tutto il resto, cosi' nessun riquadro le nasconde ──
+  etichetteConduttori.forEach(e=>{
+    const lw = larghezza(e.s, ETICHETTA, true) + 2.4;
+    doc.setFillColor(255,255,255); doc.rect(e.x-lw/2, e.y-1.4, lw, 4.2, 'F');
+    doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.15);
+    doc.rect(e.x-lw/2, e.y-1.4, lw, 4.2);
+    doc.setFont('helvetica','bold'); doc.setFontSize(ETICHETTA); doc.setTextColor(...e.c);
+    t(e.s, e.x, e.y+1.4, {align:'center'});
+  });
+  etichetteBinari.forEach(e=>{
+    const lw = larghezza(e.s, ETICHETTA, false) + 3;
+    doc.setFillColor(226,230,238); doc.rect(e.x-lw/2, e.y-1.3, lw, 3.9, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(ETICHETTA); doc.setTextColor(90,100,120);
+    t(e.s, e.x, e.y+1.3, {align:'center'});
+  });
+
+  // ── legenda ──
+  const legY = areaY + areaH + 3;
+  doc.setFillColor(...COLONNA); doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.3);
+  doc.rect(M, legY, areaW, altLegenda-4, 'FD');
+  const vociLegenda = [
+    { c:[200,45,45], d:[],   l:'L1  Fase R' },
+    { c:[25,150,70],  d:[],   l:'L2  Fase S' },
+    { c:[30,110,190], d:[],   l:'L3  Fase T' },
+    { c:[70,110,190], d:[2,1.5], l:'Neutro' },
+    { c:[25,150,70],  d:[4,1.5,1,1.5], l:'Terra' }
+  ];
+  const passoLeg = Math.min(46, (areaW-8)/vociLegenda.length);
+  vociLegenda.forEach((v,i)=>{
+    const lx = M+5 + i*passoLeg;
+    doc.setDrawColor(...v.c); doc.setLineWidth(1.1);
+    doc.setLineDashPattern(v.d, 0);
+    doc.line(lx, legY+4.5, lx+9, legY+4.5);
+    doc.setLineDashPattern([], 0);
+    doc.setFont('helvetica','bold'); doc.setFontSize(ETICHETTA); doc.setTextColor(...INCHIO);
+    t(v.l, lx+11, legY+6.2);
+  });
+
+  // ── cartiglio ──
+  const cjY = H - altCartiglio;
+  doc.setFillColor(...CARTA); doc.rect(0, cjY, W, altCartiglio, 'F');
+  doc.setFillColor(...INCHIO); doc.rect(0, cjY, W, .6, 'F');
+  const campi = [
+    { l:'COMMESSE / CLIENTE', v: meta.obra || '\u2014', w:.30 },
+    { l:'QUADRO',             v: meta.nom  || '\u2014', w:.16 },
+    { l:'SISTEMA',            v: [meta.ten, meta.sis].filter(Boolean).join(' \u2014 ') || '\u2014', w:.14 },
+    { l:'TECNICO',            v: meta.tec  || '\u2014', w:.14 },
+    { l:'SCALA',              v: esc_,     w:.09 },
+    { l:'DATA',               v: dataOggi, w:.09 },
+    { l:'N\u00b0 / REV.',      v: num + ' / ' + rev, w:.08 }
+  ];
+  let cx = 0;
+  doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.25);
+  campi.forEach(f=>{
+    const fw = f.w * W;
+    doc.rect(cx, cjY+.6, fw, altCartiglio-1.2);
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(...GRIGIO);
+    t(f.l, cx+2, cjY+6.5);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...INCHIO);
+    // il valore non esce mai dal riquadro
+    const righeV = vaACapo(f.v, 8.5, fw-4, true);
+    righeV.slice(0,2).forEach((r,ri)=> t(r, cx+2, cjY+12.5+ri*4.2));
+    cx += fw;
+  });
+  if(obs){
+    doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRIGIO);
+    const testoNota = 'Note: ' + obs;
+    const righeO = vaACapo(testoNota, 6.5, W-2*M, false);
+    if(righeO.length) t(righeO[0], M, cjY+19.4);
+  }
+
+  // ══════════ PAGINA 2: LISTA COMPONENTI ══════════
+  if(S.placed.length > 0){
+    const tabella = [
+      { l:'N.',        w:9  },
+      { l:'TAG',       w:20 },
+      { l:'DESCRIZIONE', w:Math.max(58, areaW*.22) },
+      { l:'CORRENTE',  w:22 },
+      { l:'TENSIONE',  w:22 },
+      { l:'CURVA',     w:20 },
+      { l:'SEZIONE',   w:24 },
+      { l:'MONTAGGIO', w:Math.max(46, areaW*.20) }
+    ];
+    const totW = tabella.reduce((s,c)=>s+c.w, 0);
+    const colCircuito = Math.max(30, areaW - totW);
+    tabella.push({ l:'CIRCUITO', w:colCircuito });
+
+    function nuovaPaginaTabella(){
+      doc.addPage(a3?'a3':'a4', land?'landscape':'portrait');
+      doc.setFillColor(...CARTA); doc.rect(0,0,W,H,'F');
+      doc.setFillColor(...INCHIO); doc.rect(0,0,W,altTestata,'F');
+      doc.setFillColor(...FASCIA); doc.rect(0,altTestata,W,.7,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
+      t('Valve Electronics', M, 8);
+      doc.setTextColor(0,212,170); t('ELECTRONICS', M + larghezza('Valve Electronics',13,true) + 1.5, 8);
+      doc.setTextColor(255,255,255); doc.setFontSize(11);
+      t('LISTA COMPONENTI', W/2, 9, {align:'center'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+      t([titulo, meta.obra, 'N\u00b0 ' + num].filter(Boolean).join('  \u00b7  '), W/2, 14.5, {align:'center'});
+      return altTestata + 4;
+    }
+
+    let ry = nuovaPaginaTabella();
+    const hIntest = 8;
+    function intestazione(){
+      doc.setFillColor(...INCHIO); doc.rect(M, ry, areaW, hIntest, 'F');
+      let hx = M;
+      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(0,212,170);
+      tabella.forEach(c=>{ t(c.l, hx+2, ry+5.3); hx += c.w; });
+      ry += hIntest;
+    }
+    intestazione();
+
+    S.placed.forEach((p,i)=>{
+      const comp = CATALOG.find(c=>c.id===p.cid);
+      if(!comp) return;
+      if(ry > H-30){ ry = nuovaPaginaTabella(); intestazione(); }
+      const hRiga = 8.5;
+      if(i % 2 === 0){ doc.setFillColor(...COLONNA); doc.rect(M, ry, areaW, hRiga, 'F'); }
+      doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.2);
+      doc.rect(M, ry, areaW, hRiga);
+      const valori = [
+        String(i+1), p.tag || '\u2014', p.label || comp.name,
+        p.props.In || '\u2014', p.props.Vn || meta.ten || '\u2014',
+        p.props.curva || '\u2014', p.props.sez || '\u2014', p.props.mont || '\u2014'
+      ];
+      let rx = M;
+      valori.forEach((v,ci)=>{
+        const c = tabella[ci];
+        doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.15);
+        doc.line(rx+c.w, ry, rx+c.w, ry+hRiga);
+        doc.setFont('helvetica', ci===2?'bold':'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...INCHIO);
+        // il testo non deborda mai la sua colonna
+        const righeV = vaACapo(v, 7, c.w-4, ci===2);
+        t(righeV[0], rx+2, ry+5.4);
+        rx += c.w;
+      });
+      ry += hRiga;
+    });
+
+    // totali per categoria
+    if(ry > H-34){ ry = nuovaPaginaTabella(); }
+    ry += 6;
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...VERDE2);
+    t('Totale componenti: ' + S.placed.length + '   \u00b7   Conduttori: ' + S.wires.length, M, ry);
+    ry += 6;
+    const perCat = {};
+    S.placed.forEach(p=>{ const c = CATALOG.find(cc=>cc.id===p.cid); if(c) perCat[c.cat] = (perCat[c.cat]||0)+1; });
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...INCHIO);
+    Object.entries(perCat).forEach(([cat,qty])=>{ t('\u2022  ' + cat + ': ' + qty, M+2, ry); ry += 5; });
+
+    // piede
+    doc.setFillColor(...COLONNA); doc.rect(0, H-12, W, 12, 'F');
+    doc.setFillColor(...VERDE); doc.rect(0, H-12, W, .5, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRIGIO);
+    t('Valve Electronics\u2122  \u00b7  ' + (meta.tec||'') + '  \u00b7  ' + dataOggi +
+      '  \u00b7  Pagina ' + doc.getNumberOfPages(), W/2, H-4.5, {align:'center'});
+  }
+
+  doc.save('Valve_Quadro_' + (meta.nom||'schema').replace(/\s+/g,'_') + '_' + num + '.pdf');
   closePDF();
-  toast('PDF exportado ✓');
+  toast('PDF esportato');
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 //  UTILS
@@ -2727,10 +2900,14 @@ function toast(m){const e=document.getElementById('toast');e.textContent=m;e.cla
 // La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con
 // parole chiare che lasciare un errore muto quando tocca il bottone.
 // chiare che lasciare un errore muto quando l'utente tocca il bottone.
+// Restituisce vero solo se la libreria PDF non c'è: va chiamata PRIMA di
+// usare window.jspdf, altrimenti l'errore è illeggibile.
 function senzaPdf(){
-  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
-          + 'il resto della pagina funziona anche senza.';
+  if (window.jspdf && window.jspdf.jsPDF) return false;   // la libreria c'è: si prosegue
+  var msg = 'La libreria PDF non è ancora disponibile. Serve la rete al primo '
+          + 'uso: aspetta qualche secondo e riprova. Il resto della pagina funziona già senza.';
   if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof showToast === 'function') showToast(msg);
   else if (typeof alert === 'function') alert(msg);
   return true;
 }
@@ -2738,6 +2915,8 @@ function senzaPdf(){
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
+    // la pagina aperta da sola mostra la via di ritorno
+    if(window.parent === window){ document.getElementById('tornaDash').classList.add('on'); }
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }

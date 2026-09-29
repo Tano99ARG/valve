@@ -189,9 +189,16 @@
     }
   .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
   clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.torna-dash{position:fixed;left:12px;bottom:12px;z-index:60;background:rgba(29,33,48,.95);
+  border:1px solid var(--b1);color:var(--dim);padding:9px 14px;border-radius:9px;font-size:.84rem;
+  text-decoration:none;font-weight:600;display:none;align-items:center;gap:7px}
+.torna-dash.on{display:inline-flex}
+.torna-dash:hover{color:var(--ora);border-color:var(--ora)}
+@media print{.torna-dash{display:none !important}}
 </style>
 </head>
 <body>
+<a class="torna-dash" id="tornaDash" href="interno.html">&#8592; Torna alla dashboard</a>
 <h1 class="sr-only">Designer telecamere</h1>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -331,10 +338,14 @@
 // La libreria PDF arriva da CDN: senza rete non c'e'. Meglio dirlo con
 // parole chiare che lasciare un errore muto quando tocca il bottone.
 // chiare che lasciare un errore muto quando l'utente tocca il bottone.
+// Restituisce vero solo se la libreria PDF non c'è: va chiamata PRIMA di
+// usare window.jspdf, altrimenti l'errore è illeggibile.
 function senzaPdf(){
-  var msg = 'La libreria PDF non è disponibile. Serve la rete la prima volta: '
-          + 'il resto della pagina funziona anche senza.';
+  if (window.jspdf && window.jspdf.jsPDF) return false;   // la libreria c'è: si prosegue
+  var msg = 'La libreria PDF non è ancora disponibile. Serve la rete al primo '
+          + 'uso: aspetta qualche secondo e riprova. Il resto della pagina funziona già senza.';
   if (typeof toast === 'function') toast(msg, 'err');
+  else if (typeof showToast === 'function') showToast(msg);
   else if (typeof alert === 'function') alert(msg);
   return true;
 }
@@ -918,61 +929,276 @@ function clearAll(confirm=true){
 function openPDF(){document.getElementById('mpdf').classList.add('open')}
 function closePDF(){document.getElementById('mpdf').classList.remove('open')}
 
-function genPDF(){  if(senzaPdf()) return;
+function genPDF(){
+  if(senzaPdf()) return;
   const {jsPDF}=window.jspdf;
 
-  const orientation=document.getElementById('pdf-hoja').value.includes('Verticale')?'p':'l';
-  const doc=new jsPDF({orientation,unit:'mm',format:'a4'});
+  const formato = document.getElementById('pdf-hoja').value;
+  const land   = formato.includes('Orizzontale');
+  const a3     = formato.includes('A3');
+  const doc = new jsPDF({ orientation:land?'landscape':'portrait', unit:'mm', format:a3?'a3':'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = 10;
 
-  // Intestazione
-  doc.setFontSize(16);
-  doc.setTextColor(0,212,170);
-  doc.text(document.getElementById('pdf-tit').value||'Layout Videosorveglianza',14,15);
-  doc.setFontSize(10);
-  doc.setTextColor(100,100,100);
-  doc.text(`N° ${document.getElementById('pdf-num').value||'VT-001'} · Rev. ${document.getElementById('pdf-rev').value||'A'} · Scala ${document.getElementById('pdf-esc').value}`,14,22);
-  doc.text(`Cliente: ${document.getElementById('p-cli').value||'-'} · Tecnico: ${document.getElementById('p-tec').value||'-'}`,14,28);
+  const get = id => { const e = document.getElementById(id); return e ? e.value : ''; };
+  const titolo = get('pdf-tit') || 'Layout videosorveglianza';
+  const num    = get('pdf-num') || 'VT-001';
+  const rev    = get('pdf-rev') || 'A';
+  const esc_   = get('pdf-esc') || 'S/E';
+  const obs    = get('pdf-obs');
+  const dataOggi = new Date().toLocaleDateString('it-IT');
+  const cli = get('p-cli'), tec = get('p-tec'), dataProg = get('p-data');
 
-  // Disegna componenti
-  const pageW=orientation==='l'?297:210;
-  const pageH=orientation==='l'?210:297;
-  const scale=Math.min((pageW-20)/800,(pageH-50)/600);
-  const offX=10,offY=40;
+  const CARTA=[255,255,255], INCHIO=[28,32,48], GRIGIO=[120,130,150],
+        VERDE=[0,150,120], VERDE2=[0,110,88], RETE=[214,220,232],
+        RIQUADRO=[176,186,204], COLONNA=[240,243,248], FASCIA=[0,212,170];
+  const ETICHETTA = 7;
 
-  components.forEach((c,i)=>{
-    const def=CATALOG.find(d=>d.id===c.type);
-    const x=offX+c.x*scale;
-    const y=offY+c.y*scale;
-    // Se cambio pagina
-    if(y>pageH-20){
-      doc.addPage();
-    }
-    // Rettangolo componente
-    doc.setDrawColor(0,212,170);
-    doc.setFillColor(30,34,53);
-    doc.roundedRect(x,y,def.w*scale,def.h*scale,1,1,'FD');
-    // Nome
-    doc.setFontSize(7);
-    doc.setTextColor(232,234,244);
-    doc.text(c.name,x+2,y+def.h*scale+3);
-    // Numero
-    doc.setFontSize(6);
-    doc.setTextColor(0,212,170);
-    doc.text(`${i+1}`,x+2,y+4);
-  });
+  // I font standard del PDF (Helvetica) non hanno i caratteri tipografici:
+  // le virgolette curve e i puntini di sospensione verrebbero persi.
+  const pulisci = s => String(s).replace(/[\u2018\u2019]/g, "'")
+                                 .replace(/[\u201C\u201D]/g, '"')
+                                 .replace(/\u2026/g, '...');
+  const t = (txt,x,y,o)=>doc.text(pulisci(txt),x,y,o||{});
+  const larghezza = (txt,size,bold)=>{ doc.setFont('helvetica', bold?'bold':'normal'); doc.setFontSize(size); return doc.getTextWidth(pulisci(txt)); };
+  // Va a capo SOLO sugli spazi: splitTextToSize spezza le parole lunghe a
+  // meta' e su un'etichetta tecnica il risultato e' illeggibile.
+  const perParole = (txt,size,maxW,bold)=>{
+    const righe=[]; let riga='';
+    String(txt||'').split(/\s+/).filter(Boolean).forEach(p=>{
+      const prova = riga ? riga+' '+p : p;
+      if(larghezza(prova,size,bold) <= maxW) riga = prova;
+      else { if(riga) righe.push(riga); riga = p; }
+    });
+    if(riga) righe.push(riga);
+    return righe;
+  };
+  const adattaTesto = (txt,size,maxW,bold)=>{
+    const testo=String(txt||'');
+    if(!testo) return { righe:[], size:size };
+    const entra=(ls,sz)=>ls.every(r=> larghezza(r,sz,bold) <= maxW+.01);
+    let righe=perParole(testo,size,maxW,bold);
+    if(entra(righe,size)) return { righe:righe, size:size };
+    for(let s=size-.5; s>=5; s-=.5){ righe=perParole(testo,s,maxW,bold); if(entra(righe,s)) return { righe:righe, size:s }; }
+    const piccolo=5.5; righe=[]; let riga='';
+    for(const ch of testo){ if(riga && larghezza(riga+ch,piccolo,bold)>maxW){ righe.push(riga); riga=ch; } else riga+=ch; }
+    if(riga) righe.push(riga);
+    return { righe:righe, size:piccolo };
+  };
+  const griglia = (x0,y0,w,h,passo)=>{ doc.setDrawColor(...RETE); doc.setLineWidth(.15);
+    for(let x=x0;x<=x0+w;x+=passo) doc.line(x,y0,x,y0+h);
+    for(let y=y0;y<=y0+h;y+=passo) doc.line(x0,y,x0+w,y); };
 
-  // Osservazioni
-  const obs=document.getElementById('pdf-obs').value;
-  if(obs){
-    doc.setFontSize(9);
-    doc.setTextColor(100,100,100);
-    doc.text(`Note: ${obs}`,14,pageH-10);
+  // ══════════ PAGINA 1: LA PLANIMETRIA ══════════
+  doc.setFillColor(...CARTA); doc.rect(0,0,W,H,'F');
+
+  const altTestata=18, altLegenda=14, altCartiglio=22;
+  const areaY=altTestata, areaH=H-altTestata-altLegenda-altCartiglio, areaX=M, areaW=W-M*2;
+
+  griglia(M, areaY, areaW, areaH, 10);
+  doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.4); doc.rect(M, areaY, areaW, areaH);
+
+  // testata
+  doc.setFillColor(...INCHIO); doc.rect(0,0,W,altTestata,'F');
+  doc.setFillColor(...FASCIA); doc.rect(0,altTestata,W,.7,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
+  t('Valve Electronics', M, 8);
+  const lw = larghezza('Valve Electronics',13,true);
+  doc.setTextColor(0,212,170); t('ELECTRONICS', M+lw+1.5, 8);
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(150,160,185);
+  t('VIDEOSORVEGLIANZA', M, 14.5);
+  doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+  t(titolo.toUpperCase(), W/2, 9, {align:'center'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+  t([cli, dataProg].filter(Boolean).join('  \u00b7  '), W/2, 14.5, {align:'center'});
+  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(0,212,170);
+  t('N\u00b0 '+num+'   REV. '+rev, W-M, 9, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+  t(dataOggi, W-M, 14.5, {align:'right'});
+
+  // ── le telecamere ──
+  // Il cono di copertura NON viene disegnato: l'editor non ha un campo di
+  // visuale ne' una scala in metri, e inventarli in un disegno tecnico
+  // produrrebbe una planimetria falsa. Chi serve, la indica a mano.
+  if(components.length > 0){
+    const xs=[], ys=[];
+    components.forEach(c=>{
+      const d = CATALOG.find(k=>k.id===c.type);
+      xs.push(c.x - d.w/2, c.x + d.w/2);
+      ys.push(c.y - d.h/2 - 20, c.y + d.h/2 + 4);   // sopra: nome e numero d'ordine
+    });
+    const m = 14;
+    const minX=Math.min(...xs)-m, maxX=Math.max(...xs)+m;
+    const minY=Math.min(...ys)-m, maxY=Math.max(...ys)+m;
+    const sf=Math.min(areaW/(maxX-minX), (areaH-6)/(maxY-minY));
+    const ox=M+(areaW-(maxX-minX)*sf)/2;
+    const oy=areaY+3+(areaH-6-(maxY-minY)*sf)/2;
+    const tx=v=>ox+(v-minX)*sf;
+    const ty=v=>oy+(maxY-v)*sf;
+
+    components.forEach((c,i)=>{
+      const def=CATALOG.find(d=>d.id===c.type);
+      if(!def) return;
+      const cx=tx(c.x), cy=ty(c.y);
+      const bw=Math.max(11, def.w*sf), bh=Math.max(8, def.h*sf);
+
+      // ── il corpo, con lo stesso riquadro verde del canvas ──
+      doc.setFillColor(255,255,255); doc.setDrawColor(...VERDE); doc.setLineWidth(.7);
+      doc.rect(cx-bw/2, cy-bh/2, bw, bh, 'FD');
+      // la lente, al centro
+      doc.setFillColor(...VERDE2);
+      doc.rect(cx-1.5, cy-1.5, 3, 3, 'F');
+
+      // ── il nome, in un riquadro bianco sopra il corpo ──
+      const ad = adattaTesto(c.name||def.name, ETICHETTA, Math.max(26, bw), true);
+      const righeN = ad.righe.slice(0,2);
+      const larghezzaMax = Math.max(...righeN.map(r=>larghezza(r,ad.size,true)), 12);
+      const PASSO = 3.2;
+      const altoNome = righeN.length*PASSO + 1.4;
+      const baseNome = cy - bh/2 - 1.6 - altoNome;          // fondo del riquadro del nome
+      doc.setFillColor(255,255,255); doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.2);
+      doc.rect(cx-larghezzaMax/2-1.2, baseNome, larghezzaMax+2.4, altoNome, 'FD');
+      doc.setFont('helvetica','bold'); doc.setFontSize(ad.size); doc.setTextColor(...INCHIO);
+      let ny = baseNome + altoNome - 1.4;
+      righeN.forEach(r=>{ t(r, cx, ny, {align:'center'}); ny -= PASSO; });
+
+      // ── il numero d'ordine, SOPRA il riquadro del nome (mai dentro) ──
+      const yNum = baseNome + altoNome + 1.4;
+      doc.setFillColor(...VERDE2);
+      doc.rect(cx-1.9, yNum, 3.8, 3.6, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(255,255,255);
+      t(String(i+1), cx, yNum+2.7, {align:'center'});
+    });
+  } else {
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(...GRIGIO);
+    t('Nessuna telecamera nel layout', W/2, areaY+areaH/2, {align:'center'});
   }
 
-  doc.save((document.getElementById('pdf-tit').value||'telecamere')+'.pdf');
+  // ── legenda ──
+  const legY=areaY+areaH+3;
+  doc.setFillColor(...COLONNA); doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.3);
+  doc.rect(M, legY, areaW, altLegenda-4, 'FD');
+  const voci=[
+    { c:[0,150,120], l:'Corpo telecamera' },
+    { c:[0,110,88],  l:'Numero d' + String.fromCharCode(39) + 'ordine (vedi elenco)' },
+    { c:[176,186,204],l:'Rete di 1 m' }
+  ];
+  const passoL=Math.min(50,(areaW-8)/voci.length);
+  voci.forEach((v,i)=>{
+    const lx=M+5+i*passoL;
+    doc.setFillColor(...(i === 0 ? [0,212,170] : v.c));
+    doc.rect(lx, legY+2.8, 6, 3, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(ETICHETTA); doc.setTextColor(...INCHIO);
+    t(v.l, lx+8, legY+6.2);
+  });
+
+  // ── cartiglio ──
+  const cjY=H-altCartiglio;
+  doc.setFillColor(...CARTA); doc.rect(0,cjY,W,altCartiglio,'F');
+  doc.setFillColor(...INCHIO); doc.rect(0,cjY,W,.6,'F');
+  const campi=[
+    { l:'CLIENTE',      v:cli||'\u2014', w:.26 },
+    { l:'TECNICO',      v:tec||'\u2014', w:.20 },
+    { l:'DATA LAVORO',  v:dataProg||'\u2014', w:.16 },
+    { l:'TELECAMERE',   v:String(components.length), w:.14 },
+    { l:'SCALA',        v:esc_, w:.09 },
+    { l:'N\u00b0 / REV.', v:num+' / '+rev, w:.15 }
+  ];
+  let cx=0;
+  doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.25);
+  campi.forEach(f=>{
+    const fw=f.w*W;
+    doc.rect(cx, cjY+.6, fw, altCartiglio-1.2);
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(...GRIGIO);
+    t(f.l, cx+2, cjY+6.5);
+    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(...INCHIO);
+    perParole(f.v,8.5,fw-4,true).slice(0,2).forEach((r,ri)=> t(r, cx+2, cjY+12.5+ri*4.2));
+    cx+=fw;
+  });
+  if(obs){
+    doc.setFont('helvetica','italic'); doc.setFontSize(6.5); doc.setTextColor(...GRIGIO);
+    t('Note: ' + perParole(obs, 6.5, W-2*M, false)[0], M, cjY+19.4);
+  }
+
+  // ══════════ PAGINA 2: ELENCO TELECAMERE ══════════
+  if(components.length > 0){
+    const tabella=[
+      { l:'N.',  w:9  },
+      { l:'NOME', w:Math.max(58, areaW*.24) },
+      { l:'TIPO', w:Math.max(40, areaW*.16) },
+      { l:'CARATTERISTICHE', w:Math.max(62, areaW*.26) },
+      { l:'NOTE', w:Math.max(38, areaW-(9+Math.max(58, areaW*.24)+Math.max(40, areaW*.16)+Math.max(62, areaW*.26))) }
+    ];
+
+    const nuovaPag=()=>{
+      doc.addPage(a3?'a3':'a4', land?'landscape':'portrait');
+      doc.setFillColor(...CARTA); doc.rect(0,0,W,H,'F');
+      doc.setFillColor(...INCHIO); doc.rect(0,0,W,altTestata,'F');
+      doc.setFillColor(...FASCIA); doc.rect(0,altTestata,W,.7,'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
+      t('Valve Electronics', M, 8);
+      doc.setTextColor(0,212,170); t('ELECTRONICS', M+larghezza('Valve Electronics',13,true)+1.5, 8);
+      doc.setTextColor(255,255,255); doc.setFontSize(11);
+      t('ELENCO TELECAMERE', W/2, 9, {align:'center'});
+      doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,160,185);
+      t(titolo+'  \u00b7  '+(cli||'')+'  \u00b7  N\u00b0 '+num, W/2, 14.5, {align:'center'});
+      return altTestata+4;
+    };
+
+    let ry=nuovaPag();
+    const hInt=8;
+    const intest=()=>{
+      doc.setFillColor(...INCHIO); doc.rect(M, ry, areaW, hInt, 'F');
+      let hx=M;
+      doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(0,212,170);
+      tabella.forEach(c=>{ t(c.l, hx+2, ry+5.3); hx+=c.w; });
+      ry+=hInt;
+    };
+    intest();
+
+    components.forEach((c,i)=>{
+      const def=CATALOG.find(d=>d.id===c.type)||{};
+      if(ry>H-30){ ry=nuovaPag(); intest(); }
+      const hR=8.5;
+      if(i%2===0){ doc.setFillColor(...COLONNA); doc.rect(M, ry, areaW, hR, 'F'); }
+      doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.2); doc.rect(M, ry, areaW, hR);
+      const valori=[String(i+1), c.name||def.name||'\u2014', def.cat||'\u2014',
+                    def.spec||'\u2014', c.note||'\u2014'];
+      let rx=M;
+      valori.forEach((v,ci)=>{
+        const col=tabella[ci];
+        doc.setDrawColor(...RIQUADRO); doc.setLineWidth(.15);
+        doc.line(rx+col.w, ry, rx+col.w, ry+hR);
+        doc.setFont('helvetica', ci===1?'bold':'normal'); doc.setFontSize(7); doc.setTextColor(...INCHIO);
+        t(perParole(v,7,col.w-4,ci===1)[0] || '', rx+2, ry+5.4);
+        rx+=col.w;
+      });
+      ry+=hR;
+    });
+
+    // totali per tipo
+    if(ry>H-30){ ry=nuovaPag(); }
+    ry+=6;
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(...VERDE2);
+    t('Totale telecamere: '+components.length, M, ry);
+    ry+=6;
+    const perTipo={};
+    components.forEach(c=>{ const d=CATALOG.find(x=>x.id===c.type); if(d) perTipo[d.cat||d.name]=(perTipo[d.cat||d.name]||0)+1; });
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(...INCHIO);
+    Object.entries(perTipo).forEach(([k,v])=>{ t('\u2022  '+k+': '+v, M+2, ry); ry+=5; });
+
+    doc.setFillColor(...COLONNA); doc.rect(0, H-12, W, 12, 'F');
+    doc.setFillColor(...VERDE); doc.rect(0, H-12, W, .5, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(...GRIGIO);
+    t('Valve Electronics\u2122  \u00b7  '+(tec||'')+'  \u00b7  '+dataOggi+'  \u00b7  Pagina '+doc.getNumberOfPages(), W/2, H-4.5, {align:'center'});
+  }
+
+  doc.save('Valve_Telecamere_' + (titolo||'layout').replace(/\s+/g,'_') + '_' + num + '.pdf');
   closePDF();
-  showToast('PDF generato');
+  showToast('PDF esportato');
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 //  MODELLI PRECARICATI
@@ -1084,6 +1310,8 @@ if ('serviceWorker' in navigator) {
   // va registrato sw.js, non uno script su blob: i browser rifiutano
   // register() su un URL blob e il rifiuto arriverebbe in silenzio
   window.addEventListener('load', () => {
+    // la pagina aperta da sola mostra la via di ritorno
+    if(window.parent === window){ document.getElementById('tornaDash').classList.add('on'); }
     navigator.serviceWorker.register('sw.js').catch(() => {});
   });
 }
